@@ -28,7 +28,6 @@ $mySql    = "SELECT
                 s.stock_status,
                 s.stock_date,
                 s.stock_note,
-                s.reference_to,
                 s.warehouse_id AS stock_warehouse_id,
                 MAX(s.updated_date) AS stock_updated_date,
                 MAX(b.billing_id) AS billing_id,

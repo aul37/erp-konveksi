@@ -144,21 +144,18 @@ if (isset($_POST['btnSubmit'])) {
                                                         <div class="mb-1">
                                                             <label class="form-label">Customer</label>
                                                             <select id="customer" class="form-select select2" tabindex="-1" name="txtCustomer">
-
                                                                 <?php
-                                                                $mySql = "SELECT customer_id FROM customer ";
-
-                                                                $mySql .= " group by customer_id";
+                                                                $mySql = "SELECT customer_id, customer_name FROM customer";
                                                                 $dataQry = mysqli_query($koneksi, $mySql) or die("ANUGRAH ERP ERROR : " . mysqli_error($koneksi));
                                                                 while ($dataRow = mysqli_fetch_array($dataQry)) {
-                                                                    if ($dataRow['customer_id'] == $dataCustomer) $cek = " selected";
-                                                                    else $cek = "";
-                                                                    echo "<option value='$dataRow[customer_id]'  $cek>$dataRow[customer_id]</option>";
+                                                                    $selected = ($dataRow['customer_id'] == $dataCustomer) ? "selected" : "";
+                                                                    echo "<option value='$dataRow[customer_id]' $selected>$dataRow[customer_name]</option>";
                                                                 }
                                                                 ?>
                                                             </select>
                                                         </div>
                                                     </div>
+
 
                                                     <div class="col-md-3 col-12 ps-25">
                                                         <div class="mb-1">
@@ -187,12 +184,12 @@ if (isset($_POST['btnSubmit'])) {
                                                             <select id="salesman" class="form-control select2" tabindex="-1" required name="txtSalesman">
                                                                 <option value="">Pilih</option>
                                                                 <?php
-                                                                $mySql = "SELECT salesman_name FROM salesman  ";
+                                                                $mySql = "SELECT salesman_name FROM salesman WHERE salesman_status = 'active' ";
 
-                                                                $mySql .= " group by salesman_name";
+                                                                $mySql .= " GROUP BY salesman_name";
                                                                 $dataQry = mysqli_query($koneksi, $mySql) or die("ANUGRAH ERP ERROR : " . mysqli_error($koneksi));
                                                                 while ($dataRow = mysqli_fetch_array($dataQry)) {
-                                                                    if ($dataRow['salesman_name'] == '') $cek = " selected";
+                                                                    if ($dataRow['salesman_name'] == '') $cek = "selected";
                                                                     else $cek = "";
                                                                     echo "<option value='$dataRow[salesman_name]' $cek>$dataRow[salesman_name]</option>";
                                                                 }
@@ -200,6 +197,7 @@ if (isset($_POST['btnSubmit'])) {
                                                             </select>
                                                         </div>
                                                     </div>
+
                                                     <div class="col-md-3 col-12 px-25">
                                                         <div class="mb-1">
                                                             <label class="form-label">ToP *</label>

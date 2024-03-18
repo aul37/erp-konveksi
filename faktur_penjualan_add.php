@@ -155,15 +155,19 @@ if (isset($_POST['btnLoad'])) {
                                                         <select name="txtRequestID" id="txtRequestID" class="select2 form-control">
                                                             <option value=''>Pilih Referensi SO..</option>
                                                             <?php
-                                                            $mySql = "SELECT DISTINCT sales_id FROM sales";
+                                                            $mySql = "SELECT s.sales_id, c.customer_name 
+                      FROM sales s 
+                      JOIN customer c ON s.customer_id = c.customer_id 
+                      GROUP BY s.sales_id";
                                                             $dataQry = mysqli_query($koneksi, $mySql) or die("Anugrah ERP ERROR : " . mysqli_error($koneksi));
                                                             while ($dataRow = mysqli_fetch_array($dataQry)) {
-                                                                echo "<option value='$dataRow[sales_id]'>$dataRow[sales_id]</option>";
+                                                                echo "<option value='$dataRow[sales_id]'>$dataRow[sales_id] - $dataRow[customer_name]</option>";
                                                             }
                                                             ?>
                                                         </select>
                                                     </div>
                                                 </div>
+
                                                 <div class="col-md-3 col-12 ps-25">
                                                     <div class="mb-1">
                                                         <label class="form-label">Tanggal Faktur *</label>

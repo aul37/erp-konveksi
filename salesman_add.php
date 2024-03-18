@@ -103,14 +103,18 @@ $dataStatus            = isset($_POST['txtStatus']) ? $_POST['txtStatus'] : '';
                                                     <div class="col-md-2 col-12 ps-25">
                                                         <div class="mb-1">
                                                             <label class="form-label">Status *</label>
-                                                            <input class="form-control" placeholder="[ Status]" name="txtStatus" type="text" value="<?php echo $dataStatus; ?>" maxlength="255" required="required" />
-
+                                                            <select class="form-select" name="txtStatus" required>
+                                                                <option value="Active" <?php if ($dataStatus == 'Active') echo 'selected'; ?>>Active</option>
+                                                                <option value="Not Active" <?php if ($dataStatus == 'Not Active') echo 'selected'; ?>>Not Active</option>
+                                                            </select>
                                                         </div>
                                                     </div>
 
-                                                    <div class="col-12 d-flex justify-content-between">
-                                                        <a href="salesman.php" class="btn btn-outline-warning">Batalkan</a>
-                                                        <button type="submit" name="btnSubmit" class="btn btn-primary">Submit</button>
+                                                    <div class="row mt-1">
+                                                        <div class="col-12 d-flex justify-content-between">
+                                                            <a href="salesman.php" class="btn btn-outline-warning">Batalkan</a>
+                                                            <button type="submit" name="btnSubmit" class="btn btn-primary">Submit</button>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>

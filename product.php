@@ -34,7 +34,7 @@ require 'header.php';
                         <div class="card-header">
                             <!-- Button to Open the Modal -->
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
-                                Tambah Product
+                                Tambah Data Barang
                             </button>
                         </div>
                         <?php { ?>
@@ -87,7 +87,7 @@ require 'header.php';
                                                         Edit
                                                     </button> |
                                                     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['product_name']; ?>">
-                                                        Delete
+                                                        Hapus
                                                     </button>
                                                 </td>
                                             </tr>
@@ -166,15 +166,24 @@ require 'header.php';
                     <br>
                     <input type="text" name="product_name" class="form-control" placeholder="Nama Barang" required>
                     <br>
-                    <input type="text" name="product_category" placeholder="Kategori" class="form-control" required>
+                    <select name="product_category" class="form-select" required>
+                        <option value="Pakaian Wanita">Pakaian Wanita</option>
+                        <option value="Pakaian Pria">Pakaian Pria</option>
+                        <option value="Pakaian Anak-Anak">Pakaian Anak-Anak</option>
+                        <option value="Seragam">Seragam</option>
+                        <option value="Pakaian Muslim">Pakaian Muslim</option>
+                        <option value="Kaos dan Kemeja">Kaos dan Kemeja</option>
+                    </select>
                     <br>
                     <input type="text" name="product_price" class="form-control" placeholder="Harga" required>
                     <br>
                     <input type="text" name="product_note" class="form-control" placeholder="Catatan" required>
                     <br>
-                    <input type="text" name="product_status" placeholder="Status" class="form-control" required>
-                    <br>
-                    <button type="submit" class="btn btn-success" name="addproduct">Submit</button>
+                    <select name="product_status" class="form-select" required>
+                        <option value="Active">Active</option>
+                        <option value="Not Active">Not Active</option>
+                    </select> <br>
+                    <button type="submit" class="btn btn-success" name="addproduct">Simpan</button>
 
                 </div>
             </form>
@@ -212,20 +221,22 @@ while ($myData = mysqli_fetch_array($myQry)) {
                 <form method="post" action="function.php">
                     <div class="modal-body">
                         <input type="hidden" name="id" value="<?= $Code; ?>">
-                        <input type="text" name="product_id" class="form-control" placeholder="ID Barang" value="<?= $product; ?>" readonly>
+                        <input type="text" name="product_id" class="form-control" placeholder="ID Barang" value="<?= $myData['product_id']; ?>" readonly>
                         <br>
-                        <input type="text" name="product_name" class="form-control" placeholder="Nama Barang" value="<?= $name; ?>" readonly>
+                        <input type="text" name="product_name" class="form-control" placeholder="Nama Barang" value="<?= $myData['product_name']; ?>" readonly>
                         <br>
-                        <input type="text" name="product_category" placeholder="Kategori" class="form-control" value="<?= $category; ?>" readonly>
+                        <input type="text" name="product_category" class="form-control" placeholder="Kategori" value="<?= $myData['product_category']; ?>" readonly>
                         <br>
-                        <input type="text" name="product_price" class="form-control" placeholder="Harga" value="<?= $price; ?>" required>
+                        <input type="text" name="product_price" class="form-control" placeholder="Harga" value="<?= $myData['product_price']; ?>" required>
                         <br>
-                        <input type="text" name="product_note" class="form-control" placeholder="Catatan" value="<?= $note; ?>" required>
+                        <input type="text" name="product_note" class="form-control" placeholder="Catatan" value="<?= $myData['product_note']; ?>" required>
                         <br>
-                        <input type="text" name="product_status" placeholder="Status" class="form-control" value="<?= $status; ?>" required>
+                        <select name="product_status" class="form-select" required>
+                            <option value="Active" <?= ($myData['product_status'] == 'Active') ? 'selected' : ''; ?>>Active</option>
+                            <option value="Not Active" <?= ($myData['product_status'] == 'Not Active') ? 'selected' : ''; ?>>Not Active</option>
+                        </select>
                         <br>
-                        <button type="submit" class="btn btn-success" name="update">Edit</button>
-
+                        <button type="submit" class="btn btn-success" name="updateproduct">Simpan</button>
                     </div>
                 </form>
             </div>

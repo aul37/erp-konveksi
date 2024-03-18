@@ -36,7 +36,7 @@ require 'header.php';
                         <div class="card-header">
                             <!-- Button to Open the Modal -->
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
-                                Tambah User
+                                Tambah Data Pengguna
                             </button>
                         </div>
                         <?php { ?>
@@ -87,7 +87,7 @@ require 'header.php';
                                                         Edit
                                                     </button> |
                                                     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['user_name']; ?>">
-                                                        Delete
+                                                        Hapus
                                                     </button>
                                                 </td>
                                             </tr>
@@ -172,9 +172,12 @@ require 'header.php';
                     <br>
                     <input type="text" name="user_address" class="form-control" placeholder="Alamat User" required>
                     <br>
-                    <input type="text" name="user_status" placeholder="Status" class="form-control" required>
+                    <select name="user_status" class="form-select" required>
+                        <option value="Active">Active</option>
+                        <option value="Not Active">Not Active</option>
+                    </select>
                     <br>
-                    <button type="submit" class="btn btn-success" name="adduser">Submit</button>
+                    <button type="submit" class="btn btn-success" name="adduser">Simpan</button>
 
 
                 </div>
@@ -222,9 +225,12 @@ while ($myData = mysqli_fetch_array($myQry)) {
                         <br>
                         <input type="text" name="user_address" class="form-control" placeholder="Alamat User" value="<?= $address; ?>" required>
                         <br>
-                        <input type="text" name="user_status" placeholder="Status" class="form-control" value="<?= $status; ?>" required>
+                        <select name="user_status" class="form-select" required>
+                            <option value="Active" <?= ($status == 'Active') ? 'selected' : ''; ?>>Active</option>
+                            <option value="Not Active" <?= ($status == 'Not Active') ? 'selected' : ''; ?>>Not Active</option>
+                        </select>
                         <br>
-                        <button type="submit" class="btn btn-success" name="updateuser">Submit</button>
+                        <button type="submit" class="btn btn-success" name="updateuser">Simpan</button>
 
                     </div>
                 </form>

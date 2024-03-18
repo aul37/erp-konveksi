@@ -162,15 +162,17 @@ if (isset($_POST['btnLoad'])) {
                                                         <select name="txtSupplierID" id="txtOrder" class="select2 form-select" tabindex="-1" required>
                                                             <option value="" selected disabled>[ pilih supplier ]</option>
                                                             <?php
-                                                            $mySql = "SELECT * FROM supplier WHERE supplier_id  ";
+                                                            $mySql = "SELECT * FROM supplier WHERE supplier_status = 'active'";
                                                             $dataQry = mysqli_query($koneksi, $mySql) or die("RENTAS ERP ERROR : " . mysqli_error($koneksi));
                                                             while ($dataRow = mysqli_fetch_array($dataQry)) {
-                                                                echo "<option value='$dataRow[supplier_id]|$dataRow[supplier_name]' >$dataRow[supplier_code] $dataRow[supplier_name]</option>";
+                                                                echo "<option value='" . $dataRow['supplier_id'] . "|" . $dataRow['supplier_name'] . "'>" . $dataRow['supplier_id'] . " - " . $dataRow['supplier_name'] . "</option>";
                                                             }
                                                             ?>
                                                         </select>
                                                     </div>
                                                 </div>
+
+
 
                                                 <div class="col-md-3 col-12 px-25">
                                                     <div class="mb-1">
@@ -204,7 +206,7 @@ if (isset($_POST['btnLoad'])) {
                                                 <div class="col-md-3 col-12 px-25">
                                                     <div class="mb-1">
                                                         <label class="form-label">ID Pembelian *</label>
-                                                        <input type="text" name="txtPurchaseID" class="form-control" placeholder="ID Pembelian" required>
+                                                        <input type="text" name="txtPurchaseID" class="form-control" placeholder="Nomor PO" required>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-3 col-12 pe-25">

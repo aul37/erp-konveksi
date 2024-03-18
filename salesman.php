@@ -164,8 +164,10 @@ require 'header.php';
               <br>
               <input type="date" name="commission_date" placeholder="Tanggal Komisi" class="form-control" value="<?= $txtCommissionDate; ?>" required>
               <br>
-              <input type="text" name="salesman_status" placeholder="Status" class="form-control" value="<?= $txtStatus; ?>" required>
-              <br>
+              <select class="form-select" name="salesman_status" required>
+                <option value="Active" <?php if ($txtStatus == 'Active') echo 'selected'; ?>>Active</option>
+                <option value="Not Active" <?php if ($txtStatus == 'Not Active') echo 'selected'; ?>>Not Active</option>
+              </select> <br>
               <button type="submit" class="btn btn-success" name="updatesalesman">Edit</button>
 
             </div>

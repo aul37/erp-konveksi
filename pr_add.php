@@ -152,15 +152,16 @@ require 'header.php';
                                                     <select name="txtRequest" id="txtRequest" class="select2 form-control">
                                                         <option value=''>Pilih Pemohon Pembelian..</option>
                                                         <?php
-                                                        $mySql = "SELECT DISTINCT user_name FROM user";
+                                                        $mySql = "SELECT DISTINCT salesman_name FROM salesman WHERE salesman_status = 'Active'";
                                                         $dataQry = mysqli_query($koneksi, $mySql) or die("Anugrah ERP ERROR : " . mysqli_error($koneksi));
                                                         while ($dataRow = mysqli_fetch_array($dataQry)) {
-                                                            echo "<option value='$dataRow[user_name]'>$dataRow[user_name]</option>";
+                                                            echo "<option value='$dataRow[salesman_name]'>$dataRow[salesman_name]</option>";
                                                         }
                                                         ?>
                                                     </select>
                                                 </div>
                                             </div>
+
 
 
 

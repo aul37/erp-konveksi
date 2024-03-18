@@ -35,7 +35,7 @@ require 'header.php';
                         <div class="card-header">
                             <!-- Button to Open the Modal -->
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
-                                Tambah Supplier
+                                Tambah Data Supplier
                             </button>
                         </div>
                         <?php { ?>
@@ -61,7 +61,6 @@ require 'header.php';
                                             <th>No Telpon</th>
                                             <th>Status</th>
                                             <th>Aksi</th>
-
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -87,30 +86,10 @@ require 'header.php';
                                                         Edit
                                                     </button> |
                                                     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['supplier_name']; ?>">
-                                                        Delete
+                                                        Hapus
                                                     </button>
                                                 </td>
                                             </tr>
-
-
-
-                                            <div class="modal fade delete-modal" id="delete<?= $Code; ?>">
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h4 class="modal-title">Hapus Supplier</h4>
-                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <form id="deleteForm" method="POST" action="function.php">
-                                                                <p id="supplier"></p>
-                                                                <input type="hidden" name="id" id="deleteId" value="">
-                                                                <button type="submit" class="btn btn-danger" name="hapussupplier">Hapus</button>
-                                                            </form>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
                                         <?php } ?>
                                     </tbody>
                                 </table>
@@ -146,20 +125,31 @@ require 'header.php';
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 
+    <script>
+        $(document).ready(function() {
+            // Saat modal delete ditampilkan, atur nilai id dan nama supplier
+            $('.delete-modal').on('show.bs.modal', function(event) {
+                var button = $(event.relatedTarget);
+                var id = button.data('id');
+                var name = button.data('name');
+
+                var modal = $(this);
+                modal.find('#deleteId' + id).val(id);
+                modal.find('#supplier' + id).text('Anda yakin ingin menghapus supplier "' + name + '"?');
+            });
+        });
+    </script>
 
 </body>
 
-<!-- The Modal -->
+<!-- Modal for Tambah -->
 <div class="modal fade" id="myModal">
     <div class="modal-dialog">
         <div class="modal-content">
-
-            <!-- Modal Header -->
             <div class="modal-header">
                 <h4 class="modal-title">Tambah Supplier</h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
-            <!-- Modal body -->
             <form method="post">
                 <div class="modal-body">
                     <input type="text" name="supplier_id" class="form-control" placeholder="ID" required>
@@ -172,11 +162,12 @@ require 'header.php';
                     <br>
                     <input type="text" name="supplier_contact" class="form-control" placeholder="No Telpon" required>
                     <br>
-                    <input type="text" name="supplier_status" placeholder="Status" class="form-control" required>
+                    <select name="supplier_status" class="form-select" required>
+                        <option value="Active">Active</option>
+                        <option value="Not Active">Not Active</option>
+                    </select>
                     <br>
-                    <button type="submit" class="btn btn-success" name="addsupplier">Submit</button>
-
-
+                    <button type="submit" class="btn btn-success" name="addsupplier">Simpan</button>
                 </div>
             </form>
         </div>
@@ -184,17 +175,16 @@ require 'header.php';
 </div>
 
 
-
 <?php
 $mySql = "SELECT * FROM supplier where 1=1 ";
-$mySql .= " ORDER BY id ASC";
+$mySql .= " ORDER BY supplier_id ASC";
 $myQry = mysqli_query($koneksi, $mySql) or die("ANUGRAH ERP ERROR :  " . mysqli_error($koneksi));
 $nomor = 0;
 while ($myData = mysqli_fetch_array($myQry)) {
     $nomor++;
-    $Code = $myData['id'];
-    $ID = $myData['supplier_id'];
-    $supplier = $myData['supplier_name'];
+    $Code = $myData['supplier_id'];
+    $supplier = $myData['supplier_id'];
+    $name = $myData['supplier_name'];
     $address = $myData['supplier_address'];
     $city = $myData['supplier_city'];
     $contact = $myData['supplier_contact'];
@@ -212,9 +202,9 @@ while ($myData = mysqli_fetch_array($myQry)) {
                 <form method="post" action="function.php">
                     <div class="modal-body">
                         <input type="hidden" name="id" value="<?= $Code; ?>">
-                        <input type="text" name="supplier_id" class="form-control" placeholder="ID" value="<?= $ID; ?>" readonly>
+                        <input type="text" name="supplier_id" class="form-control" placeholder="ID" value="<?= $supplier; ?>" readonly>
                         <br>
-                        <input type="text" name="supplier_name" class="form-control" placeholder="Supplier" value="<?= $supplier; ?>" readonly>
+                        <input type="text" name="supplier_name" class="form-control" placeholder="Supplier" value="<?= $name; ?>" readonly>
                         <br>
                         <input type="text" name="supplier_address" class="form-control" placeholder="Alamat Supplier" value="<?= $address; ?>" required>
                         <br>
@@ -222,32 +212,20 @@ while ($myData = mysqli_fetch_array($myQry)) {
                         <br>
                         <input type="text" name="supplier_contact" class="form-control" placeholder="No Telpon" value="<?= $contact; ?>" required>
                         <br>
-                        <input type="text" name="supplier_status" placeholder="Status" class="form-control" value="<?= $status; ?>" required>
+                        <select name="supplier_status" class="form-select" required>
+                            <option value="Active" <?php if ($status == 'Active') echo 'selected="selected"'; ?>>Active</option>
+                            <option value="Not Active" <?php if ($status == 'Not Active') echo 'selected="selected"'; ?>>Not Active</option>
+                        </select>
                         <br>
-                        <button type="submit" class="btn btn-success" name="updatesupplier">Submit</button>
-
+                        <button type="submit" class="btn btn-success" name="updatesupplier">Simpan</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+
 <?php
 }
 ?>
-
-<script>
-    $(document).ready(function() {
-        // Saat modal delete ditampilkan, atur nilai id dan nama supplier
-        $('.delete-modal').on('show.bs.modal', function(event) {
-            var button = $(event.relatedTarget);
-            var id = button.data('id');
-            var name = button.data('name');
-
-            var modal = $(this);
-            modal.find('#deleteId').val(id);
-            modal.find('#supplier').text('Anda yakin ingin menghapus supplier "' + name + '"?');
-        });
-    });
-</script>
 
 </html>

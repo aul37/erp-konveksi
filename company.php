@@ -36,7 +36,7 @@ require 'header.php';
                         <div class="card-header">
                             <!-- Button to Open the Modal -->
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
-                                Tambah Company
+                                Tambah Data Perusahaan
                             </button>
                         </div>
                         <?php { ?>
@@ -91,7 +91,7 @@ require 'header.php';
                                                     </button>
                                                     |
                                                     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['company_name']; ?>">
-                                                        Delete
+                                                        Hapus
                                                     </button>
                                                 </td>
                                             </tr>
@@ -178,9 +178,12 @@ require 'header.php';
                     <br>
                     <input type="text" name="company_address" class="form-control" placeholder="Alamat Perusahaan" required>
                     <br>
-                    <input type="text" name="company_status" placeholder="Status" class="form-control" required>
+                    <select name="company_status" class="form-select" required>
+                        <option value="Active">Active</option>
+                        <option value="Not Active">Not Active</option>
+                    </select>
                     <br>
-                    <button type="submit" class="btn btn-success" name="addnewcompany">Submit</button>
+                    <button type="submit" class="btn btn-success" name="addnewcompany">Simpan</button>
 
                 </div>
             </form>
@@ -230,9 +233,12 @@ while ($myData = mysqli_fetch_array($myQry)) {
                         <br>
                         <input type="text" name="company_address" class="form-control" placeholder="Alamat Perusahaan" value="<?= $address; ?>" required>
                         <br>
-                        <input type="text" name="company_status" placeholder="Status" class="form-control" value="<?= $status; ?>" required>
+                        <select name="company_status" class="form-select" required>
+                            <option value="Active" <?php if ($status == 'Active') echo 'selected'; ?>>Active</option>
+                            <option value="Not Active" <?php if ($status == 'Not Active') echo 'selected'; ?>>Not Active</option>
+                        </select>
                         <br>
-                        <button type="submit" class="btn btn-success" name="updatecompany">Edit</button>
+                        <button type="submit" class="btn btn-success" name="updatecompany">Simpan</button>
 
                     </div>
                 </form>

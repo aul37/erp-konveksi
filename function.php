@@ -25,8 +25,8 @@ if (isset($_POST['addnewcompany'])) {
 
 //UPDATE COMPANY
 if (isset($_POST['updatecompany'])) {
-    $id = $_POST['company_id'];
-    $company = $_POST['company_id'];
+    $id = $_POST['id'];
+    $company_id = $_POST['company_id'];
     $name = $_POST['company_name'];
     $city = $_POST['company_city'];
     $contact = $_POST['company_contact'];
@@ -34,7 +34,7 @@ if (isset($_POST['updatecompany'])) {
     $address = $_POST['company_address'];
     $status = $_POST['company_status'];
 
-    $updatequery = mysqli_query($koneksi, "UPDATE company SET company_id='$company', company_name='$name', company_city='$city', company_contact='$contact', company_email='$email', company_address='$address', company_status='$status' WHERE id='$id'");
+    $updatequery = mysqli_query($koneksi, "UPDATE company SET company_id='$company_id', company_name='$name', company_city='$city', company_contact='$contact', company_email='$email', company_address='$address', company_status='$status' WHERE id='$id'");
 
     if ($updatequery) {
         header('Location: company.php');
@@ -45,6 +45,7 @@ if (isset($_POST['updatecompany'])) {
         exit();
     }
 }
+
 
 //HAPUS COMPANY
 if (isset($_POST['hapuscompany'])) {
@@ -200,7 +201,7 @@ if (isset($_POST['updatesupplier'])) {
     $city = $_POST['supplier_city'];
     $contact = $_POST['supplier_contact'];
     $status = $_POST['supplier_status'];
-    $updatequery = mysqli_query($koneksi, "UPDATE supplier SET supplier_id='$Code', supplier_name='$supplier', supplier_address='$address', supplier_city='$city', supplier_contact='$contact', supplier_status='$status' WHERE id='$id'");
+    $updatequery = mysqli_query($koneksi, "UPDATE supplier SET supplier_id='$Code', supplier_name='$supplier', supplier_address='$address', supplier_city='$city', supplier_contact='$contact', supplier_status='$status' WHERE supplier_id='$id'");
 
     if ($updatequery) {
         header('Location: supplier.php');
@@ -212,20 +213,23 @@ if (isset($_POST['updatesupplier'])) {
     }
 }
 
+
 //HAPUS SUPPLIER
 if (isset($_POST['hapussupplier'])) {
     $id = $_POST['id'];
 
-    $hapus = mysqli_query($koneksi, "DELETE FROM supplier WHERE id='$id'");
+    $hapus = mysqli_query($koneksi, "DELETE FROM supplier WHERE supplier_id='$id'");
 
-    if ($hapusdata) {
+    if ($hapus) {
         header('Location: supplier.php');
         exit();
     } else {
-        echo 'Gagal';
+        echo 'Gagal menghapus data supplier';
         header('Location: supplier.php');
+        exit();
     }
-};
+}
+
 
 //Menambah Product
 if (isset($_POST['addproduct'])) {
@@ -247,16 +251,16 @@ if (isset($_POST['addproduct'])) {
 }
 
 //UPDATE PRODUCT 
-if (isset($_POST['update'])) {
+if (isset($_POST['updateproduct'])) {
     $id = $_POST['id'];
-    $product = $_POST['product_id'];
+    $product_id = $_POST['product_id'];
     $name = $_POST['product_name'];
     $category = $_POST['product_category'];
     $price = $_POST['product_price'];
     $note = $_POST['product_note'];
     $status = $_POST['product_status'];
 
-    $updatequery = mysqli_query($koneksi, "UPDATE product SET product_id='$product', product_name='$name', product_category='$category', product_price='$price', product_note='$note', product_status='$status' WHERE id='$id'");
+    $updatequery = mysqli_query($koneksi, "UPDATE product SET product_id='$product_id', product_name='$name', product_category='$category', product_price='$price', product_note='$note', product_status='$status' WHERE id='$id'");
 
     if ($updatequery) {
         header('Location: product.php');
@@ -267,6 +271,8 @@ if (isset($_POST['update'])) {
         exit();
     }
 }
+
+
 
 //HAPUS PRODUCT
 if (isset($_POST['hapusproduct'])) {
