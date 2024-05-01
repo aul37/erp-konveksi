@@ -67,12 +67,12 @@ require 'header.php';
                                     <tbody>
                                         <?php
                                         $mySql = "SELECT * FROM customer where 1=1 ";
-                                        $mySql .= " ORDER BY id ASC";
+                                        $mySql .= " ORDER BY customer_id ASC";
                                         $myQry     = mysqli_query($koneksi, $mySql)  or die("ANUGRAH ERP ERROR :  " . mysqli_error($koneksi));
                                         $nomor  = 0;
                                         while ($myData = mysqli_fetch_array($myQry)) {
                                             $nomor++;
-                                            $Code = $myData['id'];
+                                            $Code = $myData['customer_id'];
                                         ?>
                                             <tr>
                                                 <td><?php echo $nomor; ?></td>
@@ -120,16 +120,7 @@ require 'header.php';
                 </div>
             </main>
             <footer class="py-4 bg-light mt-auto">
-                <div class="container-fluid px-4">
-                    <div class="d-flex align-items-center justify-content-between small">
-                        <div class="text-muted">Copyright &copy; Anugrah Konveksi</div>
-                        <div>
-                            <a href="#">Privacy Policy</a>
-                            &middot;
-                            <a href="#">Terms &amp; Conditions</a>
-                        </div>
-                    </div>
-                </div>
+
             </footer>
         </div>
     </div>
@@ -191,12 +182,12 @@ require 'header.php';
 
 <?php
 $mySql = "SELECT * FROM customer where 1=1 ";
-$mySql .= " ORDER BY id ASC";
+$mySql .= " ORDER BY customer_id ASC";
 $myQry = mysqli_query($koneksi, $mySql) or die("ANUGRAH ERP ERROR :  " . mysqli_error($koneksi));
 $nomor = 0;
 while ($myData = mysqli_fetch_array($myQry)) {
     $nomor++;
-    $Code = $myData['id'];
+    $Code = $myData['customer_id'];
     $ID = $myData['customer_id'];
     $customer = $myData['customer_name'];
     $npwp = $myData['customer_npwp'];

@@ -51,7 +51,7 @@ require 'header.php';
                                             <th>SO</th>
                                             <th>Nilai Faktur</th>
                                             <th>Catatan</th>
-                                            <!-- <th>Aksi</th> -->
+                                            <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -95,7 +95,13 @@ require 'header.php';
                                                 <td><?= $myData['sales_id']; ?></td>
                                                 <td><?= number_format($myData['total']); ?></td>
                                                 <td><?= $myData['billing_note']; ?></td>
-
+                                                <td><button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editModal<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['sales_id']; ?>">
+                                                        Edit
+                                                    </button> |
+                                                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['sales_id']; ?>">
+                                                        Hapus
+                                                    </button>
+                                                </td>
                                             </tr>
                                         <?php } ?>
                                     </tbody>

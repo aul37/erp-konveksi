@@ -53,7 +53,7 @@ $dataSKBDate  = $myData['stock_date'];
 $dataSupplierName  = $myData['customer_name'];
 $dataRequestID  = $myData['stock_order_references'];
 $dataNote  = $myData['stock_note'];
-$dataFaktur  = $myData['reference_to'];
+$dataFaktur  = $myData['billing_id'];
 
 
 ?>

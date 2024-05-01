@@ -96,7 +96,7 @@ require 'header.php';
                                 $itemNote    = $_POST['itemNote'][$key];
                                 $itemPrice      = $_POST['itemPrice'][$key];
 
-                                $mySql      = "INSERT INTO pr_detail (pr_id, pr_product, pr_qty, pr_unit, pr_price, pr_note, updated_date)
+                                $mySql      = "INSERT INTO pr_detail (pr_id, product_id, pr_qty, pr_unit, pr_price, pr_note, updated_date)
                                 VALUES ('$dataCode','$unit0','$itemQty','$unit2','$itemPrice','$itemNote',now())";
                                 $myQry = mysqli_query($koneksi, $mySql);
 
@@ -152,10 +152,10 @@ require 'header.php';
                                                     <select name="txtRequest" id="txtRequest" class="select2 form-control">
                                                         <option value=''>Pilih Pemohon Pembelian..</option>
                                                         <?php
-                                                        $mySql = "SELECT DISTINCT salesman_name FROM salesman WHERE salesman_status = 'Active'";
+                                                        $mySql = "SELECT DISTINCT user_name FROM user WHERE user_status = 'Active'";
                                                         $dataQry = mysqli_query($koneksi, $mySql) or die("Anugrah ERP ERROR : " . mysqli_error($koneksi));
                                                         while ($dataRow = mysqli_fetch_array($dataQry)) {
-                                                            echo "<option value='$dataRow[salesman_name]'>$dataRow[salesman_name]</option>";
+                                                            echo "<option value='$dataRow[user_name]'>$dataRow[user_name]</option>";
                                                         }
                                                         ?>
                                                     </select>
@@ -258,16 +258,7 @@ require 'header.php';
 
 
     <footer class="py-4 bg-light mt-auto">
-        <div class="container-fluid px-4">
-            <div class="d-flex align-items-center justify-content-between small">
-                <div class="text-muted">Copyright &copy; Anugrah Konveksi</div>
-                <div>
-                    <a href="#">Privacy Policy</a>
-                    &middot;
-                    <a href="#">Terms &amp; Conditions</a>
-                </div>
-            </div>
-        </div>
+
     </footer>
     </div>
     </div>

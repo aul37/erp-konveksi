@@ -52,25 +52,22 @@ require 'header.php';
                                             <th>Pemasok</th>
                                             <th>Produk</th>
                                             <th>Catatan</th>
-                                            <!-- <th>Aksi</th> -->
+                                            <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php
                                         $mySql = "SELECT
-                                        so.stock_order_id,
-                                        GROUP_CONCAT(DISTINCT s.stock_order_reference ORDER BY s.stock_order_reference ASC) AS stock_order_references,
-                                        s.stock_status,
+                                        s.stock_order_id,
                                         s.stock_date,
-                                        s.stock_note,
-                                        s.warehouse_id AS stock_warehouse_id,
-                                        MAX(s.updated_date) AS stock_updated_date,
-                                            po.supplier_name,
-                                            po.product_name
+                                        s.stock_order_reference,
+                                        po.supplier_name,
+                                        po.product_name,
+                                        s.stock_note 
                                     FROM
                                         stock_order_detail so
-                                    JOIN stock s ON so.stock_order_id = s.stock_order_id
-                                    JOIN view_po po ON s.stock_order_reference = po.purchase_id
+                                        JOIN stock s ON so.stock_order_id = s.stock_order_id
+                                        JOIN view_po po ON s.stock_order_reference = po.purchase_id 
                                     GROUP BY
                                         so.stock_order_id";
 
@@ -88,10 +85,17 @@ require 'header.php';
                                                 <td><?= $nomor; ?></td>
                                                 <td><a href="surat_masuk_barang_view.php?code=<?= $Code; ?>" target="_new" alt="View Data"><u><?= $myData['stock_order_id']; ?></u></a></td>
                                                 <td><?= $myData['stock_date']; ?></td>
-                                                <td><?= $myData['stock_order_references']; ?></td>
+                                                <td><?= $myData['stock_order_reference']; ?></td>
                                                 <td><?= $myData['supplier_name']; ?></td>
                                                 <td><?= $myData['product_name']; ?></td>
                                                 <td><?= $myData['stock_note']; ?></td>
+                                                <td><button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editModal<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['stock_order_id']; ?>">
+                                                        Edit
+                                                    </button> |
+                                                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['stock_order_id']; ?>">
+                                                        Hapus
+                                                    </button>
+                                                </td>
                                             </tr>
                                         <?php } ?>
                                     </tbody>

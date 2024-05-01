@@ -53,7 +53,7 @@ require 'header.php';
                                             <th>Pelanggan</th>
                                             <th>No Faktur</th>
                                             <th>Catatan</th>
-                                            <!-- <th>Aksi</th> -->
+                                            <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -94,6 +94,13 @@ require 'header.php';
                                                 <td><?= $myData['customer_name']; ?></td>
                                                 <td><?= $myData['billing_id']; ?></td>
                                                 <td><?= $myData['stock_note']; ?></td>
+                                                <td><button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editModal<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['sales_id']; ?>">
+                                                        Edit
+                                                    </button> |
+                                                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['sales_id']; ?>">
+                                                        Hapus
+                                                    </button>
+                                                </td>
                                             </tr>
                                         <?php } ?>
                                     </tbody>

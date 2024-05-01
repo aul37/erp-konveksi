@@ -67,33 +67,35 @@ require 'header.php';
                                             <th>Total</th>
                                             <th>Pemohon PR</th>
                                             <th>Status</th>
-                                            <th>Catatan</th>
-                                            <!-- <th>Aksi</th> -->
+                                            <!-- <th>PO</th> -->
+                                            <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php
 
                                         $mySql = "SELECT
-                                                    pr.pr_id,
-                                                    pr.pr_date,
-                                                    pr.request,
-                                                    pr.pr_note,
-                                                    pr.pr_for,
-                                                    pr.pr_status,
-                                                    IFNULL(SUM(pr_detail.pr_qty*pr_detail.pr_price),0) as total
-                                                  FROM
-                                                    pr
-                                                  JOIN
-                                                    pr_detail ON pr.pr_id = pr_detail.pr_id
-                                                  GROUP BY
-                                                    pr.pr_id,
-                                                    pr.pr_date,
-                                                    pr.request,
-                                                    pr.pr_note,
-                                                    pr.pr_for
-                                                  ORDER BY
-                                                    pr.pr_id ASC";
+                                        pr.pr_id,
+                                        pr.pr_date,
+                                        pr.request,
+                                        pr.pr_note,
+                                        pr.pr_for,
+                                        pr.pr_status,
+                                        IFNULL(SUM(pr_detail.pr_qty * pr_detail.pr_price), 0) as total
+                                      FROM
+                                        pr
+                                      LEFT JOIN
+                                        pr_detail ON pr.pr_id = pr_detail.pr_id
+                                      GROUP BY
+                                        pr.pr_id,
+                                        pr.pr_date,
+                                        pr.request,
+                                        pr.pr_note,
+                                        pr.pr_for,
+                                        pr.pr_status
+                                      ORDER BY
+                                        pr.pr_id ASC";
+
 
 
                                         $myQry = mysqli_query($koneksi, $mySql) or die("ANUGRAH ERP ERROR :  " . mysqli_error($koneksi));
@@ -101,13 +103,12 @@ require 'header.php';
                                         while ($myData = mysqli_fetch_array($myQry)) {
                                             $nomor++;
                                             $Code = $myData['pr_id'];
-
                                             // Query untuk mengambil produk berdasarkan pr_id
-                                            $produkSql = "SELECT pr_product FROM pr_detail WHERE pr_id = '$Code'";
+                                            $produkSql = "SELECT product_id FROM pr_detail WHERE pr_id = '$Code'";
                                             $produkQuery = mysqli_query($koneksi, $produkSql);
                                             $produkArray = array();
                                             while ($produkData = mysqli_fetch_array($produkQuery)) {
-                                                $produkArray[] = $produkData['pr_product'];
+                                                $produkArray[] = $produkData['product_id'];
                                             }
                                             $produkList = implode(", ", $produkArray);
                                         ?>
@@ -127,20 +128,37 @@ require 'header.php';
                                                     else echo "PR Finished";
                                                     ?>
                                                 </td>
-                                                <td><?php echo $myData['pr_note']; ?></td>
-                                                <!-- <td>
-                                                    <a class="btn-icon btn btn-warning btn-round btn-sm" href="pr_detail.php">
-                                                        <span class="align-middle">Detail</span>
-                                                    </a>
+                                                <!-- <td><a href="po_view.php?code=<?= $Id; ?>" target="_new" alt="View Data"><u><?= $myData['request_id']; ?></u></a></td> -->
+                                                <td>
+                                                    <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editModal<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['pr_id']; ?>">
+                                                        Edit
+                                                    </button>
                                                     |
-                                                    <a class="btn-icon btn btn-danger btn-round btn-sm" href="pr_delete.php">
-                                                        <span class="align-middle">Delete</span>
-                                                    </a>
-                                                </td> -->
+                                                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['pr_id']; ?>">
+                                                        Hapus
+                                                    </button>
+                                                </td>
+
                                             </tr>
+                                            <div class="modal fade delete-modal" id="delete<?= $Code; ?>">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h4 class="modal-title">Hapus Pembelian</h4>
+                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <form id="deleteForm" method="POST" action="function.php">
+                                                                <p id="id"></p>
+                                                                <input type="hidden" name="id" id="deleteId" value="">
+                                                                <button type="submit" class="btn btn-danger" name="hapuspembelian">Hapus</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
                                     </tbody>
-                                <?php } ?>
-                                </tbody>
                                 </table>
                             </div>
                         </div>
@@ -148,16 +166,7 @@ require 'header.php';
                 </div>
             </main>
             <footer class="py-4 bg-light mt-auto">
-                <div class="container-fluid px-4">
-                    <div class="d-flex align-items-center justify-content-between small">
-                        <div class="text-muted">Copyright &copy; Anugrah Konveksi</div>
-                        <div>
-                            <a href="#">Privacy Policy</a>
-                            &middot;
-                            <a href="#">Terms &amp; Conditions</a>
-                        </div>
-                    </div>
-                </div>
+
             </footer>
         </div>
     </div>
@@ -175,50 +184,60 @@ require 'header.php';
 
 
 </body>
-<?php
-$mySql = "SELECT * FROM pr where 1=1 ";
-$mySql .= " ORDER BY id ASC";
-$myQry = mysqli_query($koneksi, $mySql) or die("ANUGRAH ERP ERROR :  " . mysqli_error($koneksi));
-$nomor = 0;
-while ($myData = mysqli_fetch_array($myQry)) {
-    $nomor++;
-    $Code = $myData['id'];
-    $ID = $myData['pr_id'];
-    $date = $myData['pr_date'];
-    // $itemQty = $myData['pr_detail_qty'];
-    $dataRequest = $myData['request'];
-    $dataNote = $myData['pr_note'];
-?>
+
+</html><?php
+        $mySql = "SELECT * FROM company where 1=1 ";
+        $mySql .= " ORDER BY pr_id ASC";
+        $myQry = mysqli_query($koneksi, $mySql) or die("ANUGRAH ERP ERROR :  " . mysqli_error($koneksi));
+        $nomor = 0;
+        while ($myData = mysqli_fetch_array($myQry)) {
+            $nomor++;
+            $Code = $myData['id'];
+            $prid = $myData['pr_id'];
+            $prdate = $myData['pr_date'];
+            $prreq = $myData['request'];
+            $prnote = $myData['pr_note'];
+            $prfor = $myData['pr_for'];
+            $updatedate = $myData['updated_date'];
+            $status = $myData['pr_status'];
+        ?>
+
     <!-- Modal for Edit -->
     <div class="modal fade" id="editModal<?= $Code; ?>">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Edit Permintaan Pembelian (PR)</h4>
+                    <h4 class="modal-title">Edit Pembelian</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
-                <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+                <form method="post" action="function.php">
                     <div class="modal-body">
                         <input type="hidden" name="id" value="<?= $Code; ?>">
-                        <label>Tanggal:</label>
-                        <input type="date" name="pr_date" class="form-control" value="<?= $date; ?>" required>
-                        <label>Produk:</label>
-                        <input type="text" name="pr_product" class="form-control" value="<?= $dataOrder; ?>" required>
-                        <!-- <label>Qty:</label>
-                        <input type="text" name="pr_detail_qty" class="form-control" value="<?= $itemQty; ?>" required> -->
-                        <label>Pemohon:</label>
-                        <input type="text" name="request" class="form-control" value="<?= $dataRequest; ?>" required>
-                        <label>Catatan:</label>
-                        <input type="text" name="pr_note" class="form-control" value="<?= $dataNote; ?>" required>
-                        <button type="submit" class="btn btn-success" name="updatepr">Edit</button>
+                        <input type="text" name="pr_id" class="form-control" placeholder="ID" value="<?= $prid; ?>" readonly>
+                        <br>
+                        <input type="text" name="company_name" class="form-control" placeholder="Nama Perusahaan" value="<?= $prdate; ?>" readonly>
+                        <br>
+                        <input type="text" name="company_city" class="form-control" placeholder="Kota" value="<?= $prreq; ?>" required>
+                        <br>
+                        <input type="text" name="company_contact" placeholder="Kontak" class="form-control" value="<?= $prnote; ?>" required>
+                        <br>
+                        <input type="text" name="company_email" class="form-control" placeholder="Email" value="<?= $prfor; ?>" required>
+                        <br>
+                        <input type="text" name="company_address" class="form-control" placeholder="Alamat Perusahaan" value="<?= $updatedate; ?>" required>
+                        <br>
+                        <select name="pr_status" class="form-select" required>
+                            <option value="Active" <?php if ($status == 'Active') echo 'selected'; ?>>Active</option>
+                            <option value="Not Active" <?php if ($status == 'Not Active') echo 'selected'; ?>>Not Active</option>
+                        </select>
+                        <br>
+                        <button type="submit" class="btn btn-success" name="updatepembelian">Simpan</button>
+
                     </div>
                 </form>
             </div>
         </div>
     </div>
+
 <?php
-}
+        }
 ?>
-
-
-</html>

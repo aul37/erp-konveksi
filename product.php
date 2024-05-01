@@ -56,6 +56,7 @@ require 'header.php';
                                             <th>No</th>
                                             <th>ID Barang</th>
                                             <th>Nama Barang</th>
+                                            <th>Satuan</th>
                                             <th>Kategori</th>
                                             <th>Harga</th>
                                             <th>Catatan</th>
@@ -67,17 +68,18 @@ require 'header.php';
                                     <tbody>
                                         <?php
                                         $mySql = "SELECT * FROM product where 1=1 ";
-                                        $mySql .= " ORDER BY id ASC";
+                                        $mySql .= " ORDER BY product_id ASC";
                                         $myQry     = mysqli_query($koneksi, $mySql)  or die("ANUGRAH ERP ERROR :  " . mysqli_error($koneksi));
                                         $nomor  = 0;
                                         while ($myData = mysqli_fetch_array($myQry)) {
                                             $nomor++;
-                                            $Code = $myData['id'];
+                                            $Code = $myData['product_id'];
                                         ?>
                                             <tr>
                                                 <td><?php echo $nomor; ?></td>
                                                 <td><?php echo $myData['product_id']; ?></td>
                                                 <td><?php echo $myData['product_name']; ?></td>
+                                                <td><?php echo $myData['product_satuan']; ?></td>
                                                 <td><?php echo $myData['product_category']; ?></td>
                                                 <td><?php echo number_format($myData['product_price']); ?></td>
                                                 <td><?php echo $myData['product_note']; ?></td>
@@ -91,9 +93,6 @@ require 'header.php';
                                                     </button>
                                                 </td>
                                             </tr>
-
-
-
                                             <div class="modal fade delete-modal" id="delete<?= $Code; ?>">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
@@ -120,16 +119,7 @@ require 'header.php';
                 </div>
             </main>
             <footer class="py-4 bg-light mt-auto">
-                <div class="container-fluid px-4">
-                    <div class="d-flex align-items-center justify-content-between small">
-                        <div class="text-muted">Copyright &copy; Anugrah Konveksi</div>
-                        <div>
-                            <a href="#">Privacy Policy</a>
-                            &middot;
-                            <a href="#">Terms &amp; Conditions</a>
-                        </div>
-                    </div>
-                </div>
+
             </footer>
         </div>
     </div>
@@ -166,13 +156,22 @@ require 'header.php';
                     <br>
                     <input type="text" name="product_name" class="form-control" placeholder="Nama Barang" required>
                     <br>
+                    <select name="product_satuan" class="form-select" required>
+                        <option value="Meter (m)">Meter (m)</option>
+                        <option value="Gulung">Gulung</option>
+                        <option value="Pak">Pak</option>
+                        <option value="Unit">Unit</option>
+                        <option value="Buah">Buah</option>
+                        <option value="Pasang">Pasang</option>
+                    </select>
+                    <br>
                     <select name="product_category" class="form-select" required>
-                        <option value="Pakaian Wanita">Pakaian Wanita</option>
-                        <option value="Pakaian Pria">Pakaian Pria</option>
-                        <option value="Pakaian Anak-Anak">Pakaian Anak-Anak</option>
-                        <option value="Seragam">Seragam</option>
-                        <option value="Pakaian Muslim">Pakaian Muslim</option>
-                        <option value="Kaos dan Kemeja">Kaos dan Kemeja</option>
+                        <option value="Bahan Baku">Bahan Baku</option>
+                        <option value="Alat-Alat Produksi">Alat-Alat Produksi</option>
+                        <option value="Peralatan Tambahan">Peralatan Tambahan</option>
+                        <option value="Bahan Tambahan">Bahan Tambahan</option>
+                        <option value="Perlengkapan Keselamatan">Perlengkapan Keselamatan</option>
+                        <option value="Barang Jadi">Barang Jadi</option>
                     </select>
                     <br>
                     <input type="text" name="product_price" class="form-control" placeholder="Harga" required>
@@ -195,14 +194,15 @@ require 'header.php';
 
 <?php
 $mySql = "SELECT * FROM product where 1=1 ";
-$mySql .= " ORDER BY id ASC";
+$mySql .= " ORDER BY product_id ASC";
 $myQry = mysqli_query($koneksi, $mySql) or die("ANUGRAH ERP ERROR :  " . mysqli_error($koneksi));
 $nomor = 0;
 while ($myData = mysqli_fetch_array($myQry)) {
     $nomor++;
-    $Code = $myData['id'];
+    $Code = $myData['product_id'];
     $product = $myData['product_id'];
     $name = $myData['product_name'];
+    $satuan = $myData['product_satuan'];
     $category = $myData['product_category'];
     $price = $myData['product_price'];
     $note = $myData['product_note'];
@@ -211,37 +211,65 @@ while ($myData = mysqli_fetch_array($myQry)) {
 
 
     <!-- Modal for Edit -->
-    <div class="modal fade" id="editModal<?= $Code; ?>">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Edit Product</h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-                <form method="post" action="function.php">
-                    <div class="modal-body">
-                        <input type="hidden" name="id" value="<?= $Code; ?>">
-                        <input type="text" name="product_id" class="form-control" placeholder="ID Barang" value="<?= $myData['product_id']; ?>" readonly>
-                        <br>
-                        <input type="text" name="product_name" class="form-control" placeholder="Nama Barang" value="<?= $myData['product_name']; ?>" readonly>
-                        <br>
-                        <input type="text" name="product_category" class="form-control" placeholder="Kategori" value="<?= $myData['product_category']; ?>" readonly>
-                        <br>
-                        <input type="text" name="product_price" class="form-control" placeholder="Harga" value="<?= $myData['product_price']; ?>" required>
-                        <br>
-                        <input type="text" name="product_note" class="form-control" placeholder="Catatan" value="<?= $myData['product_note']; ?>" required>
-                        <br>
-                        <select name="product_status" class="form-select" required>
-                            <option value="Active" <?= ($myData['product_status'] == 'Active') ? 'selected' : ''; ?>>Active</option>
-                            <option value="Not Active" <?= ($myData['product_status'] == 'Not Active') ? 'selected' : ''; ?>>Not Active</option>
-                        </select>
-                        <br>
-                        <button type="submit" class="btn btn-success" name="updateproduct">Simpan</button>
+    <!-- Modal for Edit -->
+    <?php
+    $mySql = "SELECT * FROM product where 1=1 ";
+    $mySql .= " ORDER BY product_id ASC";
+    $myQry = mysqli_query($koneksi, $mySql) or die("ANUGRAH ERP ERROR :  " . mysqli_error($koneksi));
+    while ($myData = mysqli_fetch_array($myQry)) {
+        $Code = $myData['product_id'];
+    ?>
+        <div class="modal fade" id="editModal<?= $Code; ?>">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Edit Product</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
-                </form>
+                    <form method="post" action="function.php">
+                        <div class="modal-body">
+                            <input type="hidden" name="product_id" value="<?= $Code; ?>">
+                            <input type="text" name="product_id" class="form-control" placeholder="ID Barang" value="<?= $myData['product_id']; ?>" readonly>
+                            <br>
+                            <input type="text" name="product_name" class="form-control" placeholder="Nama Barang" value="<?= $myData['product_name']; ?>" readonly>
+                            <br>
+                            <select name="product_satuan" class="form-select" required>
+                                <option value="">Pilih Satuan</option>
+                                <option value="Meter (m)" <?= ($myData['product_satuan'] == 'Meter (m)') ? 'selected' : ''; ?>>Meter (m)</option>
+                                <option value="Gulung" <?= ($myData['product_satuan'] == 'Gulung') ? 'selected' : ''; ?>>Gulung</option>
+                                <option value="Pak" <?= ($myData['product_satuan'] == 'Pak') ? 'selected' : ''; ?>>Pak</option>
+                                <option value="Unit" <?= ($myData['product_satuan'] == 'Unit') ? 'selected' : ''; ?>>Unit</option>
+                                <option value="Buah" <?= ($myData['product_satuan'] == 'Buah') ? 'selected' : ''; ?>>Buah</option>
+                                <option value="Pasang" <?= ($myData['product_satuan'] == 'Pasang') ? 'selected' : ''; ?>>Pasang</option>
+                            </select>
+                            <br>
+                            <select name="product_category" class="form-select" required>
+                                <option value="">Pilih Kategori</option>
+                                <option value="Bahan Baku" <?= ($myData['product_category'] == 'Bahan Baku') ? 'selected' : ''; ?>>Bahan Baku</option>
+                                <option value="Alat-Alat Produksi" <?= ($myData['product_category'] == 'Alat-Alat Produksi') ? 'selected' : ''; ?>>Alat-Alat Produksi</option>
+                                <option value="Peralatan Tambahan" <?= ($myData['product_category'] == 'Peralatan Tambahan') ? 'selected' : ''; ?>>Peralatan Tambahan</option>
+                                <option value="Bahan Tambahan" <?= ($myData['product_category'] == 'Bahan Tambahan') ? 'selected' : ''; ?>>Bahan Tambahan</option>
+                                <option value="Perlengkapan Keselamatan" <?= ($myData['product_category'] == 'Perlengkapan Keselamatan') ? 'selected' : ''; ?>>Perlengkapan Keselamatan</option>
+                            </select>
+                            <br>
+                            <input type="text" name="product_price" class="form-control" placeholder="Harga" value="<?= $myData['product_price']; ?>" required>
+                            <br>
+                            <input type="text" name="product_note" class="form-control" placeholder="Catatan" value="<?= $myData['product_note']; ?>" required>
+                            <br>
+                            <select name="product_status" class="form-select" required>
+                                <option value="Active" <?= ($myData['product_status'] == 'Active') ? 'selected' : ''; ?>>Active</option>
+                                <option value="Not Active" <?= ($myData['product_status'] == 'Not Active') ? 'selected' : ''; ?>>Not Active</option>
+                            </select>
+                            <br>
+                            <button type="submit" class="btn btn-success" name="updateproduct">Simpan</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
+    <?php } ?>
+
+
 
 <?php
 }

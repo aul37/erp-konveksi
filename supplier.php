@@ -90,6 +90,23 @@ require 'header.php';
                                                     </button>
                                                 </td>
                                             </tr>
+                                            <div class="modal fade delete-modal" id="delete<?= $Code; ?>">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h4 class="modal-title">Hapus Supplier</h4>
+                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <form id="deleteForm" method="POST" action="function.php">
+                                                                <p id="supplier"></p>
+                                                                <input type="hidden" name="id" id="deleteId" value="">
+                                                                <button type="submit" class="btn btn-danger" name="hapussupplier">Hapus</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         <?php } ?>
                                     </tbody>
                                 </table>
@@ -99,16 +116,7 @@ require 'header.php';
                 </div>
             </main>
             <footer class="py-4 bg-light mt-auto">
-                <div class="container-fluid px-4">
-                    <div class="d-flex align-items-center justify-content-between small">
-                        <div class="text-muted">Copyright &copy; Anugrah Konveksi</div>
-                        <div>
-                            <a href="#">Privacy Policy</a>
-                            &middot;
-                            <a href="#">Terms &amp; Conditions</a>
-                        </div>
-                    </div>
-                </div>
+
             </footer>
         </div>
     </div>
@@ -125,20 +133,6 @@ require 'header.php';
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script>
-        $(document).ready(function() {
-            // Saat modal delete ditampilkan, atur nilai id dan nama supplier
-            $('.delete-modal').on('show.bs.modal', function(event) {
-                var button = $(event.relatedTarget);
-                var id = button.data('id');
-                var name = button.data('name');
-
-                var modal = $(this);
-                modal.find('#deleteId' + id).val(id);
-                modal.find('#supplier' + id).text('Anda yakin ingin menghapus supplier "' + name + '"?');
-            });
-        });
-    </script>
 
 </body>
 
@@ -227,5 +221,20 @@ while ($myData = mysqli_fetch_array($myQry)) {
 <?php
 }
 ?>
+
+<script>
+    $(document).ready(function() {
+        // Saat modal delete ditampilkan, atur nilai id dan nama supplier
+        $('.delete-modal').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget);
+            var id = button.data('id');
+            var name = button.data('name');
+
+            var modal = $(this);
+            modal.find('#deleteId').val(id);
+            modal.find('#supplier').text('Anda yakin ingin menghapus supplier "' + name + '"?');
+        });
+    });
+</script>
 
 </html>

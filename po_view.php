@@ -34,7 +34,7 @@ $dataSupplierID  = $myData['supplier_id'];
 $dataSupplierTOP  = $myData['supplier_termofpayment'];
 $dataSupplierName  = $myData['supplier_name'];
 $dataPurchaseFor  = $myData['purchase_for'];
-$dataRequestID  = $myData['request_id'];
+$dataRequestID  = $myData['purchase_request_id'];
 $dataDeliveryDate = $myData['purchase_delivery_date'];
 $dataPurchaseNote  = $myData['purchase_note'];
 ?>
@@ -160,12 +160,11 @@ $dataPurchaseNote  = $myData['purchase_note'];
                                                         ?>
                                                     <tfoot>
                                                         <tr>
-                                                            <td colspan="5"></td>
-                                                            <td></td>
-                                                            <td><br />Total Biaya<br /><?php echo (number_format($sumTotal)); ?></td>
-
+                                                            <td colspan="6"><strong>Total Biaya</strong></td>
+                                                            <td><?php echo (number_format($sumTotal)); ?></td>
                                                         </tr>
                                                     </tfoot>
+
                                                     </tbody>
                                                 </table>
                                             </div>

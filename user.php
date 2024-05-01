@@ -45,6 +45,7 @@ require 'header.php';
                         $cek = isset($_GET['cek']) ? $_GET['cek'] : '';
                         $nama = isset($_GET['nama']) ? $_GET['nama'] : '';
                         $kode = isset($_GET['kode']) ? $_GET['kode'] : '';
+                        $password = isset($_GET['password']) ? $_GET['password'] : '';
                         $komisi = isset($_GET['komisi']) ? $_GET['komisi'] : '';
                         $status = isset($_GET['status']) ? $_GET['status'] : '';
                         ?>
@@ -59,6 +60,7 @@ require 'header.php';
                                             <th>Nama User</th>
                                             <th>Kontak</th>
                                             <th>Alamat User</th>
+                                            <th>Password</th>
                                             <th>Status</th>
                                             <th>Aksi</th>
 
@@ -67,12 +69,12 @@ require 'header.php';
                                     <tbody>
                                         <?php
                                         $mySql = "SELECT * FROM user where 1=1 ";
-                                        $mySql .= " ORDER BY id ASC";
+                                        $mySql .= " ORDER BY user_id ASC";
                                         $myQry     = mysqli_query($koneksi, $mySql)  or die("ANUGRAH ERP ERROR :  " . mysqli_error($koneksi));
                                         $nomor  = 0;
                                         while ($myData = mysqli_fetch_array($myQry)) {
                                             $nomor++;
-                                            $Code = $myData['id'];
+                                            $Code = $myData['user_id'];
                                         ?>
                                             <tr>
                                                 <td><?php echo $nomor; ?></td>
@@ -81,6 +83,7 @@ require 'header.php';
                                                 <td><?php echo $myData['user_name']; ?></td>
                                                 <td><?php echo $myData['user_contact']; ?></td>
                                                 <td><?php echo $myData['user_address']; ?></td>
+                                                <td><?php echo md5($myData['user_password']); ?></td>
                                                 <td><?php echo $myData['user_status']; ?></td>
                                                 <td>
                                                     <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editModal<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['user_name']; ?>">
@@ -120,16 +123,7 @@ require 'header.php';
                 </div>
             </main>
             <footer class="py-4 bg-light mt-auto">
-                <div class="container-fluid px-4">
-                    <div class="d-flex align-items-center justify-content-between small">
-                        <div class="text-muted">Copyright &copy; Anugrah Konveksi</div>
-                        <div>
-                            <a href="#">Privacy Policy</a>
-                            &middot;
-                            <a href="#">Terms &amp; Conditions</a>
-                        </div>
-                    </div>
-                </div>
+
             </footer>
         </div>
     </div>
@@ -172,6 +166,8 @@ require 'header.php';
                     <br>
                     <input type="text" name="user_address" class="form-control" placeholder="Alamat User" required>
                     <br>
+                    <input type="text" name="user_password" class="form-control" placeholder="Password User" required>
+                    <br>
                     <select name="user_status" class="form-select" required>
                         <option value="Active">Active</option>
                         <option value="Not Active">Not Active</option>
@@ -190,18 +186,19 @@ require 'header.php';
 
 <?php
 $mySql = "SELECT * FROM user where 1=1 ";
-$mySql .= " ORDER BY id ASC";
+$mySql .= " ORDER BY user_id ASC";
 $myQry = mysqli_query($koneksi, $mySql) or die("ANUGRAH ERP ERROR :  " . mysqli_error($koneksi));
 $nomor = 0;
 while ($myData = mysqli_fetch_array($myQry)) {
     $nomor++;
-    $Code = $myData['id'];
+    $Code = $myData['user_id'];
     $ID = $myData['user_id'];
     $department = $myData['user_department'];
     $name = $myData['user_name'];
     $address = $myData['user_address'];
     $contact = $myData['user_contact'];
     $status = $myData['user_status'];
+    $password = $myData['user_password'];
 ?>
 
     <!-- Modal for Edit -->
@@ -224,6 +221,8 @@ while ($myData = mysqli_fetch_array($myQry)) {
                         <input type="text" name="user_contact" placeholder="Kontak" class="form-control" value="<?= $contact; ?>" required>
                         <br>
                         <input type="text" name="user_address" class="form-control" placeholder="Alamat User" value="<?= $address; ?>" required>
+                        <br>
+                        <input type="text" name="user_password" class="form-control" placeholder="Password User" value="<?= $password; ?>" required>
                         <br>
                         <select name="user_status" class="form-select" required>
                             <option value="Active" <?= ($status == 'Active') ? 'selected' : ''; ?>>Active</option>

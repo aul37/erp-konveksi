@@ -7,7 +7,7 @@ if (isset($_POST['login'])) {
     $password = $_POST['password'];
 
     // Mencocokkan data
-    $cekdatabase = mysqli_query($koneksi, "SELECT * FROM login where username='$username' and password='$password'");
+    $cekdatabase = mysqli_query($koneksi, "SELECT * FROM user where user_name='$username' and user_password='$password'");
     // Menghitung jumlah data
     $hitung = mysqli_num_rows($cekdatabase);
 
@@ -15,7 +15,7 @@ if (isset($_POST['login'])) {
         // Login sukses
         $data = mysqli_fetch_assoc($cekdatabase);
         $_SESSION['log'] = true;
-        $_SESSION['username'] = $data['username'];
+        $_SESSION['username'] = $data['user_name'];
 
         if ($username == 'anugrah') {
             // Pengguna dengan nama "anugrah" berhasil login
@@ -28,9 +28,8 @@ if (isset($_POST['login'])) {
         header('location: login.php');
     }
 }
-
-
 ?>
+
 
 
 <!DOCTYPE html>

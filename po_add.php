@@ -50,7 +50,6 @@ if (isset($_POST['btnSubmit'])) {
     $dataPurchaseFor    = $_POST['txtPurchaseFor'];
     $dataTermOfPayment  = $_POST['txtTermofpayment'];
     $dataRequestID      = $_POST['txtRequestID'];
-    $dataSalesID        = "";
     $dataDeliveryDate   = $_POST['txtDeliveryDate'];
     $dataPurchaseNote   = $_POST['txtPurchaseNote'];
     $dataStatus         = 'PO Created';
@@ -71,9 +70,9 @@ if (isset($_POST['btnSubmit'])) {
 
             # SIMPAN DATA KE DATABASE. 
             // Jika tidak menemukan error, simpan data ke database   
-            $mySql   = "INSERT INTO po (purchase_id,supplier_termofpayment, purchase_date, supplier_id, purchase_for, sales_id, request_id, 
+            $mySql   = "INSERT INTO po (purchase_id,supplier_termofpayment, purchase_date, supplier_id, purchase_for, purchase_request_id, 
                   purchase_delivery_date, purchase_note, updated_date)
-               VALUES ('$dataCode','$dataTermOfPayment','$dataPurchaseDate', '$dataSupplierID', '$dataPurchaseFor', '$dataSalesID','$dataRequestID',
+               VALUES ('$dataCode','$dataTermOfPayment','$dataPurchaseDate', '$dataSupplierID', '$dataPurchaseFor','$dataRequestID',
                 '$dataDeliveryDate', '$dataPurchaseNote', now())";
             $myQry = mysqli_query($koneksi, $mySql);
             if (!$myQry)
@@ -128,7 +127,6 @@ if (isset($_POST['btnLoad'])) {
     $dataSupplierName = $data[1];
     $dataPurchaseFor    = $_POST['txtPurchaseFor'];
     $dataRequestID      = $_POST['txtRequestID'];
-    $dataSalesID        = "";
     $dataDeliveryDate   = $_POST['txtDeliveryDate'];
     $dataPurchaseNote   = $_POST['txtPurchaseNote'];
     $dataTermOfPayment  = $_POST['txtTermofpayment'];
@@ -215,7 +213,8 @@ if (isset($_POST['btnLoad'])) {
                                                         <select name="txtRequestID" id="txtRequestID" class="select2 form-control">
                                                             <option value=''>Pilih Permintaan Pembelian..</option>
                                                             <?php
-                                                            $mySql = "SELECT DISTINCT pr_id FROM pr";
+                                                            // Ubah kueri untuk mengambil hanya pr_id yang belum memiliki po
+                                                            $mySql = "SELECT DISTINCT pr_id FROM pr WHERE pr_id NOT IN (SELECT DISTINCT purchase_request_id FROM po)";
                                                             $dataQry = mysqli_query($koneksi, $mySql) or die("Anugrah ERP ERROR : " . mysqli_error($koneksi));
                                                             while ($dataRow = mysqli_fetch_array($dataQry)) {
                                                                 echo "<option value='$dataRow[pr_id]'>$dataRow[pr_id]</option>";
@@ -224,6 +223,7 @@ if (isset($_POST['btnLoad'])) {
                                                         </select>
                                                     </div>
                                                 </div>
+
                                                 <div class="col-md-3 col-12 ps-25">
                                                     <div class="mb-1">
                                                         <label class="form-label">Tanggal Pembelian *</label>
@@ -256,6 +256,11 @@ if (isset($_POST['btnLoad'])) {
                                                 <input type="hidden" name="txtDeliveryDate" value="<?= $dataDeliveryDate  ?>">
                                                 <input type="hidden" name="txtPurchaseNote" value="<?= $dataPurchaseNote  ?>">
 
+                                                <div class="divider divider-primary">
+                                                    <div class="divider-text" style="font-weight: bold;">
+                                                        <h3>Pesanan Pembelian Detail</h3>
+                                                    </div>
+                                                </div>
 
                                                 <div class="row mt-1">
                                                     <div class="col-md-3 col-12 pe-25">
@@ -298,9 +303,7 @@ if (isset($_POST['btnLoad'])) {
                                                     </div>
                                                 </div>
 
-                                                <div class="divider divider-primary">
-                                                    <div class="divider-text">Daftar Produk</div>
-                                                </div>
+
 
                                                 <div class="row mt-1">
                                                     <table class="table table-striped table-hover" width="100%">
@@ -331,9 +334,9 @@ if (isset($_POST['btnLoad'])) {
                                                                 <tr>
                                                                     <input type="text" value="<?= $Purchase; ?>" name="updId[<?= $array; ?>]" hidden>
                                                                     <input type="text" value="<?= $dataCode; ?>" name="updCode[<?= $array; ?>]" hidden>
-                                                                    <input type="text" value="<?= $myData['pr_product']; ?>" name="updProduct[<?= $array; ?>]" hidden>
+                                                                    <input type="text" value="<?= $myData['product_id']; ?>" name="updProduct[<?= $array; ?>]" hidden>
                                                                     <td><?= $nomor; ?></td>
-                                                                    <td><?= $myData['pr_product']; ?></td>
+                                                                    <td><?= $myData['product_id']; ?></td>
                                                                     <td><?= $myData['product_name']; ?></td>
                                                                     <td><input class="form-control form-control-sm" id="idQty<?= $array; ?>" onkeyup="sum()" name="updQty[<?= $array; ?>]" step="any" type="number" value="<?= $myData['qty_outstanding']; ?>" required /></td>
                                                                     <td><input class="form-control form-control-sm" id="idPrice<?= $array; ?>" onkeyup="sum()" name="updPrice[<?= $array; ?>]" step="any" type="number" value="<?= $myData['pr_price']; ?>" required /></td>

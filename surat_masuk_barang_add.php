@@ -39,8 +39,8 @@ if (isset($_POST['btnSubmit'])) {
             mysqli_autocommit($koneksi, FALSE);
 
             // Insert data into stock_order table
-            $mySql = "INSERT INTO stock_order (stock_order_id, stock_order_reference, stock_order_reference_id, stock_order_date, warehouse_id, stock_order_note, updated_date)
-VALUES ('$dataCode','$dataReference','$dataReference','$dataDate', '$dataWH', '$dataNote',now())";
+            $mySql = "INSERT INTO stock_order (stock_order_id, stock_order_reference, stock_order_reference_id, stock_order_date, stock_order_note, updated_date)
+VALUES ('$dataCode','$dataReference','$dataReference','$dataDate', '$dataNote',now())";
             $myQry = mysqli_query($koneksi, $mySql);
 
             // Periksa apakah query eksekusi berhasil
@@ -67,9 +67,9 @@ VALUES ('$dataCode','$productid','$dataQty',now())";
 
                     // Insert data into stock table
                     $mySql3 = "INSERT INTO stock
-(stock_order_id, stock_status, stock_order_reference, stock_date, product_id, qty, stock_note, warehouse_id, updated_date)
+(stock_order_id, stock_status, stock_date, product_id, qty, stock_note, stock_order_reference, updated_date)
 VALUES
-('$dataCode','$dataStatus', '$dataReference','$dataDate','$productid','$dataQty','$dataNote','$dataWH', now())";
+('$dataCode','$dataStatus','$dataDate','$productid','$dataQty','$dataNote', '$dataReference', now())";
                     $myQry3 = mysqli_query($koneksi, $mySql3);
 
                     // Periksa apakah query eksekusi berhasil
@@ -163,7 +163,7 @@ if (isset($_POST['btnLoad'])) {
                                                 <div class="col-md-4 col-12 px-25">
                                                     <div class="mb-1">
                                                         <label class="form-label">Dari Gudang *</label>
-                                                        <select name="txtWH" id="idWH" required class="select2 form-select form-control-sm" tabindex="-1">
+                                                        <select name="txtWH" id="idWH" required class="select2 form-select form-control" tabindex="-1">
                                                             <option value="" selected>Pilih Gudang</option>
                                                             <?php
                                                             $gudang = array("Anugrah");
@@ -201,46 +201,51 @@ if (isset($_POST['btnLoad'])) {
                                                 <input type="hidden" name="txtRequestID" value="<?= $dataRequestID  ?>">
                                                 <input type="hidden" name="txtSMBNote" value="<?= $dataNote  ?>">
                                                 <input type="hidden" name="txtWH" value="<?= $dataWH  ?>">
-
-
-                                                <div class="row mt-1">
-                                                    <div class="col-md-3 col-12 pe-25">
-                                                        <div class="mb-1">
-                                                            <label class="form-label">ID Surat Masuk Barang *</label>
-                                                            <input class="form-control" placeholder="[ nomor ID ]" name="txtSMBID" id="idPurchase" readonly type="text" value="<?php echo $dataSMBID; ?>" onkeyup="checkStatus()" />
-                                                            <p style="color: red;" id="idPurchaseError"></p>
+                                                <div class="card-body">
+                                                    <div class="row mt-1">
+                                                        <div class="col-md-12">
+                                                            <div class="divider divider-primary">
+                                                                <div class="divider-text" style="font-weight: bold;">
+                                                                    <h3>Surat Masuk Barang Detail</h3>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
-
-                                                    <div class="col-md-3 col-12 px-25">
-                                                        <div class="mb-1">
-                                                            <label>Tanggal Surat Masuk Barang</label><br /><?= $dataDate; ?>
+                                                    <div class="row mt-1">
+                                                        <div class="col-md-3 col-12 pe-25">
+                                                            <div class="mb-1">
+                                                                <label class="form-label">ID Surat Masuk Barang *</label>
+                                                                <input class="form-control" placeholder="[ nomor ID ]" name="txtSMBID" id="idPurchase" readonly type="text" value="<?php echo $dataSMBID; ?>" onkeyup="checkStatus()" />
+                                                                <p style="color: red;" id="idPurchaseError"></p>
+                                                            </div>
                                                         </div>
-                                                    </div>
-
-
-                                                    <div class="col-md-3 col-12 px-25">
-                                                        <div class="mb-1">
-                                                            <label>No Referensi PO </label><br /><?= $dataRequestID; ?>
+                                                        <div class="col-md-3 col-12 px-25">
+                                                            <div class="mb-1">
+                                                                <label>Tanggal Surat Masuk Barang</label><br /><?= $dataDate; ?>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="col-md-3 col-12 ps-25">
-                                                        <div class="mb-1">
-                                                            <label>Dari Gudang</label><br /><?= $dataWH; ?>
+                                                        <div class="col-md-3 col-12 px-25">
+                                                            <div class="mb-1">
+                                                                <label>No Referensi PO </label><br /><?= $dataRequestID; ?>
+                                                            </div>
                                                         </div>
-                                                    </div>
-
-                                                    <div class="col-md-3 col-12 ps-25">
-                                                        <div class="mb-1">
-                                                            <label>Catatan</label><br /><?= $dataNote; ?>
+                                                        <div class="col-md-3 col-12 ps-25">
+                                                            <div class="mb-1">
+                                                                <label>Dari Gudang</label><br /><?= $dataWH; ?>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-3 col-12 ps-25">
+                                                            <div class="mb-1">
+                                                                <label>Catatan</label><br /><?= $dataNote; ?>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
+
+                                                <?php ?>
                                         </div>
 
-                                        <div class="divider divider-primary">
-                                            <div class="divider-text">Daftar Produk</div>
-                                        </div>
+
 
                                         <div class="row mt-1">
                                             <table class="table table-striped  table-hover" width="100%">

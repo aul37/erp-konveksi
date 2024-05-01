@@ -50,7 +50,7 @@ require 'header.php';
                                             <th>Tanggal PO</th>
                                             <th>Nama Supplier</th>
                                             <th>Product</th>
-                                            <!-- <th>Aksi</th> -->
+                                            <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -75,6 +75,13 @@ require 'header.php';
                                                 <td><?= $myData['purchase_date']; ?></td>
                                                 <td><?= $myData['supplier_name']; ?></td>
                                                 <td><?= $myData['product_name']; ?></td>
+                                                <td><button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editModal<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['purchase_id']; ?>">
+                                                        Edit
+                                                    </button> |
+                                                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['purchase_id']; ?>">
+                                                        Hapus
+                                                    </button>
+                                                </td>
                                             </tr>
                                         <?php } ?>
                                     </tbody>

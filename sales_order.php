@@ -51,8 +51,7 @@ require 'header.php';
                                             <th>Customer</th>
                                             <th>Product</th>
                                             <th>Total Sales</th>
-                                            <th>Salesman</th>
-                                            <!-- <th nowrap>Aksi</th> -->
+                                            <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -63,7 +62,6 @@ require 'header.php';
                                                     s.sales_date,
                                                     c.customer_name,
                                                     GROUP_CONCAT(p.product_name) AS product_name,
-                                                    s.salesman_id,
                                                     SUM(sd.qty * sd.price_list) AS total 
                                                     FROM
                                                     sales s
@@ -74,9 +72,8 @@ require 'header.php';
                                                     s.sales_id,
                                                     s.sales_date,
                                                     c.customer_name,
-                                                    s.salesman_id
                                                     ORDER BY
-                                                    s.sales_id";
+                                                    sales_id";
 
 
                                         $myQry = mysqli_query($koneksi, $mySql) or die("ANUGRAH ERP ERROR :  " . mysqli_error($koneksi));
@@ -93,7 +90,13 @@ require 'header.php';
                                                 <td><?php echo $myData['customer_name']; ?></td>
                                                 <td><?php echo $myData['product_name']; ?></td>
                                                 <td><?= number_format($myData['total']); ?></td>
-                                                <td><?php echo $myData['salesman_id']; ?></td>
+                                                <td><button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editModal<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['sales_id']; ?>">
+                                                        Edit
+                                                    </button> |
+                                                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['sales_id']; ?>">
+                                                        Hapus
+                                                    </button>
+                                                </td>
                                             </tr>
                                     </tbody>
                                 <?php } ?>

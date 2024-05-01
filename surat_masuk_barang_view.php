@@ -22,20 +22,17 @@ require 'header.php';
 <?php
 
 $Code    = isset($_GET['code']) ?  $_GET['code'] : '';
-$mySql    = "SELECT
-so.stock_order_id,
-GROUP_CONCAT(DISTINCT s.stock_order_reference ORDER BY s.stock_order_reference ASC) AS stock_order_references,
-s.stock_status,
+$mySql = "SELECT
+s.stock_order_id,
 s.stock_date,
-s.stock_note,
-s.warehouse_id AS stock_warehouse_id,
-MAX(s.updated_date) AS stock_updated_date,
-    po.supplier_name,
-    po.product_name
+s.stock_order_reference,
+po.supplier_name,
+po.product_name,
+s.stock_note 
 FROM
 stock_order_detail so
 JOIN stock s ON so.stock_order_id = s.stock_order_id
-JOIN view_po po ON s.stock_order_reference = po.purchase_id
+JOIN view_po po ON s.stock_order_reference = po.purchase_id 
 WHERE 
                 so.stock_order_id='$Code'
 GROUP BY
@@ -46,10 +43,9 @@ $myData = mysqli_fetch_array($myQry);
 
 # MASUKKAN DATA KE VARIABEL
 $dataCode        = $myData['stock_order_id'];
-$dataSD = $myData['stock_order_id'];
 $dataSMBDate  = $myData['stock_date'];
 $dataSupplierName  = $myData['supplier_name'];
-$dataRequestID  = $myData['stock_order_references'];
+$dataRequestID  = $myData['stock_order_reference'];
 $dataNote  = $myData['stock_note'];
 ?>
 
@@ -162,12 +158,12 @@ $dataNote  = $myData['stock_note'];
                                                         <?php } ?>
                                                     <tfoot>
                                                         <tr>
-                                                            <td colspan="4">Total</td>
-                                                            <td><?php echo number_format($totalQty); ?></td> <!-- menampilkan total qty -->
+                                                            <td colspan="4"><strong>Total</strong></td>
+                                                            <td><?php echo number_format($totalQty); ?></td>
                                                             <td></td>
-                                                            <!-- <td><br />Total<br /><?php echo (number_format($sumTotal)); ?></td> -->
                                                         </tr>
                                                     </tfoot>
+
                                                     </tbody>
                                                 </table>
                                             </div>

@@ -45,8 +45,7 @@ if (isset($_POST['btnSubmit'])) {
     $dataPO         = isset($_POST['txtPO']) ? $_POST['txtPO'] : '';
 
     $dataCustomer       = $_POST['txtCustomer'];
-    $dataSalesman       = $_POST['txtSalesman'];
-    $dataTop    = $_POST['txtToP'];
+    $dataTermOfPayment  = $_POST['txtTermofpayment'];
     $dataSalesDate       = $_POST['txtSalesDate'];
     $dataProduct    = $_POST['txtOrder'];
     $dataPrice    = $_POST['txtPrice'];
@@ -54,6 +53,7 @@ if (isset($_POST['btnSubmit'])) {
     $dataRequestDate       = $_POST['txtRequestDate'];
     $dataPO             = $_POST['txtPO'];
     $dataSales             = $_POST['txtSales'];
+    $dataType             = $_POST['txtType'];
 
     # JIKA ADA PESAN ERROR DARI VALIDASI
     if (count($pesanError) >= 1) {
@@ -71,8 +71,8 @@ if (isset($_POST['btnSubmit'])) {
             # SIMPAN DATA KE DATABASE.
 
             $mySql = "INSERT INTO sales 
-            (sales_id, sales_date, customer_id, salesman_id, sales_po, sales_top, sales_request_date, updated_date)
-            VALUES ('$dataSales', '$dataSalesDate', '$dataCustomer', '$dataSalesman', '$dataPO', '$dataTop', '$dataRequestDate', now())";
+            (sales_id, sales_date, customer_id, sales_po, sales_top, sales_request_date, sales_type, updated_date)
+            VALUES ('$dataSales', '$dataSalesDate', '$dataCustomer', '$dataPO', '$dataTermOfPayment', '$dataRequestDate', '$dataType', now())";
             $myQry = mysqli_query($koneksi, $mySql) or die("ANUGRAH ERP ERROR: " . mysqli_error($koneksi));
 
             if (!$myQry) {
@@ -160,7 +160,7 @@ if (isset($_POST['btnSubmit'])) {
                                                     <div class="col-md-3 col-12 ps-25">
                                                         <div class="mb-1">
                                                             <label class="form-label">Category</label>
-                                                            <select id="idCategory" class="form-control select2" tabindex="-1" required name="txtCategory">
+                                                            <select id="idCategory" class="form-control select2" tabindex="-1" required name="txtType">
                                                                 <option value="">Pilih</option>
                                                                 <?php
                                                                 $mySql = "SELECT product_category FROM product  ";
@@ -178,7 +178,7 @@ if (isset($_POST['btnSubmit'])) {
                                                     </div>
 
 
-                                                    <div class="col-md-3 col-12 pe-25">
+                                                    <!-- <div class="col-md-3 col-12 pe-25">
                                                         <div class="mb-1">
                                                             <label class="form-label">Salesman *</label>
                                                             <select id="salesman" class="form-control select2" tabindex="-1" required name="txtSalesman">
@@ -196,12 +196,12 @@ if (isset($_POST['btnSubmit'])) {
                                                                 ?>
                                                             </select>
                                                         </div>
-                                                    </div>
+                                                    </div> -->
 
                                                     <div class="col-md-3 col-12 px-25">
                                                         <div class="mb-1">
                                                             <label class="form-label">ToP *</label>
-                                                            <select name="txtToP" id="idToP" required class="select2 form-select" tabindex="-1">
+                                                            <select name="txtTermofpayment" id="idToP" required class="select2 form-select" tabindex="-1">
                                                                 <option value="" selected>Pilih ToP</option>
                                                                 <?php
                                                                 $tops = array("COD", "7", "15", "30", "45", "50");
