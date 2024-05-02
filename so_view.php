@@ -15,7 +15,6 @@ $dataSalesman       = $myData['salesman_name'];
 $dataSalesDate       = $myData['sales_date'];
 $dataFor    = $myData['product_category'];
 $dataNote    = $myData['product_note'];
-$dataRequestDate       = $myData['txtRequestDate'];
 $dataPO             = $myData['sales_po'];
 
 ?>
@@ -49,139 +48,119 @@ $dataPO             = $myData['sales_po'];
             </ol>
           </div>
 
-          <div class="card mb-4">
-            <div class="content-header-right text-md-end col-md-3 col-12 d-md-block d-none">
-              <div class="mb-1 breadcrumb-right">
-                <div class="dropdown">
-                </div>
-              </div>
-            </div>
 
 
-
-            <form action="<?php $_SERVER['PHP_SELF']; ?>" method="post" name="form1" target="_self" enctype="multipart/form-data">
-              <div class="content-body">
-                <div class="row">
-                  <div class="col-12">
-                    <div class="card">
-                      <div class="card-header border-bottom">
-                        <div class="content-header-left col-md-9 col-12">
-                          <strong class="card-title">Detail Pesanan Penjualan</strong>
-                        </div>
+          <form action="<?php $_SERVER['PHP_SELF']; ?>" method="post" name="form1" target="_self" enctype="multipart/form-data">
+            <div class="content-body">
+              <div class="row">
+                <div class="col-12">
+                  <div class="card">
+                    <div class="card-header border-bottom">
+                      <div class="content-header-left col-md-9 col-12">
+                        <strong class="card-title">Detail Pesanan Penjualan</strong>
                       </div>
+                    </div>
 
-                      <div class="card-body">
-                        <div class="row mt-1">
-                          <div class="col-md-3 col-12 ps-25">
-                            <div class="mb-2">
-                              <strong class="mb-75">No Sales Order</strong>
-                              <p class="card-text"><?= $Code; ?></p>
-                            </div>
+                    <div class="card-body">
+                      <div class="row mt-1">
+                        <div class="col-md-3 col-12 ps-25">
+                          <div class="mb-2">
+                            <strong class="mb-75">No Sales Order</strong>
+                            <p class="card-text"><?= $Code; ?></p>
                           </div>
-                          <div class="col-md-3 col-12 ps-25">
-                            <div class="mb-1">
-                              <strong class="mb-75">Tanggal Sales Order</strong>
-                              <p class="card-text"><?= $dataSalesDate; ?></p>
-                            </div>
+                        </div>
+                        <div class="col-md-3 col-12 ps-25">
+                          <div class="mb-1">
+                            <strong class="mb-75">Tanggal Sales Order</strong>
+                            <p class="card-text"><?= $dataSalesDate; ?></p>
                           </div>
-                          <div class="col-md-3 col-12 ps-25">
-                            <div class="mb-1">
-                              <strong class="mb-75">Permintaan Untuk</strong>
-                              <p class="card-text"><?= $dataFor; ?></p>
-                            </div>
+                        </div>
+                        <div class="col-md-3 col-12 ps-25">
+                          <div class="mb-1">
+                            <strong class="mb-75">Permintaan Untuk</strong>
+                            <p class="card-text"><?= $dataFor; ?></p>
                           </div>
-                          <div class="col-md-3 col-12 ps-25">
-                            <div class="mb-1">
-                              <strong class="mb-75">Salesman</strong>
-                              <p class="card-text"><?= $dataSalesman; ?></p>
-                            </div>
+                        </div>
+                        <div class="col-md-3 col-12 ps-25">
+                          <div class="mb-1">
+                            <strong class="mb-75">No PO</strong>
+                            <p class="card-text"><?= $dataPO; ?></p>
                           </div>
-                          <div class="col-md-3 col-12 ps-25">
-                            <div class="mb-1">
-                              <strong class="mb-75">No PO</strong>
-                              <p class="card-text"><?= $dataPO; ?></p>
-                            </div>
-                          </div>
-                          <div class="col-md-3 col-12 px-25">
-                            <div class="mb-1">
-                              <strong class="mb-75">Nama Customer</strong>
-                              <p class="card-text"><?= $dataCustomer; ?></p>
-                            </div>
-                          </div>
-
-                          <div class="col-md-3 col-12 ps-25">
-                            <div class="mb-1">
-                              <strong class="mb-75">Catatan</strong>
-                              <p class="card-text"><?= $dataNote; ?></p>
-                            </div>
+                        </div>
+                        <div class="col-md-3 col-12 px-25">
+                          <div class="mb-1">
+                            <strong class="mb-75">Nama Customer</strong>
+                            <p class="card-text"><?= $dataCustomer; ?></p>
                           </div>
                         </div>
 
-
-
-                        <div class="row mt-1">
-                          <table id="datatable-responsive" class="table datatables-basic table-striped" width="100%">
-                            <thead>
-                              <tr>
-                                <th>No</th>
-                                <th>No Produk</th>
-                                <th>Nama Produk</th>
-                                <th>Qty</th>
-                                <th>Harga (Rp)</th>
-                                <th>Total (Rp)</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <?php
-                              $mySql     = "SELECT * FROM view_sales WHERE sales_id='$Code' ORDER BY sales_detail_id";
-                              $myQry     = mysqli_query($koneksi, $mySql);
-                              $nomor  = 0;
-                              $sumTotal =    0;
-                              while ($myData = mysqli_fetch_array($myQry)) {
-                                $nomor++;
-                                $sumTotal =  $sumTotal + $myData['total_price'];
-
-
-                              ?>
-                                <tr>
-                                  <td><?php echo $nomor; ?></td>
-                                  <td><?php echo ($myData['product_id']); ?></td>
-                                  <td><?php echo $myData['product_id'] . ' - ' . $myData['product_name']; ?></td>
-                                  <td><?php echo number_format($myData['qty']); ?></td>
-                                  <td><?php echo (number_format($myData['product_price'])); ?></td>
-                                  <td><?php echo (number_format($myData['total_price'])); ?></td>
-                                </tr>
-                              <?php } ?>
-                            </tbody>
-                            <tfoot>
-                              <tr>
-                                <td colspan="4"></td>
-                                <td></td>
-                                <td><br />Total Biaya<br /><?php echo (number_format($sumTotal)); ?></td>
-
-                              </tr>
-                            </tfoot>
-                          </table>
+                        <div class="col-md-3 col-12 ps-25">
+                          <div class="mb-1">
+                            <strong class="mb-75">Catatan</strong>
+                            <p class="card-text"><?= $dataNote; ?></p>
+                          </div>
                         </div>
                       </div>
                     </div>
-                    <div class="card-footer">
-                      <div class="row">
-                        <div class="col-12 d-flex justify-content-between">
-                          <a href=sales_order.php class="btn btn-outline-warning">Kembali</a>
-                        </div>
-                      </div>
-                    </div>
+
+                    <table id="datatable-responsive" class="table datatables-basic table-striped" width="100%">
+                      <thead>
+                        <tr>
+                          <th>No</th>
+                          <th>No Produk</th>
+                          <th>Nama Produk</th>
+                          <th>Qty</th>
+                          <th>Harga (Rp)</th>
+                          <th>Total (Rp)</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <?php
+                        $mySql     = "SELECT * FROM view_sales WHERE sales_id='$Code' ORDER BY sales_detail_id";
+                        $myQry     = mysqli_query($koneksi, $mySql);
+                        $nomor  = 0;
+                        $sumTotal =    0;
+                        while ($myData = mysqli_fetch_array($myQry)) {
+                          $nomor++;
+                          $sumTotal =  $sumTotal + $myData['total_price'];
+
+
+                        ?>
+                          <tr>
+                            <td><?php echo $nomor; ?></td>
+                            <td><?php echo ($myData['product_id']); ?></td>
+                            <td><?php echo $myData['product_id'] . ' - ' . $myData['product_name']; ?></td>
+                            <td><?php echo number_format($myData['qty']); ?></td>
+                            <td><?php echo (number_format($myData['product_price'])); ?></td>
+                            <td><?php echo (number_format($myData['total_price'])); ?></td>
+                          </tr>
+                        <?php } ?>
+                      </tbody>
+                      <tfoot>
+                        <tr>
+                          <td colspan="4"></td>
+                          <td></td>
+                          <td><br />Total Biaya<br /><?php echo (number_format($sumTotal)); ?></td>
+
+                        </tr>
+                      </tfoot>
+                    </table>
                   </div>
                 </div>
               </div>
-            </form>
-          </div>
+              <div class="card-footer">
+                <div class="row">
+                  <div class="col-12 d-flex justify-content-between">
+                    <a href=sales_order.php class="btn btn-outline-warning">Kembali</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
         </div>
       </main>
     </div>
   </div>
-
   <footer class="py-4 bg-light mt-auto">
     <div class="container-fluid px-4">
       <div class="d-flex align-items-center justify-content-between small">

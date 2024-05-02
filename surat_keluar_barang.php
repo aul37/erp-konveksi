@@ -59,21 +59,20 @@ require 'header.php';
                                     <tbody>
                                         <?php
                                         $mySql = "SELECT
-                                                    so.stock_order_id,
-                                                    GROUP_CONCAT(DISTINCT s.stock_order_reference) AS stock_order_references,
-                                                    s.stock_status,
-                                                    s.stock_date,
-                                                    s.stock_note,
-                                                    s.warehouse_id AS stock_warehouse_id,
-                                                    MAX(s.updated_date) AS stock_updated_date,
-                                                    MAX(b.billing_id) AS billing_id,
-                                                    MAX(b.customer_name) AS customer_name
-                                                FROM
-                                                    stock_order_detail so
-                                                    JOIN stock s ON so.stock_order_id = s.stock_order_id
-                                                    JOIN view_billing_detail b ON s.stock_order_reference = b.sales_id
-                                                GROUP BY
-                                                    so.stock_order_id";
+                                        so.stock_order_id,
+                                        GROUP_CONCAT( DISTINCT s.stock_order_reference ) AS stock_order_references,
+                                        s.stock_status,
+                                        s.stock_date,
+                                        s.stock_note,
+                                        MAX( s.updated_date ) AS stock_updated_date,
+                                        MAX( b.billing_id ) AS billing_id,
+                                        MAX( b.customer_name ) AS customer_name 
+                                    FROM
+                                        stock_order_detail so
+                                        JOIN stock s ON so.stock_order_id = s.stock_order_id
+                                        JOIN view_billing_detail b ON s.stock_order_reference = b.sales_id 
+                                    GROUP BY
+                                        so.stock_order_id";
 
                                         $myQry = mysqli_query($koneksi, $mySql);
 

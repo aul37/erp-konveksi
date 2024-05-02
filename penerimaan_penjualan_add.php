@@ -40,8 +40,8 @@ if (isset($_POST['btnSubmit'])) {
             // Mulai transaksi
 
             // Masukkan data pembayaran ke dalam tabel payment
-            $queryPayment = "INSERT INTO payment (payment_id, payment_date, billing_id, payment_note, payment_total) 
-                             VALUES ('$dataPaymentID', '$dataPaymentDate', '$dataRequestID', '$dataPaymentNote', '$dataPaymentTotal')";
+            $queryPayment = "INSERT INTO payment (payment_id, payment_date, payment_note, payment_total) 
+                             VALUES ('$dataPaymentID', '$dataPaymentDate', '$dataPaymentNote', '$dataPaymentTotal')";
             $resultPayment = mysqli_query($koneksi, $queryPayment);
             if (!$resultPayment) {
                 throw new Exception("Gagal memasukkan data pembayaran ke dalam database.");
@@ -59,8 +59,8 @@ if (isset($_POST['btnSubmit'])) {
                 $updTotal = $updQty * $updPrice;
 
                 // Masukkan data detail pembayaran ke dalam tabel payment_detail
-                $queryPaymentDetail = "INSERT INTO payment_detail (payment_id, payment_ledger_id, billing_id, billing_jumlah, billing_pembayaran, billing_desc) 
-                                       VALUES ('$dataPaymentID', '$updProduct', '$updCode', '$updQty', '$updTotal', '$updNote')";
+                $queryPaymentDetail = "INSERT INTO payment_detail (payment_id, billing_id, reference_id, billing_pembayaran, billing_desc) 
+                                       VALUES ('$dataPaymentID'', '$updCode', '$updQty', '$updTotal', '$updNote')";
                 $resultPaymentDetail = mysqli_query($koneksi, $queryPaymentDetail);
                 if (!$resultPaymentDetail) {
                     throw new Exception("Gagal memasukkan detail pembayaran ke dalam database.");
@@ -169,7 +169,7 @@ if (isset($_POST['btnLoad'])) {
                                                             <option value=''>Pilih Faktur Penjualan..</option>
                                                             <!-- Options akan diisi secara dinamis menggunakan PHP -->
                                                             <?php
-                                                            $mySql = "SELECT DISTINCT billing_id FROM billing";
+                                                            $mySql = "SELECT DISTINCT billing_id FROM billing_detail";
                                                             $dataQry = mysqli_query($koneksi, $mySql) or die("Anugrah ERP ERROR : " . mysqli_error($koneksi));
                                                             while ($dataRow = mysqli_fetch_array($dataQry)) {
                                                                 echo "<option value='$dataRow[billing_id]'>$dataRow[billing_id]</option>";

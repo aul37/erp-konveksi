@@ -3,9 +3,11 @@ require 'function.php';
 require 'cek.php';
 require 'header.php';
 
+
 if (isset($_POST['btnSubmit'])) {
     $pesanError = array();
 
+    // Pastikan semua input memiliki nilai sebelum digunakan
     $tgl = date('Y-m-d H:i:s');
     $dataCode = $_POST['txtSKBID'];
     $dataReference = $_POST['txtRequestID']; // Ganti txtReference dengan txtRequestID
@@ -17,16 +19,36 @@ if (isset($_POST['btnSubmit'])) {
     $dataFaktur = $_POST['txtFaktur'];
 
 
+    // Tambahkan pemeriksaan nilai-nilai form
+    if (empty($dataCode)) {
+        $pesanError[] = "No SKB tidak boleh kosong.";
+    }
+    if (empty($dataReference)) {
+        $pesanError[] = "Referensi PO tidak boleh kosong.";
+    }
+    if (empty($dataDate)) {
+        $pesanError[] = "Tanggal SKB tidak boleh kosong.";
+    }
+    if (empty($dataWH)) {
+        $pesanError[] = "Gudang tidak boleh kosong.";
+    }
+    if (empty($dataNote)) {
+        $pesanError[] = "Catatan tidak boleh kosong.";
+    }
+
     if (count($pesanError) == 0) {
         try {
             mysqli_autocommit($koneksi, FALSE);
 
+
+            // Insert data into stock_order table
             $mySql = "INSERT INTO stock_order (stock_order_id, stock_order_reference, stock_order_reference_id, stock_order_date, warehouse_id, stock_order_note, billing_id, updated_date)
             VALUES ('$dataCode','$dataReference','$dataReferenceID','$dataDate', '$dataWH', '$dataNote', '$dataFaktur' ,now())";
             $myQry = mysqli_query($koneksi, $mySql);
             if (!$myQry) {
                 throw new Exception("Form gagal diinput. code:Surat Keluar Barang1. " . mysqli_error($koneksi));
             }
+
 
             foreach ($dataDetail as $key => $value) {
                 $orderID =  $_POST['updId'][$key];
@@ -53,6 +75,8 @@ if (isset($_POST['btnSubmit'])) {
                 }
             }
 
+
+            // Commit the transaction
             mysqli_commit($koneksi);
             echo "<meta http-equiv='refresh' content='0; url=surat_keluar_barang.php'>";
             exit;
@@ -65,6 +89,7 @@ if (isset($_POST['btnSubmit'])) {
 
 
 # MASUKKAN DATA KE VARIABEL
+# MASUKKAN DATA KE VARIABEL
 $tgl = date('Y-m-d H:i:s');
 $dataCode = isset($_POST['txtSKBID']) ? $_POST['txtSKBID'] : '';
 $dataSKBID = isset($_POST['txtSKBID']) ? $_POST['txtSKBID'] : '';
@@ -73,6 +98,7 @@ $dataRequestID  = isset($_POST['txtRequestID']) ? $_POST['txtRequestID'] : '';
 $dataFaktur  = isset($_POST['txtFaktur']) ? $_POST['txtFaktur'] : '';
 $dataSKBNote = isset($_POST['txtSKBNote']) ? $_POST['txtSKBNote'] : '';
 $dataWH = isset($_POST['txtWH']) ? $_POST['txtWH'] : '';
+
 
 if (isset($_POST['btnLoad'])) {
     $array = 0;
@@ -84,6 +110,9 @@ if (isset($_POST['btnLoad'])) {
 ?>
 
 
+
+<!-- BEGIN: Content-->
+
 <!-- BEGIN: Content-->
 
 <body class="sb-nav-fixed">
@@ -93,10 +122,11 @@ if (isset($_POST['btnLoad'])) {
                 <div class="container-fluid">
                     <div class="breadcrumb-wrapper">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item active">Penjualan </li>
+                            <li class="breadcrumb-item active">Pembelian </li>
                             <li class="breadcrumb-item ">Surat Keluar Barang</li>
                         </ol>
                     </div>
+
                     <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" name="form1" target="_self" enctype="multipart/form-data">
                         <div class="content-body">
                             <div class="row">
@@ -104,6 +134,7 @@ if (isset($_POST['btnLoad'])) {
                                     <div class="card-body">
                                         <div class="row mt-1">
                                             <?php if ($dataRequestID == '') { ?>
+
 
                                                 <div class="col-md-4 col-12 px-25">
                                                     <div class="mb-1">
@@ -184,132 +215,138 @@ if (isset($_POST['btnLoad'])) {
                                                 <input type="hidden" name="txtFaktur" value="<?= $dataFaktur  ?>">
                                                 <input type="hidden" name="txtSKBNote" value="<?= $dataSKBNote  ?>">
                                                 <input type="hidden" name="txtWH" value="<?= $dataWH  ?>">
+                                                <div class="card-body">
+                                                    <div class="row mt-1">
+                                                        <div class="col-md-12">
+                                                            <div class="divider divider-primary">
+                                                                <div class="divider-text" style="font-weight: bold;">
+                                                                    <h3>Surat Keluar Barang Detail</h3>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
 
+                                                    <div class="row mt-1">
+                                                        <div class="col-md-3 col-12 pe-25">
+                                                            <div class="mb-1">
+                                                                <label class="form-label">ID Surat Keluar Barang *</label>
+                                                                <input class="form-control" placeholder="[ nomor ID ]" name="txtSKBID" id="idPurchase" readonly type="text" value="<?php echo $dataSKBID; ?>" onkeyup="checkStatus()" />
+                                                                <p style="color: red;" id="idPurchaseError"></p>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-3 col-12 px-25">
+                                                            <div class="mb-1">
+                                                                <label>Tanggal Surat Keluar Barang</label><br /><?= $dataSKBDate; ?>
+                                                            </div>
+                                                        </div>
+
+
+                                                        <div class="col-md-3 col-12 px-25">
+                                                            <div class="mb-1">
+                                                                <label>No Referensi SO </label><br /><?= $dataRequestID; ?>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-3 col-12 px-25">
+                                                            <div class="mb-1">
+                                                                <label>No Faktur </label><br /><?= $dataFaktur; ?>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-3 col-12 px-25">
+                                                            <div class="mb-1">
+                                                                <label>Dari Gudang</label><br /><?= $dataWH; ?>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-3 col-12 ps-25">
+                                                            <div class="mb-1">
+                                                                <label>Catatan</label><br /><?= $dataSKBNote; ?>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <?php ?>
+                                                </div>
 
                                                 <div class="row mt-1">
-                                                    <div class="col-md-3 col-12 pe-25">
-                                                        <div class="mb-1">
-                                                            <label class="form-label">ID Surat Keluar Barang *</label>
-                                                            <input class="form-control" placeholder="[ nomor ID ]" name="txtSKBID" id="idPurchase" readonly type="text" value="<?php echo $dataSKBID; ?>" onkeyup="checkStatus()" />
-                                                            <p style="color: red;" id="idPurchaseError"></p>
-                                                        </div>
-                                                    </div>
+                                                    <table class="table table-striped  table-hover" width="100%">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>No</th>
+                                                                <th>Kode Produk</th>
+                                                                <th>Nama Produk</th>
+                                                                <th>Qty</th>
+                                                                <th>Harga</th>
+                                                                <th>Note</th>
+                                                                <th>Total</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <?php
+                                                            $mySql  =   "SELECT
+                                                                        sales.sales_id,
+                                                                        sales_detail.sales_detail_id,
+                                                                        sales.sales_date,
+                                                                        sales.customer_id,
+                                                                        sales.sales_po,
+                                                                        sales.sales_top,
+                                                                        sales.sales_request_date,
+                                                                        sales.updated_date,
+                                                                        sales_detail.sales_detail_id,
+                                                                        sales_detail.product_id,
+                                                                        product.product_name,
+                                                                        sales_detail.qty,
+                                                                        sales_detail.price_list,
+                                                                        sales_detail.updated_date AS detail_updated_date,
+                                                                        ( sales_detail.qty * sales_detail.price_list ) AS total 
+                                                                    FROM
+                                                                        sales
+                                                                        INNER JOIN sales_detail ON sales.sales_id = sales_detail.sales_id
+                                                                        INNER JOIN product ON sales_detail.product_id = product.product_id
+                                                                    WHERE
+                                                                        sales.sales_id = '$dataRequestID' 
+                                                                    ORDER BY
+                                                                        sales_detail_id";
 
-                                                    <div class="col-md-3 col-12 px-25">
-                                                        <div class="mb-1">
-                                                            <label>Tanggal Surat Keluar Barang</label><br /><?= $dataSKBDate; ?>
-                                                        </div>
-                                                    </div>
-
-
-                                                    <div class="col-md-3 col-12 px-25">
-                                                        <div class="mb-1">
-                                                            <label>No Referensi SO </label><br /><?= $dataRequestID; ?>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-3 col-12 px-25">
-                                                        <div class="mb-1">
-                                                            <label>No Faktur </label><br /><?= $dataFaktur; ?>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-3 col-12 ps-25">
-                                                        <div class="mb-1">
-                                                            <label>Dari Gudang</label><br /><?= $dataWH; ?>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-md-3 col-12 ps-25">
-                                                        <div class="mb-1">
-                                                            <label>Catatan</label><br /><?= $dataSKBNote; ?>
-                                                        </div>
-                                                    </div>
+                                                            $myQry     = mysqli_query($koneksi, $mySql)  or die("ANUGRAH ERP ERROR :  " . mysqli_error($koneksi));
+                                                            $nomor  = 0;
+                                                            $array  = 0;
+                                                            $sumTotal = 0;
+                                                            while ($myData = mysqli_fetch_array($myQry)) {
+                                                                $nomor++;
+                                                                $Purchase = $myData['sales_detail_id'];
+                                                                $Order = $myData['sales_id'];
+                                                                $sumTotal = $sumTotal + $myData['total'];
+                                                            ?>
+                                                                <tr>
+                                                                    <input type="text" value="<?= $Purchase; ?>" name="updId[<?= $array; ?>]" hidden>
+                                                                    <input type="text" value="<?= $dataCode; ?>" name="updCode[<?= $array; ?>]" hidden>
+                                                                    <input type="text" value="<?= $myData['product_id']; ?>" name="updProduct[<?= $array; ?>]" hidden>
+                                                                    <td><?= $nomor; ?></td>
+                                                                    <td><?= $myData['product_id']; ?></td>
+                                                                    <td><?= $myData['product_name']; ?></td>
+                                                                    <td><input class="form-control form-control-sm" id="idQty<?= $array; ?>" onkeyup="sum()" name="updQty[<?= $array; ?>]" step="any" type="number" value="<?= $myData['qty']; ?>" required /></td>
+                                                                    <td><input class="form-control form-control-sm" id="idPrice<?= $array; ?>" onkeyup="sum()" name="updPrice[<?= $array; ?>]" step="any" type="number" value="<?= $myData['price_list']; ?>" required readonly /></td>
+                                                                    <td><textarea name="updNote[<?= $array; ?>]" id="" class="form-control form-control-sm" cols="30" rows="1"></textarea></td>
+                                                                    <td align="right" id="idTotal<?= $array; ?>"><?= (number_format($myData['total'])); ?></td>
+                                                                </tr>
+                                                            <?php
+                                                                $array++;
+                                                            }
+                                                            $array--; ?>
+                                                            <input type="hidden" id="count" value="<?= $array; ?>">
+                                                            <?php ?>
+                                                        </tbody>
+                                                        <tfoot>
+                                                        </tfoot>
+                                                    </table>
                                                 </div>
+
+                                                <div class="col-12 d-flex justify-content-between">
+                                                    <a href="surat_keluar_barang.php" class="btn btn-outline-warning">Batalkan</a>
+                                                    <button type="submit" name="btnSubmit" class="btn btn-primary">Submit</button>
+                                                </div>
+                                            <?php } ?>
                                         </div>
-
-                                        <div class="divider divider-primary">
-                                            <div class="divider-text">Daftar Produk</div>
-                                        </div>
-
-                                        <div class="row mt-1">
-                                            <table class="table table-striped  table-hover" width="100%">
-                                                <thead>
-                                                    <tr>
-                                                        <th>No</th>
-                                                        <th>Kode Produk</th>
-                                                        <th>Nama Produk</th>
-                                                        <th>Qty</th>
-                                                        <th>Harga</th>
-                                                        <th>Note</th>
-                                                        <th>Total</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <?php
-                                                    $mySql  =   "SELECT
-                                                    sales.sales_id,
-                                                    sales_detail.sales_detail_id,
-                                                    sales.sales_date,
-                                                    sales.customer_id,
-                                                    sales.salesman_id,
-                                                    sales.sales_po,
-                                                    sales.sales_top,
-                                                    sales.sales_request_date,
-                                                    sales.updated_date,
-                                                    sales_detail.sales_detail_id,
-                                                    sales_detail.product_id,
-                                                    product.product_name,
-                                                    sales_detail.qty,
-                                                    sales_detail.price_list,
-                                                    sales_detail.updated_date AS detail_updated_date,
-                                                    ( sales_detail.qty * sales_detail.price_list ) AS total 
-                                                FROM
-                                                    sales
-                                                    INNER JOIN sales_detail ON sales.sales_id = sales_detail.sales_id
-                                                    INNER JOIN product ON sales_detail.product_id = product.product_id
-                                                WHERE
-                                                    sales.sales_id = '$dataRequestID' 
-                                                ORDER BY
-                                                    sales_detail_id";
-
-                                                    $myQry     = mysqli_query($koneksi, $mySql)  or die("ANUGRAH ERP ERROR :  " . mysqli_error($koneksi));
-                                                    $nomor  = 0;
-                                                    $array  = 0;
-                                                    $sumTotal = 0;
-                                                    while ($myData = mysqli_fetch_array($myQry)) {
-                                                        $nomor++;
-                                                        $Purchase = $myData['sales_detail_id'];
-                                                        $Order = $myData['sales_id'];
-                                                        $sumTotal = $sumTotal + $myData['total'];
-                                                    ?>
-                                                        <tr>
-                                                            <input type="text" value="<?= $Purchase; ?>" name="updId[<?= $array; ?>]" hidden>
-                                                            <input type="text" value="<?= $dataCode; ?>" name="updCode[<?= $array; ?>]" hidden>
-                                                            <input type="text" value="<?= $myData['product_id']; ?>" name="updProduct[<?= $array; ?>]" hidden>
-                                                            <td><?= $nomor; ?></td>
-                                                            <td><?= $myData['product_id']; ?></td>
-                                                            <td><?= $myData['product_name']; ?></td>
-                                                            <td><input class="form-control form-control-sm" id="idQty<?= $array; ?>" onkeyup="sum()" name="updQty[<?= $array; ?>]" step="any" type="number" value="<?= $myData['qty']; ?>" required /></td>
-                                                            <td><input class="form-control form-control-sm" id="idPrice<?= $array; ?>" onkeyup="sum()" name="updPrice[<?= $array; ?>]" step="any" type="number" value="<?= $myData['price_list']; ?>" required readonly /></td>
-                                                            <td><textarea name="updNote[<?= $array; ?>]" id="" class="form-control form-control-sm" cols="30" rows="1"></textarea></td>
-                                                            <td align="right" id="idTotal<?= $array; ?>"><?= (number_format($myData['total'])); ?></td>
-                                                        </tr>
-                                                    <?php
-                                                        $array++;
-                                                    }
-                                                    $array--; ?>
-                                                    <input type="hidden" id="count" value="<?= $array; ?>">
-                                                </tbody>
-                                                <tfoot>
-                                                </tfoot>
-                                            </table>
-                                        </div>
-
-                                        <div class="col-12 d-flex justify-content-between">
-                                            <a href="surat_keluar_barang.php" class="btn btn-outline-warning">Batalkan</a>
-                                            <button type="submit" name="btnSubmit" class="btn btn-primary">Submit</button>
-                                        </div>
-                                    <?php } ?>
-
                                     </div>
                                 </div>
                             </div>

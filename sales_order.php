@@ -58,22 +58,22 @@ require 'header.php';
                                         <?php
 
                                         $mySql = "SELECT
-                                                    s.sales_id,
-                                                    s.sales_date,
-                                                    c.customer_name,
-                                                    GROUP_CONCAT(p.product_name) AS product_name,
-                                                    SUM(sd.qty * sd.price_list) AS total 
-                                                    FROM
-                                                    sales s
-                                                    JOIN sales_detail sd ON s.sales_id = sd.sales_id 
-                                                    JOIN customer c ON s.customer_id = c.customer_id
-                                                    JOIN product p ON sd.product_id = p.product_id
-                                                    GROUP BY
-                                                    s.sales_id,
-                                                    s.sales_date,
-                                                    c.customer_name,
-                                                    ORDER BY
-                                                    sales_id";
+                                        s.sales_id,
+                                        s.sales_date,
+                                        c.customer_name,
+                                        GROUP_CONCAT(p.product_name) AS product_name,
+                                        SUM(sd.qty * sd.price_list) AS total 
+                                    FROM
+                                        sales s
+                                        JOIN sales_detail sd ON s.sales_id = sd.sales_id 
+                                        JOIN customer c ON s.customer_id = c.customer_id
+                                        JOIN product p ON sd.product_id = p.product_id
+                                    GROUP BY
+                                        s.sales_id,
+                                        s.sales_date,
+                                        c.customer_name
+                                    ORDER BY
+                                        s.sales_id";
 
 
                                         $myQry = mysqli_query($koneksi, $mySql) or die("ANUGRAH ERP ERROR :  " . mysqli_error($koneksi));

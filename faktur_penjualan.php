@@ -33,12 +33,13 @@ require 'header.php';
 
                     <div class="card mb-4">
                         <div class="content-header-right text-md-end col-md-2 col-12 d-md-block d-none">
-                            <div class="mb-1 breadcrumb-right">
+                            <div class="mb-2 breadcrumb-right">
                                 <a class="btn-icon btn btn-primary btn-round btn-sm" href="faktur_penjualan_add.php">
                                     <span class="align-middle">Tambah Data Faktur Penjualan</span>
                                 </a>
                             </div>
                         </div>
+
 
                         <div class="card-body">
                             <div class="table-responsive">

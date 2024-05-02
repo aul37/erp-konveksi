@@ -193,6 +193,7 @@ if (isset($_POST['btnLoad'])) {
 
                                                 <div class="col-md-4 col-12 pe-25">
                                                     <div class="mb-1" style="padding-top: 20px;">
+                                                        <a href="surat_masuk_barang.php" class="btn btn-warning">Kembali</a>
                                                         <button type="submit" name="btnLoad" class="btn btn-primary">Submit</button>
                                                     </div>
                                                 </div>

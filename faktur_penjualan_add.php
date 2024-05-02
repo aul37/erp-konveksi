@@ -183,6 +183,7 @@ if (isset($_POST['btnLoad'])) {
                                                 </div>
                                                 <div class="col-md-3 col-12 pe-25">
                                                     <div class="mb-1" style="padding-top: 20px;">
+                                                        <a href="faktur_penjualan.php" class="btn btn-warning">Kembali</a>
                                                         <button type="submit" name="btnLoad" class="btn btn-primary">Submit</button>
                                                     </div>
                                                 </div>
@@ -245,7 +246,6 @@ if (isset($_POST['btnLoad'])) {
                                                             sales_detail.sales_detail_id,
                                                             sales.sales_date,
                                                             sales.customer_id,
-                                                            sales.salesman_id,
                                                             sales.sales_po,
                                                             sales.sales_top,
                                                             sales.sales_request_date,

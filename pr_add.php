@@ -244,7 +244,7 @@ require 'header.php';
                                             </button>
                                         </div>
                                         <div class="col-12 d-flex justify-content-between">
-                                            <a href="pr.php" class="btn btn-outline-warning">Batalkan</a>
+                                            <a href="pr.php" class="btn btn-outline-warning">Kembali</a>
                                             <button type="submit" name="btnSubmit" class="btn btn-primary">Submit</button>
                                         </div>
                                     </div>

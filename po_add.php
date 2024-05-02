@@ -242,8 +242,10 @@ if (isset($_POST['btnLoad'])) {
                                                         <input type="text" name="txtPurchaseNote" class="form-control" placeholder="Catatan" required>
                                                     </div>
                                                 </div>
+
                                                 <div class="col-md-3 col-12 pe-25">
                                                     <div class="mb-1" style="padding-top: 20px;">
+                                                        <a href="po.php" class="btn btn-warning">Kembali</a>
                                                         <button type="submit" name="btnLoad" class="btn btn-primary">Submit</button>
                                                     </div>
                                                 </div>
