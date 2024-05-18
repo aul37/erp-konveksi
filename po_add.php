@@ -236,12 +236,13 @@ if (isset($_POST['btnLoad'])) {
                                                         <input type="date" name="txtDeliveryDate" class="form-control" required>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-3 col-12 px-25">
+                                                <div class="col-md-12 col-12 px-25">
                                                     <div class="mb-1">
                                                         <label class="form-label">Catatan *</label>
-                                                        <input type="text" name="txtPurchaseNote" class="form-control" placeholder="Catatan" required>
+                                                        <textarea name="txtPurchaseNote" class="form-control" placeholder="Catatan" required></textarea>
                                                     </div>
                                                 </div>
+
 
                                                 <div class="col-md-3 col-12 pe-25">
                                                     <div class="mb-1" style="padding-top: 20px;">

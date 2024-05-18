@@ -138,13 +138,13 @@ if (isset($_POST['btnLoad'])) {
                                         <div class="row mt-1">
                                             <?php if ($dataRequestID == '') { ?>
 
-                                                <div class="col-md-4 col-12 px-25">
+                                                <div class="col-md-3 col-12 px-25">
                                                     <div class="mb-1">
                                                         <label class="form-label">No SMB *</label>
                                                         <input type="text" name="txtSMBID" class="form-control" placeholder="No SMB" required>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-4 col-12 pe-25">
+                                                <div class="col-md-3 col-12 pe-25">
                                                     <div class="mb-1">
                                                         <label class="form-label">Referensi PO *</label>
                                                         <select name="txtRequestID" id="txtRequestID" class="select2 form-control">
@@ -160,7 +160,7 @@ if (isset($_POST['btnLoad'])) {
                                                     </div>
                                                 </div>
 
-                                                <div class="col-md-4 col-12 px-25">
+                                                <div class="col-md-3 col-12 px-25">
                                                     <div class="mb-1">
                                                         <label class="form-label">Dari Gudang *</label>
                                                         <select name="txtWH" id="idWH" required class="select2 form-select form-control" tabindex="-1">
@@ -176,7 +176,7 @@ if (isset($_POST['btnLoad'])) {
                                                 </div>
 
 
-                                                <div class="col-md-4 col-12 ps-25">
+                                                <div class="col-md-3 col-12 ps-25">
                                                     <div class="mb-1">
                                                         <label class="form-label">Tanggal SMB *</label>
                                                         <input type="date" name="txtSMBDate" class="form-control" required>
@@ -184,12 +184,13 @@ if (isset($_POST['btnLoad'])) {
                                                 </div>
 
 
-                                                <div class="col-md-4 col-12 px-25">
+                                                <div class="col-md-12 col-12 px-25">
                                                     <div class="mb-1">
                                                         <label class="form-label">Catatan *</label>
-                                                        <input type="text" name="txtSMBNote" class="form-control" placeholder="Catatan" required>
+                                                        <textarea name="txtSMBNote" class="form-control" placeholder="Catatan" required></textarea>
                                                     </div>
                                                 </div>
+
 
                                                 <div class="col-md-4 col-12 pe-25">
                                                     <div class="mb-1" style="padding-top: 20px;">

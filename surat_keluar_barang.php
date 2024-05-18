@@ -32,7 +32,7 @@ require 'header.php';
                     </div>
 
                     <div class="card mb-4">
-                        <div class="content-header-right text-md-end col-md-2 col-12 d-md-block d-none">
+                        <div class="col-md-6 col-12">
                             <div class="mb-1 breadcrumb-right">
                                 <a class="btn-icon btn btn-primary btn-round btn-sm" href="surat_keluar_barang_add.php">
                                     <span class="align-middle">Tambah Data Surat Keluar Barang</span>
@@ -48,7 +48,6 @@ require 'header.php';
                                             <th>No</th>
                                             <th>No. SKB</th>
                                             <th>Tanggal SKB</th>
-                                            <th>Gudang</th>
                                             <th>No SO</th>
                                             <th>Pelanggan</th>
                                             <th>No Faktur</th>
@@ -88,7 +87,6 @@ require 'header.php';
                                                 <td><?= $nomor; ?></td>
                                                 <td><a href="surat_keluar_barang_view.php?code=<?= $Code; ?>" target="_new" alt="View Data"><u><?= $myData['stock_order_id']; ?></u></a></td>
                                                 <td><?= $myData['stock_date']; ?></td>
-                                                <td><?= $myData['stock_warehouse_id']; ?></td>
                                                 <td><?= $myData['stock_order_references']; ?></td>
                                                 <td><?= $myData['customer_name']; ?></td>
                                                 <td><?= $myData['billing_id']; ?></td>

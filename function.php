@@ -344,40 +344,44 @@ if (isset($_POST['updatepembelian'])) {
 }
 
 // // UPDATE PR
-// if (isset($_POST['updatepr'])) {
-//     $id = $_POST['id'];
-//     $tanggal = $_POST['tanggal'];
-//     $produk = $_POST['produk'];
-//     $qty = $_POST['qty'];
-//     $pemohon = $_POST['pemohon'];
-//     $catatan = $_POST['catatan'];
+if (isset($_POST['updatepr'])) {
+    $id = $_POST['pr_id'];
+    $pr_id  = $_POST['pr_id'];
+    $tanggal = $_POST['tanggal'];
+    $produk = $_POST['produk'];
+    $qty = $_POST['qty'];
+    $pemohon = $_POST['pemohon'];
+    $catatan = $_POST['catatan'];
 
-//     $updatequery = mysqli_query($koneksi, "UPDATE pr SET tanggal='$tanggal', produk='$produk', qty='$qty', pemohon='$pemohon', catatan='$catatan' WHERE id='$id'");
+    $updatequery = mysqli_query($koneksi, "UPDATE pr SET tanggal='$tanggal', produk='$produk', qty='$qty', pemohon='$pemohon', catatan='$catatan' WHERE pr_id='$id'");
 
-//     if ($updatequery) {
-//         header('Location: pr.php');
-//         exit();
-//     } else {
-//         echo 'Gagal mengupdate data pr';
-//         header('Location: pr.php');
-//         exit();
-//     }
-// }
+    if ($updatequery) {
+        header('Location: pr.php');
+        exit();
+    } else {
+        echo 'Gagal mengupdate data pr';
+        header('Location: pr.php');
+        exit();
+    }
+}
+//HAPUS PR
+if (isset($_POST['hapuspr'])) {
+    $id = $_POST['pr_id'];
 
-// //HAPUS PR
-// if (isset($_POST['hapuspr'])) {
-//     $id = $_POST['id'];
+    $hapus = mysqli_query($koneksi, "DELETE FROM pr WHERE pr_id='$id'");
+    $hapus1 = mysqli_query($koneksi, "DELETE FROM pr_detail WHERE pr_id='$id'");
 
-//     $hapus = mysqli_query($koneksi, "DELETE FROM pr WHERE id='$id'");
+    if ($hapus && $hapus1) {
+        header('Location: pr.php');
+        exit();
+    } else {
+        echo 'Gagal menghapus data.';
+        header('Location: pr.php');
+        exit();
+    }
+}
 
-//     if ($hapusdata) {
-//         header('Location: pr.php');
-//         exit();
-//     } else {
-//         echo 'Gagal';
-//         header('Location: pr.php');
-//     }
-// };
+
 
 // Menambah PO
 if (isset($_POST['addpo'])) {
@@ -436,38 +440,38 @@ if (isset($_POST['hapuspo'])) {
 };
 
 //HAPUS SALESMAN
-if (isset($_POST['hapussalesman'])) {
-    $id = $_POST['id'];
+// if (isset($_POST['hapussalesman'])) {
+//     $id = $_POST['id'];
 
-    $hapus = mysqli_query($koneksi, "DELETE FROM salesman WHERE salesman_id='$id'");
+//     $hapus = mysqli_query($koneksi, "DELETE FROM salesman WHERE salesman_id='$id'");
 
-    if ($hapus) {
-        header('Location: salesman.php');
-        exit();
-    } else {
-        echo 'Gagal';
-        header('Location: salesman.php');
-    }
-}
+//     if ($hapus) {
+//         header('Location: salesman.php');
+//         exit();
+//     } else {
+//         echo 'Gagal';
+//         header('Location: salesman.php');
+//     }
+// }
 //UPDATE SALESMAN 
-if (isset($_POST['updatesalesman'])) {
-    $id = $_POST['salesman_id'];
-    $txtSalesman    = ($_POST['salesman_name']);
-    $txtCommission  = $_POST['commission'];
-    $txtCommissionDate  = $_POST['commission_date'];
-    $txtStatus      = $_POST['salesman_status'];
-    $txtPhone      = $_POST['salesman_phone'];
-    $txtAddress      = $_POST['salesman_address'];
+// if (isset($_POST['updatesalesman'])) {
+//     $id = $_POST['salesman_id'];
+//     $txtSalesman    = ($_POST['salesman_name']);
+//     $txtCommission  = $_POST['commission'];
+//     $txtCommissionDate  = $_POST['commission_date'];
+//     $txtStatus      = $_POST['salesman_status'];
+//     $txtPhone      = $_POST['salesman_phone'];
+//     $txtAddress      = $_POST['salesman_address'];
 
 
-    $updatequery = mysqli_query($koneksi, "UPDATE salesman SET salesman_name='$txtSalesman', salesman_phone='$txtPhone', salesman_address='$txtAddress', commission='$txtCommission', commission_date='$txtCommissionDate', salesman_status='$txtStatus' WHERE salesman_id='$id'");
+//     $updatequery = mysqli_query($koneksi, "UPDATE salesman SET salesman_name='$txtSalesman', salesman_phone='$txtPhone', salesman_address='$txtAddress', commission='$txtCommission', commission_date='$txtCommissionDate', salesman_status='$txtStatus' WHERE salesman_id='$id'");
 
-    if ($updatequery) {
-        header('Location: salesman.php');
-        exit();
-    } else {
-        echo 'Gagal mengupdate data pr';
-        header('Location: salesman.php');
-        exit();
-    }
-}
+//     if ($updatequery) {
+//         header('Location: salesman.php');
+//         exit();
+//     } else {
+//         echo 'Gagal mengupdate data pr';
+//         header('Location: salesman.php');
+//         exit();
+//     }
+// }

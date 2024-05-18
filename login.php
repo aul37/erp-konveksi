@@ -52,8 +52,8 @@ if (isset($_POST['login'])) {
     </style>
 </head>
 
-<body style="background-image: url(/erp/css/a.png);
-    background-repeat: no-repeat; background-position: center; background-size:cover;">
+<body style="background-image: url(/erp/css/konveksi.jpg);
+    background-repeat: no-repeat; background-position: center; background-size: 1710px 750px;">
 
 
     <div id="layoutAuthentication">

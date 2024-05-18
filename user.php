@@ -17,6 +17,7 @@ require 'header.php';
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
     <link href="css/styles.css" rel="stylesheet">
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+
 </head>
 
 <body class="sb-nav-fixed">
@@ -38,6 +39,13 @@ require 'header.php';
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
                                 Tambah Data Pengguna
                             </button>
+                        </div>
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <!-- Button to Open the Modal -->
+
+                                <a href="report_user.php" class="btn btn-info">Cetak</a>
+                            </div>
                         </div>
                         <?php { ?>
 

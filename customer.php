@@ -38,6 +38,13 @@ require 'header.php';
                                 Tambah Data Customer
                             </button>
                         </div>
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <!-- Button to Open the Modal -->
+
+                                <a href="report_customer.php" class="btn btn-info">Cetak</a>
+                            </div>
+                        </div>
                         <?php { ?>
 
                         <?php }

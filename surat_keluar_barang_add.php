@@ -12,7 +12,6 @@ if (isset($_POST['btnSubmit'])) {
     $dataCode = $_POST['txtSKBID'];
     $dataReference = $_POST['txtRequestID']; // Ganti txtReference dengan txtRequestID
     $dataDate = $_POST['txtSKBDate']; // Ganti txtDate dengan txtSKBDate
-    $dataWH = $_POST['txtWH'];
     $dataNote = $_POST['txtSKBNote'];
     $dataStatus = 'PO Created';
     $dataDetail = $_POST['updCode'];
@@ -29,9 +28,6 @@ if (isset($_POST['btnSubmit'])) {
     if (empty($dataDate)) {
         $pesanError[] = "Tanggal SKB tidak boleh kosong.";
     }
-    if (empty($dataWH)) {
-        $pesanError[] = "Gudang tidak boleh kosong.";
-    }
     if (empty($dataNote)) {
         $pesanError[] = "Catatan tidak boleh kosong.";
     }
@@ -42,8 +38,8 @@ if (isset($_POST['btnSubmit'])) {
 
 
             // Insert data into stock_order table
-            $mySql = "INSERT INTO stock_order (stock_order_id, stock_order_reference, stock_order_reference_id, stock_order_date, warehouse_id, stock_order_note, billing_id, updated_date)
-            VALUES ('$dataCode','$dataReference','$dataReferenceID','$dataDate', '$dataWH', '$dataNote', '$dataFaktur' ,now())";
+            $mySql = "INSERT INTO stock_order (stock_order_id, stock_order_reference, stock_order_reference_id, stock_order_date, stock_order_note, updated_date)
+            VALUES ('$dataCode','$dataReference','$dataReferenceID','$dataDate', '$dataNote' ,now())";
             $myQry = mysqli_query($koneksi, $mySql);
             if (!$myQry) {
                 throw new Exception("Form gagal diinput. code:Surat Keluar Barang1. " . mysqli_error($koneksi));
@@ -57,17 +53,17 @@ if (isset($_POST['btnSubmit'])) {
                 $dataPrice = $_POST['updPrice'][$key];
 
                 if ($dataQty > 0) {
-                    $mySql = "INSERT INTO stock_order_detail(stock_order_id, product_id, qty, updated_date)
-                    VALUES ('$dataCode','$productid','$dataQty',now())";
+                    $mySql = "INSERT INTO stock_order_detail(stock_order_id, product_id, qty, ref_detail_id, updated_date)
+                    VALUES ('$dataCode','$productid','$dataQty', '$dataFaktur', now())";
                     $myQry = mysqli_query($koneksi, $mySql);
                     if (!$myQry) {
                         throw new Exception("Form gagal diinput. code:Surat Keluar Barang2. " . mysqli_error($koneksi));
                     }
 
                     $mySql3 = "INSERT INTO stock 
-                    (stock_order_id, stock_status, stock_order_reference, stock_date, product_id, qty, stock_note, warehouse_id, billing_id, updated_date)
+                    (stock_order_id, stock_status, stock_order_reference, stock_date, product_id, qty, stock_note, updated_date)
                     VALUES 
-                    ('$dataCode','$dataStatus', '$dataReference','$dataDate','$productid','$dataQty','$dataNote','$dataWH', '$dataFaktur', now())";
+                    ('$dataCode','$dataStatus', '$dataReference','$dataDate','$productid','$dataQty','$dataNote', now())";
                     $myQry3 = mysqli_query($koneksi, $mySql3);
                     if (!$myQry3) {
                         throw new Exception("Form gagal diinput. code:Surat Keluar Barang3. " . mysqli_error($koneksi));
@@ -97,7 +93,6 @@ $dataSKBDate  = isset($_POST['txtSKBDate']) ? $_POST['txtSKBDate'] : date('Y-m-d
 $dataRequestID  = isset($_POST['txtRequestID']) ? $_POST['txtRequestID'] : '';
 $dataFaktur  = isset($_POST['txtFaktur']) ? $_POST['txtFaktur'] : '';
 $dataSKBNote = isset($_POST['txtSKBNote']) ? $_POST['txtSKBNote'] : '';
-$dataWH = isset($_POST['txtWH']) ? $_POST['txtWH'] : '';
 
 
 if (isset($_POST['btnLoad'])) {
@@ -136,13 +131,13 @@ if (isset($_POST['btnLoad'])) {
                                             <?php if ($dataRequestID == '') { ?>
 
 
-                                                <div class="col-md-4 col-12 px-25">
+                                                <div class="col-md-3 col-12 px-25">
                                                     <div class="mb-1">
                                                         <label class="form-label">No SKB *</label>
                                                         <input type="text" name="txtSKBID" class="form-control" placeholder="No SKB" required>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-4 col-12 pe-25">
+                                                <div class="col-md-3 col-12 pe-25">
                                                     <div class="mb-1">
                                                         <label class="form-label">Referensi SO *</label>
                                                         <select name="txtRequestID" id="txtRequestID" class="select2 form-control">
@@ -161,7 +156,7 @@ if (isset($_POST['btnLoad'])) {
                                                     </div>
                                                 </div>
 
-                                                <div class="col-md-4 col-12 pe-25">
+                                                <div class="col-md-3 col-12 pe-25">
                                                     <div class="mb-1">
                                                         <label class="form-label">No. Faktur *</label>
                                                         <select name="txtFaktur" id="txtFaktur" class="select2 form-control">
@@ -176,34 +171,22 @@ if (isset($_POST['btnLoad'])) {
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-4 col-12 px-25">
-                                                    <div class="mb-1">
-                                                        <label class="form-label">Dari Gudang *</label>
-                                                        <select name="txtWH" id="idWH" required class="select2 form-select form-control" tabindex="-1">
-                                                            <option value="" selected>Pilih Gudang</option>
-                                                            <?php
-                                                            $gudang = array("Anugrah");
-                                                            foreach ($gudang as $gudang) {
-                                                                echo "<option value=\"$gudang\">$gudang</option>";
-                                                            }
-                                                            ?>
-                                                        </select>
-                                                    </div>
-                                                </div>
 
-                                                <div class="col-md-4 col-12 ps-25">
+
+                                                <div class="col-md-3 col-12 ps-25">
                                                     <div class="mb-1">
                                                         <label class="form-label">Tanggal SKB *</label>
                                                         <input type="date" name="txtSKBDate" class="form-control" required>
                                                     </div>
                                                 </div>
 
-                                                <div class="col-md-4 col-12 px-25">
+                                                <div class="col-md-12 col-12 px-25">
                                                     <div class="mb-1">
                                                         <label class="form-label">Catatan *</label>
-                                                        <input type="text" name="txtSKBNote" class="form-control" placeholder="Catatan" required>
+                                                        <textarea name="txtSKBNote" class="form-control" placeholder="Catatan" required></textarea>
                                                     </div>
                                                 </div>
+
                                                 <div class="col-md-4 col-12 pe-25">
                                                     <div class="mb-1" style="padding-top: 20px;">
                                                         <button type="submit" name="btnLoad" class="btn btn-primary">Submit</button>
@@ -214,7 +197,6 @@ if (isset($_POST['btnLoad'])) {
                                                 <input type="hidden" name="txtRequestID" value="<?= $dataRequestID  ?>">
                                                 <input type="hidden" name="txtFaktur" value="<?= $dataFaktur  ?>">
                                                 <input type="hidden" name="txtSKBNote" value="<?= $dataSKBNote  ?>">
-                                                <input type="hidden" name="txtWH" value="<?= $dataWH  ?>">
                                                 <div class="card-body">
                                                     <div class="row mt-1">
                                                         <div class="col-md-12">
@@ -252,11 +234,7 @@ if (isset($_POST['btnLoad'])) {
                                                                 <label>No Faktur </label><br /><?= $dataFaktur; ?>
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-3 col-12 px-25">
-                                                            <div class="mb-1">
-                                                                <label>Dari Gudang</label><br /><?= $dataWH; ?>
-                                                            </div>
-                                                        </div>
+
 
                                                         <div class="col-md-3 col-12 ps-25">
                                                             <div class="mb-1">

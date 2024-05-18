@@ -36,7 +36,6 @@
             </a>
             <div class="collapse" id="collapseMasterData" aria-labelledby="headingMasterData" data-parent="#sidenavAccordion">
               <nav class="sb-sidenav-menu-nested nav">
-                <a class="nav-link" href="company.php">Perusahaan</a>
                 <a class="nav-link" href="product.php">Barang</a>
                 <a class="nav-link" href="user.php">User</a>
                 <a class="nav-link" href="customer.php">Customer</a>
@@ -53,6 +52,9 @@
                 <a class="nav-link" href="pr.php">Permintaan Pembelian (PR)</a>
                 <a class="nav-link" href="po.php">Pesanan Pembelian (PO)</a>
                 <a class="nav-link" href="surat_masuk_barang.php">Surat Masuk Barang</a>
+                <a class="nav-link" href="penerimaan_invoice.php">Penerimaan Invoice</a>
+                <a class="nav-link" href="pembayaran_pembelian.php">Pembayaran Pembelian</a>
+
               </nav>
             </div>
 

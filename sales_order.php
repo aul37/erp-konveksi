@@ -33,10 +33,10 @@ require 'header.php';
                     </div>
 
                     <div class="card mb-4">
-                        <div class="content-header-right text-md-end col-md-2 col-12 d-md-block d-none">
+                        <div class="col-md-6 col-12">
                             <div class="mb-1 breadcrumb-right">
                                 <a class="btn-icon btn btn-primary btn-round btn-sm" href="so_add.php">
-                                    <span class="align-middle">Tambah Data Daftar Sales Order</span>
+                                    <span class="align-middle">Tambah Data Sales Order</span>
                                 </a>
                             </div>
                         </div>
