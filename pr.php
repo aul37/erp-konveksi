@@ -156,8 +156,7 @@ require 'header.php';
                                                         </div>
                                                         <div class="modal-body">
                                                             <form id="deleteForm" method="POST" action="function.php">
-                                                                <p id="pr"></p>
-                                                                <input type="hidden" name="id" id="deleteId" value="">
+                                                                <input type="hidden" name="pr_id" id="deleteId" value="<?php $Code; ?>">
                                                                 <button type="submit" class="btn btn-danger" name="hapuspr">Hapus</button>
                                                             </form>
                                                         </div>

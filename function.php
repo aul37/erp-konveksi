@@ -295,27 +295,44 @@ if (isset($_POST['hapusproduct'])) {
     }
 };
 
-#HAPUS PR
+// #HAPUS PR
+// if (isset($_POST['hapuspr'])) {
+//     $id = $_POST['id'];
+
+//     // Menggunakan prepared statement untuk menghindari SQL Injection
+//     $stmt = $koneksi->prepare("SELECT pr.pr_id FROM pr INNER JOIN pr_detail ON pr.pr_id = pr_detail.pr_id WHERE pr.pr_id = ?");
+//     $stmt->bind_param('i', $id);
+//     $stmt->execute();
+//     $result = $stmt->get_result();
+
+//     if ($result->num_rows > 0) {
+//         // Data ditemukan, maka hapus data dari kedua tabel
+//         mysqli_query($koneksi, "DELETE pr, pr_detail FROM pr INNER JOIN pr_detail ON pr.pr_id=pr_detail.pr_id WHERE pr.pr_id = $id");
+//     } else {
+//         // Data tidak ditemukan, maka hapus data dari tabel pr saja
+//         mysqli_query($koneksi, "DELETE FROM pr WHERE pr_id = $id");
+//     }
+
+//     // Tidak perlu mengembalikan nilai, cukup redirect atau lakukan tindakan sesuai kebutuhan
+//     header('Location: pr.php');
+//     exit();
+// }
+
+//HAPUS PR
 if (isset($_POST['hapuspr'])) {
-    $id = $_POST['id'];
+    $id = $_POST['pr_id'];
 
-    // Menggunakan prepared statement untuk menghindari SQL Injection
-    $stmt = $koneksi->prepare("SELECT pr.pr_id FROM pr INNER JOIN pr_detail ON pr.pr_id = pr_detail.pr_id WHERE pr.pr_id = ?");
-    $stmt->bind_param('i', $id);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $hapus = mysqli_query($koneksi, "DELETE FROM pr WHERE pr_id='$id'");
+    $hapus1 = mysqli_query($koneksi, "DELETE FROM pr_detail WHERE pr_id='$id'");
 
-    if ($result->num_rows > 0) {
-        // Data ditemukan, maka hapus data dari kedua tabel
-        mysqli_query($koneksi, "DELETE pr, pr_detail FROM pr INNER JOIN pr_detail ON pr.pr_id=pr_detail.pr_id WHERE pr.pr_id = $id");
+    if ($hapus && $hapus1) {
+        header('Location: pr.php');
+        exit();
     } else {
-        // Data tidak ditemukan, maka hapus data dari tabel pr saja
-        mysqli_query($koneksi, "DELETE FROM pr WHERE pr_id = $id");
+        echo 'Gagal menghapus data.';
+        header('Location: pr.php');
+        exit();
     }
-
-    // Tidak perlu mengembalikan nilai, cukup redirect atau lakukan tindakan sesuai kebutuhan
-    header('Location: pr.php');
-    exit();
 }
 
 
@@ -346,14 +363,16 @@ if (isset($_POST['updatepembelian'])) {
 // // UPDATE PR
 if (isset($_POST['updatepr'])) {
     $id = $_POST['pr_id'];
-    $pr_id  = $_POST['pr_id'];
-    $tanggal = $_POST['tanggal'];
-    $produk = $_POST['produk'];
-    $qty = $_POST['qty'];
-    $pemohon = $_POST['pemohon'];
-    $catatan = $_POST['catatan'];
+    // $pr_id  = $_POST['pr_id'];
+    // $tanggal = $_POST['tanggal'];
+    // $produk = $_POST['produk'];
+    // $qty = $_POST['qty'];
+    // $pemohon = $_POST['pemohon'];
+    // $catatan = $_POST['catatan'];
+    $pr_for = $_POST['txtFor'];
 
-    $updatequery = mysqli_query($koneksi, "UPDATE pr SET tanggal='$tanggal', produk='$produk', qty='$qty', pemohon='$pemohon', catatan='$catatan' WHERE pr_id='$id'");
+    // $updatequery = mysqli_query($koneksi, "UPDATE pr SET tanggal='$tanggal', produk='$produk', qty='$qty', pemohon='$pemohon', catatan='$catatan' WHERE pr_id='$id'");
+    $updatequery = mysqli_query($koneksi, "UPDATE pr SET pr_for = '$pr_for' WHERE pr_id='$id'");
 
     if ($updatequery) {
         header('Location: pr.php');
@@ -364,24 +383,6 @@ if (isset($_POST['updatepr'])) {
         exit();
     }
 }
-//HAPUS PR
-if (isset($_POST['hapuspr'])) {
-    $id = $_POST['pr_id'];
-
-    $hapus = mysqli_query($koneksi, "DELETE FROM pr WHERE pr_id='$id'");
-    $hapus1 = mysqli_query($koneksi, "DELETE FROM pr_detail WHERE pr_id='$id'");
-
-    if ($hapus && $hapus1) {
-        header('Location: pr.php');
-        exit();
-    } else {
-        echo 'Gagal menghapus data.';
-        header('Location: pr.php');
-        exit();
-    }
-}
-
-
 
 // Menambah PO
 if (isset($_POST['addpo'])) {
