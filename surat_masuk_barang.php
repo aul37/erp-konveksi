@@ -59,15 +59,17 @@ require 'header.php';
                                         <?php
                                         $mySql = "SELECT
                                         s.stock_order_id,
-                                        s.stock_date,
-                                        s.stock_order_reference,
-                                        po.supplier_name,
-                                        po.product_name,
-                                        s.stock_note 
+                                        s.stock_order_date,
+                                        s.stock_order_reference_id,
+                                        sp.supplier_name,
+                                        GROUP_CONCAT(p.product_name) as product_name,
+                                        s.stock_order_note
                                     FROM
                                         stock_order_detail so
-                                        JOIN stock s ON so.stock_order_id = s.stock_order_id
-                                        JOIN view_po po ON s.stock_order_reference = po.purchase_id 
+                                        JOIN stock_order s ON so.stock_order_id = s.stock_order_id
+                                        JOIN po po ON s.stock_order_reference_id = po.purchase_id 
+                                        JOIN supplier sp ON sp.supplier_id = po.supplier_id
+                                        JOIN product p ON p.product_id = so.product_id
                                     GROUP BY
                                         so.stock_order_id";
 
@@ -84,12 +86,12 @@ require 'header.php';
                                             <tr>
                                                 <td><?= $nomor; ?></td>
                                                 <td><a href="surat_masuk_barang_view.php?code=<?= $Code; ?>" target="_new" alt="View Data"><u><?= $myData['stock_order_id']; ?></u></a></td>
-                                                <td><?= $myData['stock_date']; ?></td>
-                                                <td><?= $myData['stock_order_reference']; ?></td>
+                                                <td><?= $myData['stock_order_date']; ?></td>
+                                                <td><?= $myData['stock_order_reference_id']; ?></td>
                                                 <td><?= $myData['supplier_name']; ?></td>
                                                 <td><?= $myData['product_name']; ?></td>
-                                                <td><?= $myData['stock_note']; ?></td>
-                                                <td><button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editModal<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['stock_order_id']; ?>">
+                                                <td><?= $myData['stock_order_note']; ?></td>
+                                                <td><button type="button" class="btn btn-warning" onclick="window.location.href='surat_masuk_barang_edit.php?code=<?= $Code; ?>&id=<?= $myData['stock_order_id']; ?>'">
                                                         Edit
                                                     </button> |
                                                     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['stock_order_id']; ?>">
@@ -97,6 +99,23 @@ require 'header.php';
                                                     </button>
                                                 </td>
                                             </tr>
+                                            <div class="modal fade delete-modal" id="delete<?= $Code; ?>">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h4 class="modal-title">Hapus SMB</h4>
+                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>Anda yakin ingin menghapus SMB <strong><?= $myData['stock_order_id']; ?></strong>?</p>
+                                                            <form id="deleteForm" method="POST" action="function.php">
+                                                                <input type="hidden" name="stock_order_id" value="<?= $Code; ?>">
+                                                                <button type="submit" class="btn btn-danger" name="hapussmb">Hapus</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         <?php } ?>
                                     </tbody>
                                 </table>
@@ -125,95 +144,6 @@ require 'header.php';
     <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
     <script src="js/scripts.js"></script>
 
-    <?php
-    $mySql = "SELECT *
-       FROM stock_order
-       INNER JOIN stock_order_detail ON stock_order.stock_order_id = stock_order_detail.stock_order_id
-       INNER JOIN stock ON stock_order_detail.stock_order_id = stock.stock_order_id
-       WHERE 1=1";
-    $mySql .= " ORDER BY stock_order.stock_order_id ASC";
-    $myQry = mysqli_query($koneksi, $mySql) or die("ANUGRAH ERP ERROR :  " . mysqli_error($koneksi));
-    $nomor = 0;
-    while ($myData = mysqli_fetch_array($myQry)) {
-        $nomor++;
-        $Code = $myData['stock_order_id'];
-        $prdate = $myData['pr_date'];
-        $prnote = $myData['pr_note'];
-        $prfor = $myData['pr_for'];
-        $product = $myData['product_id'];
-        $updatedate = $myData['updated_date'];
-        $status = $myData['pr_status'];
-    ?>
-
-        <!-- Modal for Edit -->
-        <div class="modal fade" id="editModal<?= $Code; ?>">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Edit Prt</h4>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    </div>
-                    <form method="post" action="function.php">
-                        <div class="modal-body">
-                            <input type="hidden" name="pr_id" value="<?= $Code; ?>">
-                            <input type="date" class="form-control" placeholder="Tanggal" value="<?= $prdate; ?>" readonly>
-                            <br>
-                            <div class="col-md-12 col-12 pe-25">
-                                <div class="mb-1">
-                                    <select name="txtFor" id="txtFor" class="select2 form-control">
-                                        <option value=''>Pilih Kategori Pembelian..</option>
-                                        <?php
-                                        $categorySql = "SELECT DISTINCT product_category FROM product";
-                                        $categoryQry = mysqli_query($koneksi, $categorySql) or die("Anugrah ERP ERROR : " . mysqli_error($koneksi));
-                                        while ($categoryRow = mysqli_fetch_array($categoryQry)) {
-                                            $selected = ($categoryRow['product_category'] == $prfor) ? "selected" : "";
-                                            echo "<option value='$categoryRow[product_category]' $selected>$categoryRow[product_category]</option>";
-                                        }
-                                        ?>
-                                    </select>
-                                </div>
-                            </div>
-                            <br>
-                            <div class="col-md-12 col-12 ps-25">
-                                <div class="mb-1">
-                                    <select name="txtOrder" id="txtOrderDetail" class="select2 form-control" onchange="updatePrice()">
-                                        <option value=''>Pilih Produk..</option>
-                                        <?php
-                                        $productSql = "SELECT * FROM product";
-                                        $productQry = mysqli_query($koneksi, $productSql) or die("Anugrah ERP ERROR : " . mysqli_error($koneksi));
-                                        while ($productRow = mysqli_fetch_array($productQry)) {
-                                            $selected = ($productRow['product_id'] == $product) ? "selected" : "";
-                                            echo "<option value='$productRow[product_id]' data-price='$productRow[product_price]' $selected>$productRow[product_name]</option>";
-                                        }
-                                        ?>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-12 col-12 ps-25">
-                                <div class="mb-1">
-                                    <select name="txtOrder" id="txtOrderDetail" class="select2 form-control" onchange="updatePrice()">
-                                        <option value=''>Pilih Produk..</option>
-                                        <?php
-                                        $productSql = "SELECT * FROM product";
-                                        $productQry = mysqli_query($koneksi, $productSql) or die("Anugrah ERP ERROR : " . mysqli_error($koneksi));
-                                        while ($productRow = mysqli_fetch_array($productQry)) {
-                                            $selected = ($productRow['product_id'] == $product) ? "selected" : "";
-                                            echo "<option value='$productRow[product_id]' data-price='$productRow[product_price]' $selected>$productRow[product_name]</option>";
-                                        }
-                                        ?>
-                                    </select>
-                                </div>
-                            </div>
-                            <br>
-                            <button type="submit" class="btn btn-success" name="updateproduct">Simpan</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    <?php
-    }
-    ?>
 
     <script>
         $(document).ready(function() {

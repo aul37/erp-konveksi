@@ -301,6 +301,11 @@ if (isset($_POST['btnLoad'])) {
                                                     </div>
                                                     <div class="col-md-3 col-12 ps-25">
                                                         <div class="mb-1">
+                                                            <label>TOP </label><br /><?= $dataTermOfPayment; ?>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-3 col-12 ps-25">
+                                                        <div class="mb-1">
                                                             <label>Catatan</label><br /><?= $dataPurchaseNote; ?>
                                                         </div>
                                                     </div>

@@ -10,12 +10,13 @@ if (isset($_POST['btnSubmit'])) {
     // Pastikan semua input memiliki nilai sebelum digunakan
     $tgl = date('Y-m-d H:i:s');
     $dataCode = $_POST['txtSKBID'];
-    $dataReference = $_POST['txtRequestID']; // Ganti txtReference dengan txtRequestID
+    $dataReference = 'SALES ORDER';
     $dataDate = $_POST['txtSKBDate']; // Ganti txtDate dengan txtSKBDate
     $dataNote = $_POST['txtSKBNote'];
-    $dataStatus = 'PO Created';
+    $dataStatus = 'OUT';
     $dataDetail = $_POST['updCode'];
     $dataFaktur = $_POST['txtFaktur'];
+
 
 
     // Tambahkan pemeriksaan nilai-nilai form
@@ -28,9 +29,7 @@ if (isset($_POST['btnSubmit'])) {
     if (empty($dataDate)) {
         $pesanError[] = "Tanggal SKB tidak boleh kosong.";
     }
-    if (empty($dataNote)) {
-        $pesanError[] = "Catatan tidak boleh kosong.";
-    }
+
 
     if (count($pesanError) == 0) {
         try {
@@ -39,7 +38,7 @@ if (isset($_POST['btnSubmit'])) {
 
             // Insert data into stock_order table
             $mySql = "INSERT INTO stock_order (stock_order_id, stock_order_reference, stock_order_reference_id, stock_order_date, stock_order_note, updated_date)
-            VALUES ('$dataCode','$dataReference','$dataReferenceID','$dataDate', '$dataNote' ,now())";
+            VALUES ('$dataCode','$dataReference','$dataFaktur','$dataDate', '$dataNote' ,now())";
             $myQry = mysqli_query($koneksi, $mySql);
             if (!$myQry) {
                 throw new Exception("Form gagal diinput. code:Surat Keluar Barang1. " . mysqli_error($koneksi));
@@ -52,18 +51,21 @@ if (isset($_POST['btnSubmit'])) {
                 $dataQty = $_POST['updQty'][$key];
                 $dataPrice = $_POST['updPrice'][$key];
 
+                $dataIncrementQ = mysqli_fetch_array(mysqli_query($koneksi, "SELECT AUTO_INCREMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'db_anugrah' AND TABLE_NAME = 'stock_order_detail'"));
+                $dataIncrement = $dataIncrementQ[0];
+
                 if ($dataQty > 0) {
                     $mySql = "INSERT INTO stock_order_detail(stock_order_id, product_id, qty, ref_detail_id, updated_date)
-                    VALUES ('$dataCode','$productid','$dataQty', '$dataFaktur', now())";
+                    VALUES ('$dataCode','$productid','$dataQty', '$orderID', now())";
                     $myQry = mysqli_query($koneksi, $mySql);
                     if (!$myQry) {
                         throw new Exception("Form gagal diinput. code:Surat Keluar Barang2. " . mysqli_error($koneksi));
                     }
 
                     $mySql3 = "INSERT INTO stock 
-                    (stock_order_id, stock_status, stock_order_reference, stock_date, product_id, qty, stock_note, updated_date)
+                    (stock_order_id, stock_status, stock_date, product_id, qty, stock_note, updated_date, stock_order_detail_id)
                     VALUES 
-                    ('$dataCode','$dataStatus', '$dataReference','$dataDate','$productid','$dataQty','$dataNote', now())";
+                    ('$dataCode','$dataStatus','$dataDate','$productid','-$dataQty','$dataNote', now(), '$dataIncrement')";
                     $myQry3 = mysqli_query($koneksi, $mySql3);
                     if (!$myQry3) {
                         throw new Exception("Form gagal diinput. code:Surat Keluar Barang3. " . mysqli_error($koneksi));
@@ -79,12 +81,13 @@ if (isset($_POST['btnSubmit'])) {
         } catch (Exception $e) {
             mysqli_rollback($koneksi);
             echo 'Error: ' . $e->getMessage();
+            die;
         }
     }
+    die;
 }
 
 
-# MASUKKAN DATA KE VARIABEL
 # MASUKKAN DATA KE VARIABEL
 $tgl = date('Y-m-d H:i:s');
 $dataCode = isset($_POST['txtSKBID']) ? $_POST['txtSKBID'] : '';
@@ -128,31 +131,13 @@ if (isset($_POST['btnLoad'])) {
                                 <div class="col-12">
                                     <div class="card-body">
                                         <div class="row mt-1">
-                                            <?php if ($dataRequestID == '') { ?>
+                                            <?php if ($dataFaktur == '') { ?>
 
 
                                                 <div class="col-md-3 col-12 px-25">
                                                     <div class="mb-1">
                                                         <label class="form-label">No SKB *</label>
                                                         <input type="text" name="txtSKBID" class="form-control" placeholder="No SKB" required>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3 col-12 pe-25">
-                                                    <div class="mb-1">
-                                                        <label class="form-label">Referensi SO *</label>
-                                                        <select name="txtRequestID" id="txtRequestID" class="select2 form-control">
-                                                            <option value=''>Pilih Referensi SO..</option>
-                                                            <?php
-                                                            $mySql = "SELECT s.sales_id, c.customer_name 
-                                                                    FROM sales s 
-                                                                    JOIN customer c ON s.customer_id = c.customer_id 
-                                                                    GROUP BY s.sales_id";
-                                                            $dataQry = mysqli_query($koneksi, $mySql) or die("Anugrah ERP ERROR : " . mysqli_error($koneksi));
-                                                            while ($dataRow = mysqli_fetch_array($dataQry)) {
-                                                                echo "<option value='$dataRow[sales_id]'>$dataRow[sales_id] - $dataRow[customer_name]</option>";
-                                                            }
-                                                            ?>
-                                                        </select>
                                                     </div>
                                                 </div>
 
@@ -194,7 +179,6 @@ if (isset($_POST['btnLoad'])) {
                                                 </div>
                                             <?php } else { ?>
                                                 <input type="hidden" name="txtSKBDate" value="<?= $dataSKBDate  ?>">
-                                                <input type="hidden" name="txtRequestID" value="<?= $dataRequestID  ?>">
                                                 <input type="hidden" name="txtFaktur" value="<?= $dataFaktur  ?>">
                                                 <input type="hidden" name="txtSKBNote" value="<?= $dataSKBNote  ?>">
                                                 <div class="card-body">
@@ -223,12 +207,6 @@ if (isset($_POST['btnLoad'])) {
                                                             </div>
                                                         </div>
 
-
-                                                        <div class="col-md-3 col-12 px-25">
-                                                            <div class="mb-1">
-                                                                <label>No Referensi SO </label><br /><?= $dataRequestID; ?>
-                                                            </div>
-                                                        </div>
                                                         <div class="col-md-3 col-12 px-25">
                                                             <div class="mb-1">
                                                                 <label>No Faktur </label><br /><?= $dataFaktur; ?>
@@ -260,30 +238,7 @@ if (isset($_POST['btnLoad'])) {
                                                         </thead>
                                                         <tbody>
                                                             <?php
-                                                            $mySql  =   "SELECT
-                                                                        sales.sales_id,
-                                                                        sales_detail.sales_detail_id,
-                                                                        sales.sales_date,
-                                                                        sales.customer_id,
-                                                                        sales.sales_po,
-                                                                        sales.sales_top,
-                                                                        sales.sales_request_date,
-                                                                        sales.updated_date,
-                                                                        sales_detail.sales_detail_id,
-                                                                        sales_detail.product_id,
-                                                                        product.product_name,
-                                                                        sales_detail.qty,
-                                                                        sales_detail.price_list,
-                                                                        sales_detail.updated_date AS detail_updated_date,
-                                                                        ( sales_detail.qty * sales_detail.price_list ) AS total 
-                                                                    FROM
-                                                                        sales
-                                                                        INNER JOIN sales_detail ON sales.sales_id = sales_detail.sales_id
-                                                                        INNER JOIN product ON sales_detail.product_id = product.product_id
-                                                                    WHERE
-                                                                        sales.sales_id = '$dataRequestID' 
-                                                                    ORDER BY
-                                                                        sales_detail_id";
+                                                            $mySql  =   "SELECT * FROM view_billing_detail WHERE billing_id = '$dataFaktur'";
 
                                                             $myQry     = mysqli_query($koneksi, $mySql)  or die("ANUGRAH ERP ERROR :  " . mysqli_error($koneksi));
                                                             $nomor  = 0;
@@ -293,7 +248,7 @@ if (isset($_POST['btnLoad'])) {
                                                                 $nomor++;
                                                                 $Purchase = $myData['sales_detail_id'];
                                                                 $Order = $myData['sales_id'];
-                                                                $sumTotal = $sumTotal + $myData['total'];
+                                                                $sumTotal = $sumTotal + $myData['total_akhir'];
                                                             ?>
                                                                 <tr>
                                                                     <input type="text" value="<?= $Purchase; ?>" name="updId[<?= $array; ?>]" hidden>
@@ -303,9 +258,9 @@ if (isset($_POST['btnLoad'])) {
                                                                     <td><?= $myData['product_id']; ?></td>
                                                                     <td><?= $myData['product_name']; ?></td>
                                                                     <td><input class="form-control form-control-sm" id="idQty<?= $array; ?>" onkeyup="sum()" name="updQty[<?= $array; ?>]" step="any" type="number" value="<?= $myData['qty']; ?>" required /></td>
-                                                                    <td><input class="form-control form-control-sm" id="idPrice<?= $array; ?>" onkeyup="sum()" name="updPrice[<?= $array; ?>]" step="any" type="number" value="<?= $myData['price_list']; ?>" required readonly /></td>
+                                                                    <td><input class="form-control form-control-sm" id="idPrice<?= $array; ?>" onkeyup="sum()" name="updPrice[<?= $array; ?>]" step="any" type="number" value="<?= $myData['billing_price']; ?>" required readonly /></td>
                                                                     <td><textarea name="updNote[<?= $array; ?>]" id="" class="form-control form-control-sm" cols="30" rows="1"></textarea></td>
-                                                                    <td align="right" id="idTotal<?= $array; ?>"><?= (number_format($myData['total'])); ?></td>
+                                                                    <td align="right" id="idTotal<?= $array; ?>"><?= (number_format($myData['total_akhir'])); ?></td>
                                                                 </tr>
                                                             <?php
                                                                 $array++;

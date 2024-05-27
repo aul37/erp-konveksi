@@ -1,15 +1,11 @@
 <?php
 require 'function.php';
 require 'cek.php';
-// require 'header.php';
+require 'header.php';
+
 
 $dataRequest = '';
-
-
-// Check if form is submitted to load data
-if (isset($_POST['btnLoad'])) {
-  $dataRequest = $_POST['txtRequest'];
-}
+$dataCode = '';
 
 if (isset($_POST['btnSubmit'])) {
   $pesanError = array();
@@ -19,20 +15,10 @@ if (isset($_POST['btnSubmit'])) {
   $dataFakturDate       = $_POST['txtFakturDate'];
   $dataInvoiceNote      = $_POST['txtNote'];
   $dataFakturSupplier   = $_POST['txtFakturSupplier'];
-  $dataSupplier   = explode('|', $_POST['txtSupplier'])[0];
+  $dataSupplier         = explode('|', $_POST['txtSupplier'])[0];
 
 
 
-  // Add form value checks
-  // if (empty($dataCode)) {
-  //     $pesanError[] = "No SKB tidak boleh kosong.";
-  // }
-  // if (empty($dataReference)) {
-  //     $pesanError[] = "Referensi PO tidak boleh kosong.";
-  // }
-  // if (empty($dataDate)) {
-  //     $pesanError[] = "Tanggal SKB tidak boleh kosong.";
-  // }
 
   if (count($pesanError) == 0) {
     try {
@@ -42,56 +28,65 @@ if (isset($_POST['btnSubmit'])) {
 
       mysqli_autocommit($koneksi, FALSE);
 
-
       // Insert data into payment table
-      $mySql   = "INSERT INTO purchase_invoice (purchase_invoice_id, faktur_supplier, supplier_id, purchase_invoice_date, purchase_invoice_note, updated_date )
-      VALUES ('$dataCode','$dataFakturSupplier','$dataSupplier', '$dataFakturDate',  '$dataInvoiceNote',now())";
+      $mySql = "UPDATE purchase_invoice 
+                SET faktur_supplier = '$dataFakturSupplier', supplier_id = '$dataSupplier', purchase_invoice_date = '$dataFakturDate', purchase_invoice_note = '$dataInvoiceNote', updated_date = NOW() 
+                WHERE purchase_invoice_id = '$dataCode'";
+
       $myQry = mysqli_query($koneksi, $mySql);
       if (!$myQry) {
         throw new Exception("Form gagal diinput. code:Penerimaan Penjualan1. " . mysqli_error($koneksi));
       }
 
-      // var_dump($_POST['itemSMB']);
-      // die;
-      foreach ($_POST['itemSMB'] as $key => $value) {
-        $dataPO = $_POST['itemSMB'][$key];
-        $dataProduct = $_POST['itemProduct'][$key];
-        $dataQty = $_POST['itemQty'][$key];
-        $dataSubTotal = $_POST['itemTotal'][$key];
-        // var_dump('itemSMB');
-        // die;
-
-        // $dataIncrementQ = mysqli_fetch_array(mysqli_query($koneksi, "SELECT AUTO_INCREMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'db_anugrah' AND TABLE_NAME = 'stock_order_detail'"));
-        // $dataIncrement = $dataIncrementQ[0];
-
-        if ($dataSubTotal > 0) {
-          $mySql = "INSERT INTO purchase_invoice_detail 
-          (purchase_invoice_id, stock_order_detail_id, product_id, qty, purchase_invoice_value, updated_date)
-          VALUES 
-          ('$dataCode','$dataPO','$dataProduct','$dataQty','$dataSubTotal', now())";
-          $myQry = mysqli_query($koneksi, $mySql);
-          if (!$myQry) {
-            throw new Exception("Form gagal diinput. code:Penerimaan Penjualan2. " . mysqli_error($koneksi));
-          }
-        }
-      }
-
-      // Commit the transaction
-      // var_dump($_POST['itemBilling']);
-      // mysqli_rollback($koneksi);
+      // rollback();
       // die;
       mysqli_commit($koneksi);
       echo "<meta http-equiv='refresh' content='0; url=penerimaan_invoice.php'>";
-      exit;
     } catch (Exception $e) {
-      mysqli_rollback($koneksi);
-      echo 'Error: ' . $e->getMessage();
-      die;
+      rollback();
+      echo $e->getMessage();
     }
+    exit;
   }
-}
+} // Penutup Tombol Submit
 
+$Code = isset($_GET['code']) ? $_GET['code'] : '';
+$mySql = "SELECT
+pi.purchase_invoice_id,
+pi.supplier_id,
+pi.faktur_supplier,
+pi.purchase_invoice_date,
+pid.stock_order_detail_id,
+SUM( pid.purchase_invoice_value ) AS total_value,
+s.supplier_name,
+pi.purchase_invoice_note
+FROM
+purchase_invoice pi
+JOIN purchase_invoice_detail pid ON pid.purchase_invoice_id = pi.purchase_invoice_id
+JOIN supplier s ON s.supplier_id = pi.supplier_id 
+WHERE
+pi.purchase_invoice_id = '$Code' 
+GROUP BY
+pi.purchase_invoice_id,
+pi.supplier_id,
+pi.faktur_supplier,
+pi.purchase_invoice_date,
+s.supplier_name";
+$myQry = mysqli_query($koneksi, $mySql) or die("ANUGRAH ERP ERROR : " . mysqli_error($koneksi));
+$myData = mysqli_fetch_array($myQry);
+
+# MASUKKAN DATA KE VARIABEL
+$dataCode             = $myData['purchase_invoice_id'];
+$dataFakturDate       = $myData['purchase_invoice_date'];
+$dataFakturSupplier   = $myData['faktur_supplier'];
+$dataSupplier         = $myData['supplier_name'];
+$dataSMB              = $myData['stock_order_id'];
+$dataInvoiceNote              = $myData['purchase_invoice_note'];
+
+// var_dump($dataSupplier);
+// die;
 ?>
+
 
 
 
@@ -116,74 +111,56 @@ if (isset($_POST['btnSubmit'])) {
                 <div class="col-12">
                   <div class="card-body">
                     <div class="row mt-1">
-                      <?php if ($dataRequest == '') { ?>
+                      <?php if ($dataRequest != '') { ?>
 
-                        <div class="col-md-3 col-12 pe-25">
-                          <div class="mb-1">
-                            <label class="form-label">Surat Masuk Barang *</label>
-                            <select name="txtRequest" id="txtRequest" class="select2 form-control">
-                              <option value=''>Pilih Surat Masuk Barang..</option>
-                              <?php
-                              $mySql = "SELECT DISTINCT stock_order_id FROM stock_order WHERE stock_order_reference = 'PURCHASE ORDER' ";
-                              $dataQry = mysqli_query($koneksi, $mySql) or die("Anugrah ERP ERROR : " . mysqli_error($koneksi));
-                              while ($dataRow = mysqli_fetch_array($dataQry)) {
-                                echo "<option value='$dataRow[stock_order_id]'>$dataRow[stock_order_id]</option>";
-                              }
-                              ?>
-                            </select>
-                          </div>
-                        </div>
 
-                        <div class="col-md-4 col-12 pe-25">
-                          <div class="mb-1" style="padding-top: 20px;">
-                            <button type="submit" name="btnLoad" class="btn btn-primary">Submit</button>
-                          </div>
-                        </div>
 
                       <?php } else { ?>
-                        <input type="hidden" name="txtFaktur" value="<?= $dataRequest  ?>">
 
                         <div class="card-body">
                           <div class="row mt-1">
                             <div class="col-md-3 col-12 px-25">
                               <div class="mb-1">
                                 <label class="form-label">No Penerimaan Invoice *</label>
-                                <input type="text" name="txtCode" class="form-control" placeholder="Nomor Penerimaan Invoice" required>
+                                <input type="text" name="txtCode" value="<?= $dataCode; ?>" class="form-control" placeholder="No Penerimaan Invoice" required readonly>
                               </div>
                             </div>
                             <div class="col-md-3 col-12 pe-25">
                               <div class="mb-1">
                                 <label>ID Supplier *</label>
                                 <select name="txtSupplier" id="txtSupplier" class="form-control" required>
-                                  <option value="" selected disabled>[ pilih supplier ]</option>
+                                  <option value="" disabled>[ pilih supplier ]</option>
                                   <?php
                                   $mySql = "SELECT * FROM supplier WHERE supplier_status = 'active'";
                                   $dataQry = mysqli_query($koneksi, $mySql) or die("RENTAS ERP ERROR : " . mysqli_error($koneksi));
                                   while ($dataRow = mysqli_fetch_array($dataQry)) {
-                                    echo "<option value='" . $dataRow['supplier_id'] . "|" . $dataRow['supplier_name'] . "'>" . $dataRow['supplier_id'] . " - " . $dataRow['supplier_name'] . "</option>";
+                                    $selected = ($dataRow['supplier_id'] == $dataSupplier) ? 'selected' : '';
+                                    echo "<option value='" . $dataRow['supplier_id'] . "|" . $dataRow['supplier_name'] . "' $selected>" . $dataRow['supplier_id'] . " - " . $dataRow['supplier_name'] . "</option>";
                                   }
                                   ?>
                                 </select>
                               </div>
                             </div>
+
                             <div class="col-md-3 col-12 ps-25">
                               <div class="mb-1">
                                 <label class="form-label">Tanggal Faktur *</label>
-                                <input type="date" name="txtFakturDate" class="form-control" required>
+                                <input type="date" name="txtFakturDate" value="<?= $dataFakturDate; ?>" class="form-control" required>
                               </div>
                             </div>
                             <div class="col-md-3 col-12 px-25">
                               <div class="mb-1">
                                 <label class="form-label">Faktur Supplier *</label>
-                                <input type="text" name="txtFakturSupplier" class="form-control" placeholder="Faktur Supplier" required>
+                                <input type="text" name="txtFakturSupplier" value="<?= $dataFakturSupplier; ?>" class="form-control" placeholder="Faktur Supplier" required>
                               </div>
                             </div>
                             <div class="col-md-12 col-12 px-25">
                               <div class="mb-1">
                                 <label class="form-label">Catatan *</label>
-                                <textarea name="txtNote" class="form-control" placeholder="Catatan" required></textarea>
+                                <textarea name="txtNote" class="form-control" placeholder="Catatan" required><?php echo $dataInvoiceNote; ?></textarea>
                               </div>
                             </div>
+
                             <?php ?>
                           </div>
                           <br>
@@ -193,7 +170,6 @@ if (isset($_POST['btnSubmit'])) {
                               <thead>
                                 <tr>
                                   <th>No</th>
-                                  <th>No. Surat Masuk Barang</th>
                                   <th>Nama Product</th>
                                   <th>Qty</th>
                                   <th>Harga</th>
@@ -205,40 +181,37 @@ if (isset($_POST['btnSubmit'])) {
                                 $nomor  = 0;
                                 $sumTotal =    0;
                                 $mySql  =   "SELECT
-                                so.stock_order_detail_id,
-                                so.stock_order_id,
-                                so.product_id,
-                                so.qty,
-                                po.purchase_price,
-                                p.product_name,
-                                po.total
-                              FROM
-                                stock_order_detail so
-                                JOIN view_po_detail po ON po.purchase_detail_id = so.ref_detail_id 
-                                JOIN product p ON p.product_id = po.product_id
+                                pid.product_id,
+                                	p.product_name,
+                                  pid.qty,
+                                  pid.purchase_invoice_value
+                                FROM
+                                  purchase_invoice pi
+                                  JOIN purchase_invoice_detail pid ON pid.purchase_invoice_id = pi.purchase_invoice_id
+                                  JOIN product p ON p.product_id = pid.product_id
+                                
                               WHERE
-                                so.stock_order_id = '$dataRequest' ";
+                                pi.purchase_invoice_id = '$dataCode' ";
 
                                 $myQry     = mysqli_query($koneksi, $mySql)  or die("ANUGRAH ERP ERROR :  " . mysqli_error($koneksi));
                                 while ($myData = mysqli_fetch_array($myQry)) {
                                   $nomor++;
                                   $sumTotal =
-                                    $sumTotal + $myData['total'];
+                                    $sumTotal + $myData['purchase_invoice_value'];
 
 
                                 ?>
                                   <tr>
-                                    <input type="hidden" name="itemSMB[<?= $nomor; ?>]" value=" <?= $myData['stock_order_detail_id']; ?>">
-                                    <input type="hidden" name="itemProduct[<?= $nomor; ?>]" value="<?= $myData['product_id']; ?>">
+                                    <input type="hidden" name="itemDetail[<?= $nomor; ?>]" value=" <?= $myData['purchase_invoice_detail_id']; ?>">
+                                    <input type="hidden" name="itemProduct[<?= $nomor; ?>]" value=" <?= $myData['product_id']; ?>">
                                     <input type="hidden" name="itemQty[<?= $nomor; ?>]" value=" <?= $myData['qty']; ?>">
-                                    <input type="hidden" name="itemPrice[<?= $nomor; ?>]" value=" <?= $myData['purchase_price']; ?>">
-                                    <input type="hidden" name="itemTotal[<?= $nomor; ?>]" value=" <?= $myData['total']; ?>">
+                                    <input type="hidden" name="itemPrice[<?= $nomor; ?>]" value=" <?= $myData['purchase_invoice_value']; ?>">
+                                    <input type="hidden" name="itemTotal[<?= $nomor; ?>]" value=" <?= $myData['purchase_invoice_value'] * $myData['qty']; ?>">
                                     <td><?= $nomor; ?></td>
-                                    <td><?= $myData['stock_order_id']; ?></td>
                                     <td><?= $myData['product_name']; ?></td>
                                     <td><?= $myData['qty']; ?></td>
-                                    <td><?php echo (number_format($myData['purchase_price'])); ?></td>
-                                    <td><?php echo (number_format($myData['total'])); ?></td>
+                                    <td><?php echo (number_format($myData['purchase_invoice_value'])); ?></td>
+                                    <td><?php echo (number_format($myData['purchase_invoice_value'] * $myData['qty'])); ?></td>
                                   </tr>
                                 <?php
                                 }

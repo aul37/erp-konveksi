@@ -295,30 +295,9 @@ if (isset($_POST['hapusproduct'])) {
     }
 };
 
-// #HAPUS PR
-// if (isset($_POST['hapuspr'])) {
-//     $id = $_POST['id'];
 
-//     // Menggunakan prepared statement untuk menghindari SQL Injection
-//     $stmt = $koneksi->prepare("SELECT pr.pr_id FROM pr INNER JOIN pr_detail ON pr.pr_id = pr_detail.pr_id WHERE pr.pr_id = ?");
-//     $stmt->bind_param('i', $id);
-//     $stmt->execute();
-//     $result = $stmt->get_result();
 
-//     if ($result->num_rows > 0) {
-//         // Data ditemukan, maka hapus data dari kedua tabel
-//         mysqli_query($koneksi, "DELETE pr, pr_detail FROM pr INNER JOIN pr_detail ON pr.pr_id=pr_detail.pr_id WHERE pr.pr_id = $id");
-//     } else {
-//         // Data tidak ditemukan, maka hapus data dari tabel pr saja
-//         mysqli_query($koneksi, "DELETE FROM pr WHERE pr_id = $id");
-//     }
-
-//     // Tidak perlu mengembalikan nilai, cukup redirect atau lakukan tindakan sesuai kebutuhan
-//     header('Location: pr.php');
-//     exit();
-// }
-
-//HAPUS PR
+//HAPUS Permintaan Pembelian
 if (isset($_POST['hapuspr'])) {
     $id = $_POST['pr_id'];
 
@@ -360,15 +339,9 @@ if (isset($_POST['updatepembelian'])) {
     }
 }
 
-// // UPDATE PR
+// // UPDATE Permintaan Pembelian
 if (isset($_POST['updatepr'])) {
     $id = $_POST['pr_id'];
-    // $pr_id  = $_POST['pr_id'];
-    // $tanggal = $_POST['tanggal'];
-    // $produk = $_POST['produk'];
-    // $qty = $_POST['qty'];
-    // $pemohon = $_POST['pemohon'];
-    // $catatan = $_POST['catatan'];
     $pr_for = $_POST['txtFor'];
 
     // $updatequery = mysqli_query($koneksi, "UPDATE pr SET tanggal='$tanggal', produk='$produk', qty='$qty', pemohon='$pemohon', catatan='$catatan' WHERE pr_id='$id'");
@@ -384,7 +357,7 @@ if (isset($_POST['updatepr'])) {
     }
 }
 
-// Menambah PO
+// Menambah Pesanan Pembelian
 if (isset($_POST['addpo'])) {
     $tanggal = $_POST['tanggal'];
     $supplier = $_POST['supplier'];
@@ -403,7 +376,7 @@ if (isset($_POST['addpo'])) {
     }
 }
 
-//UPDATE PO 
+//UPDATE Pesanan Pembelian 
 if (isset($_POST['updatepo'])) {
     $id = $_POST['id'];
     $tanggal = $_POST['tanggal'];
@@ -425,54 +398,147 @@ if (isset($_POST['updatepo'])) {
     }
 }
 
-//HAPUS PO
+//HAPUS Pesanan Pembelian
 if (isset($_POST['hapuspo'])) {
-    $id = $_POST['id'];
+    $id = $_POST['purchase_id'];
 
-    $hapus = mysqli_query($koneksi, "DELETE FROM po WHERE id='$id'");
+    $hapus = mysqli_query($koneksi, "DELETE FROM po WHERE purchase_id='$id'");
+    $hapus1 = mysqli_query($koneksi, "DELETE FROM po_detail WHERE purchase_id='$id'");
 
-    if ($hapusdata) {
-        header('Location: pr.php');
+    if ($hapus && $hapus1) {
+        header('Location: po.php');
         exit();
     } else {
-        echo 'Gagal';
+        echo 'Gagal menghapus data.';
         header('Location: po.php');
+        exit();
     }
-};
+}
 
-//HAPUS SALESMAN
-// if (isset($_POST['hapussalesman'])) {
-//     $id = $_POST['id'];
+//HAPUS Surat Masuk Barang
+if (isset($_POST['hapussmb'])) {
+    $id = $_POST['stock_order_id'];
 
-//     $hapus = mysqli_query($koneksi, "DELETE FROM salesman WHERE salesman_id='$id'");
-
-//     if ($hapus) {
-//         header('Location: salesman.php');
-//         exit();
-//     } else {
-//         echo 'Gagal';
-//         header('Location: salesman.php');
-//     }
-// }
-//UPDATE SALESMAN 
-// if (isset($_POST['updatesalesman'])) {
-//     $id = $_POST['salesman_id'];
-//     $txtSalesman    = ($_POST['salesman_name']);
-//     $txtCommission  = $_POST['commission'];
-//     $txtCommissionDate  = $_POST['commission_date'];
-//     $txtStatus      = $_POST['salesman_status'];
-//     $txtPhone      = $_POST['salesman_phone'];
-//     $txtAddress      = $_POST['salesman_address'];
+    $hapus = mysqli_query($koneksi, "DELETE FROM stock_order WHERE stock_order_id='$id'");
+    $hapus1 = mysqli_query($koneksi, "DELETE FROM stock_order_detail WHERE stock_order_id='$id'");
+    $hapus3 = mysqli_query($koneksi, "DELETE FROM stock WHERE stock_order_id='$id'");
 
 
-//     $updatequery = mysqli_query($koneksi, "UPDATE salesman SET salesman_name='$txtSalesman', salesman_phone='$txtPhone', salesman_address='$txtAddress', commission='$txtCommission', commission_date='$txtCommissionDate', salesman_status='$txtStatus' WHERE salesman_id='$id'");
+    if ($hapus && $hapus1) {
+        header('Location: surat_masuk_barang.php');
+        exit();
+    } else {
+        echo 'Gagal menghapus data.';
+        header('Location: surat_masuk_barang.php');
+        exit();
+    }
+}
 
-//     if ($updatequery) {
-//         header('Location: salesman.php');
-//         exit();
-//     } else {
-//         echo 'Gagal mengupdate data pr';
-//         header('Location: salesman.php');
-//         exit();
-//     }
-// }
+//HAPUS Surat Keluar Barang
+if (isset($_POST['hapusskb'])) {
+    $id = $_POST['stock_order_id'];
+
+    $hapus = mysqli_query($koneksi, "DELETE FROM stock_order WHERE stock_order_id='$id'");
+    $hapus1 = mysqli_query($koneksi, "DELETE FROM stock_order_detail WHERE stock_order_id='$id'");
+    $hapus3 = mysqli_query($koneksi, "DELETE FROM stock WHERE stock_order_id='$id'");
+
+
+    if ($hapus && $hapus1) {
+        header('Location: surat_keluar_barang.php');
+        exit();
+    } else {
+        echo 'Gagal menghapus data.';
+        header('Location: surat_keluar_barang.php');
+        exit();
+    }
+}
+
+//HAPUS Sales Order
+if (isset($_POST['hapusso'])) {
+    $id = $_POST['sales_id'];
+
+    $hapus = mysqli_query($koneksi, "DELETE FROM sales WHERE sales_id='$id'");
+    $hapus1 = mysqli_query($koneksi, "DELETE FROM sales_detail WHERE sales_id='$id'");
+
+
+    if ($hapus && $hapus1) {
+        header('Location: sales_order.php');
+        exit();
+    } else {
+        echo 'Gagal menghapus data.';
+        header('Location: sales_order.php');
+        exit();
+    }
+}
+
+//HAPUS Faktur Penjualan
+if (isset($_POST['hapusfj'])) {
+    $id = $_POST['billing_id'];
+
+    $hapus = mysqli_query($koneksi, "DELETE FROM billing WHERE billing_id='$id'");
+    $hapus1 = mysqli_query($koneksi, "DELETE FROM billing_detail WHERE billing_id='$id'");
+
+
+    if ($hapus && $hapus1) {
+        header('Location: faktur_penjualan.php');
+        exit();
+    } else {
+        echo 'Gagal menghapus data.';
+        header('Location: faktur_penjualan.php');
+        exit();
+    }
+}
+
+//HAPUS Penerimaan Invoice
+if (isset($_POST['hapusPI'])) {
+    $id = $_POST['purchase_invoice_id'];
+
+    $hapus = mysqli_query($koneksi, "DELETE FROM purchase_invoice WHERE purchase_invoice_id='$id'");
+    $hapus1 = mysqli_query($koneksi, "DELETE FROM purchase_invoice_detail WHERE purchase_invoice_id='$id'");
+
+
+    if ($hapus && $hapus1) {
+        header('Location: penerimaan_invoice.php');
+        exit();
+    } else {
+        echo 'Gagal menghapus data.';
+        header('Location: penerimaan_invoice.php');
+        exit();
+    }
+}
+
+//HAPUS Pembayaran Pembelian
+if (isset($_POST['hapusPP'])) {
+    $id = $_POST['payment_id'];
+
+    $hapus = mysqli_query($koneksi, "DELETE FROM purchase_payment WHERE payment_id='$id'");
+    $hapus1 = mysqli_query($koneksi, "DELETE FROM purchase_payment_detail WHERE payment_id='$id'");
+
+
+    if ($hapus && $hapus1) {
+        header('Location: pembayaran_pembelian.php');
+        exit();
+    } else {
+        echo 'Gagal menghapus data.';
+        header('Location: pembayaran_pembelian.php');
+        exit();
+    }
+}
+
+//HAPUS Penerimaan Penjualan
+if (isset($_POST['hapusPJ'])) {
+    $id = $_POST['payment_id'];
+
+    $hapus = mysqli_query($koneksi, "DELETE FROM payment WHERE payment_id='$id'");
+    $hapus1 = mysqli_query($koneksi, "DELETE FROM payment_detail WHERE payment_id='$id'");
+
+
+    if ($hapus && $hapus1) {
+        header('Location: pembayaran_pembelian.php');
+        exit();
+    } else {
+        echo 'Gagal menghapus data.';
+        header('Location: pembayaran_pembelian.php');
+        exit();
+    }
+}

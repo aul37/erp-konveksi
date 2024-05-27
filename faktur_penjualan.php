@@ -96,14 +96,31 @@ require 'header.php';
                                                 <td><?= $myData['sales_id']; ?></td>
                                                 <td><?= number_format($myData['total']); ?></td>
                                                 <td><?= $myData['billing_note']; ?></td>
-                                                <td><button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editModal<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['sales_id']; ?>">
+                                                <td><button type="button" class="btn btn-warning" onclick="window.location.href='faktur_penjualan_edit.php?code=<?= $Code; ?>&id=<?= $myData['billing_id']; ?>'">
                                                         Edit
                                                     </button> |
-                                                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['sales_id']; ?>">
+                                                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['billing_id']; ?>">
                                                         Hapus
                                                     </button>
                                                 </td>
                                             </tr>
+                                            <div class="modal fade delete-modal" id="delete<?= $Code; ?>">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h4 class="modal-title">Hapus FJ</h4>
+                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>Anda yakin ingin menghapus FJ <strong><?= $myData['billing_id']; ?></strong>?</p>
+                                                            <form id="deleteForm" method="POST" action="function.php">
+                                                                <input type="hidden" name="billing_id" value="<?= $Code; ?>">
+                                                                <button type="submit" class="btn btn-danger" name="hapusfj">Hapus</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         <?php } ?>
                                     </tbody>
                                 </table>

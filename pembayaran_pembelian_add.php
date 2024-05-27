@@ -2,445 +2,349 @@
 require 'function.php';
 require 'cek.php';
 require 'header.php';
-?>
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="">
-  <meta name="author" content="">
-  <title>Pembelian - Pembayaran Pembelian</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
-  <link href="css/styles.css" rel="stylesheet">
-  <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
-</head>
+// Initialize $dataFaktur
+$dataFaktur = '';
+
+
+// Check if form is submitted to load data
+if (isset($_POST['btnLoad'])) {
+    $dataFaktur = $_POST['txtFaktur'];
+}
+
+if (isset($_POST['btnSubmit'])) {
+    $pesanError = array();
+
+    // Ensure all input values are present before use
+    $dataFaktur = $_POST['txtFaktur'];
+    $dataDesc = '';
+    $dataCode = $_POST['txtPembayaran'];
+    $dataPaymentDate = $_POST['txtPaymentDate'];
+    $dataCekDate = $_POST['txtCekDate'];
+    $dataPaymentReference = $_POST['txtPaymentReference'];
+    $dataPaymentNote = isset($_POST['txtPaymentNote']) ? $_POST['txtPaymentNote'] : '';
+    $dataPaymentBankSender = $_POST['txtPaymentBankSender'];
+    $dataPaymentTotal = isset($_POST['txtPaymentTotal']) ? $_POST['txtPaymentTotal'] : 0; // Add this line
+    $dataCurrency = isset($_POST['txtCurrency']) ? $_POST['txtCurrency'] : ''; // Add this line
+    $dataCurrencyValue = isset($_POST['txtCurrencyValue']) ? $_POST['txtCurrencyValue'] : 1; // Add this line
+    $dataPaymentType = isset($_POST['txtPaymentType']) ? $_POST['txtPaymentType'] : ''; // Add this line
+    $dataPaymentBank = isset($_POST['txtPaymentBank']) ? $_POST['txtPaymentBank'] : ''; // Add this line
+    $tgl = $dataPaymentDate;
+    $dataCheckRetur = isset($_POST['txtCheckRetur']) ? $_POST['txtCheckRetur'] : 'off';
+    $dataStatus = 1;
+
+
+
+    // Add form value checks
+    // if (empty($dataCode)) {
+    //     $pesanError[] = "No SKB tidak boleh kosong.";
+    // }
+    // if (empty($dataReference)) {
+    //     $pesanError[] = "Referensi PO tidak boleh kosong.";
+    // }
+    // if (empty($dataDate)) {
+    //     $pesanError[] = "Tanggal SKB tidak boleh kosong.";
+    // }
+
+    if (count($pesanError) == 0) {
+        try {
+            if (!isset($koneksi)) {
+                throw new Exception("Koneksi database tidak tersedia.");
+            }
+
+            mysqli_autocommit($koneksi, FALSE);
+
+
+            // Insert data into payment table
+            $mySql = "INSERT INTO  purchase_payment 
+            (payment_id, payment_date, payment_cheque, payment_total, payment_status, currency_value, payment_bank_sender,
+            payment_type, payment_bank, payment_ref, payment_note, updated_date)
+            VALUES 
+            ('$dataCode', '$dataPaymentDate', '$dataCekDate', '$dataPaymentTotal', '$dataStatus', '$dataCurrencyValue', '$dataPaymentBankSender',
+            '$dataPaymentType', '$dataPaymentBank', '$dataPaymentReference', '$dataPaymentNote', now())";
+            $myQry = mysqli_query($koneksi, $mySql);
+            if (!$myQry) {
+                throw new Exception("Form gagal diinput. code:Pembayaran Pembelian1. " . mysqli_error($koneksi));
+            }
+
+            foreach ($_POST['itemBilling'] as $key => $value) {
+                $orderID = $_POST['itemBilling'][$key];
+                $dataJumlah = $_POST['itemValue'][$key];
+
+                // $dataIncrementQ = mysqli_fetch_array(mysqli_query($koneksi, "SELECT AUTO_INCREMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'db_anugrah' AND TABLE_NAME = 'stock_order_detail'"));
+                // $dataIncrement = $dataIncrementQ[0];
+
+                if ($dataJumlah > 0) {
+                    $mySql = "INSERT INTO purchase_payment_detail 
+                    (payment_id, purchase_invoice_id, billing_pembayaran, billing_desc, created_date)
+                    VALUES ('$dataCode','$orderID','$dataJumlah','', now())";
+                    $myQry = mysqli_query($koneksi, $mySql);
+                    if (!$myQry) {
+                        throw new Exception("Form gagal diinput. code:Pembayaran Pembelian2. " . mysqli_error($koneksi));
+                    }
+                }
+            }
+
+            // Commit the transaction
+            // var_dump($_POST['itemBilling']);
+            // mysqli_rollback($koneksi);
+            // die;
+            mysqli_commit($koneksi);
+            echo "<meta http-equiv='refresh' content='0; url=pembayaran_pembelian.php'>";
+            exit;
+        } catch (Exception $e) {
+            mysqli_rollback($koneksi);
+            echo 'Error: ' . $e->getMessage();
+            die;
+        }
+    }
+}
+
+
+$dataPaymentID          = isset($_POST['txtType']) ? $_POST['txtType'] : '';
+$dataBillingID          = isset($_POST['txtBillingID']) ? $_POST['txtBillingID'] : '';
+$dataPaymentDate        = isset($_POST['txtPaymentDate']) ? $_POST['txtPaymentDate'] : date('Y-m-d');
+$dataCekDate            = isset($_POST['txtCekDate']) ? $_POST['txtCekDate'] : date('Y-m-d');
+$dataPaymentTotal       = isset($_POST['txtPaymentTotal']) ? $_POST['txtPaymentTotal'] : 0;
+$dataPaymentType        = isset($_POST['txtPaymentType']) ? $_POST['txtPaymentType'] : '';
+$dataPaymentBank        = isset($_POST['txtPaymentBank']) ? $_POST['txtPaymentBank'] : '';
+$dataPaymentReference   = isset($_POST['txtPaymentReference']) ? $_POST['txtPaymentReference'] : '';
+$dataPaymentNote        = isset($_POST['txtPaymentNote']) ? $_POST['txtPaymentNote'] : '';
+$dataCurrency        = isset($_POST['txtCurrency']) ? $_POST['txtCurrency'] : '';
+$dataCurrencyValue        = isset($_POST['txtCurrencyValue']) ? $_POST['txtCurrencyValue'] : 1;
+$dataPaymentBankSender        = isset($_POST['txtPaymentBankSender']) ? $_POST['txtPaymentBankSender'] : '';
+?>
+
+
+
+
+<!-- BEGIN: Content-->
 
 <body class="sb-nav-fixed">
-  <div id="layoutSidenav">
-    <div id="layoutSidenav_content">
-      <main>
-        <div class="container-fluid">
-          <div class="breadcrumb-wrapper">
-            <ol class="breadcrumb">
-              <li class="breadcrumb-item active">Pembelian</li>
-              <li class="breadcrumb-item ">Pembayaran Pembelian</li>
-            </ol>
-          </div>
-        </div>
-
-        <?php
-
-        if (isset($_POST['btnSubmit'])) {
-          $pesanError = array();
-
-          function autofalse()
-          {
-            global $koneksi;
-            mysqli_autocommit($koneksi, FALSE);
-          }
-
-          function commit()
-          {
-            global $koneksi;
-            mysqli_commit($koneksi);
-          }
-
-          function rollback()
-          {
-            global $koneksi;
-            mysqli_rollback($koneksi);
-          }
-
-          // BACA DATA DALAM FORM, masukkan data ke variabel
-          $dataPurchaseDate       = $_POST['txtDate'];
-          $dataCode       = $_POST['txtCode'];
-          $dataRequest    = $_POST['txtRequest'];
-
-          $dataPurchaseNote       = $_POST['txtNote'];
-          $dataPurchaseFor    = $_POST['txtFor'];
-
-          # JIKA ADA PESAN ERROR DARI VALIDASI
-          if (count($pesanError) >= 1) {
-            echo "&nbsp;<div class='alert alert-warning'>";
-            $noPesan = 0;
-            foreach ($pesanError as $indeks => $pesan_tampil) {
-              $noPesan++;
-              echo "&nbsp;&nbsp; $noPesan. $pesan_tampil<br>";
-            }
-            echo "</div>";
-          } else {
-            try {
-              autofalse();
-
-              # SIMPAN DATA KE DATABASE.
-
-              $mySql   = "INSERT INTO pr 
-                            (pr_id, pr_date, pr_for, request, pr_note, pr_status, updated_date)
-                            VALUES ('$dataCode','$dataPurchaseDate','$dataPurchaseFor', '$dataRequest', '$dataPurchaseNote',1,now())";
-              $myQry = mysqli_query($koneksi, $mySql) or die("RENTAS ERP ERROR : " . mysqli_error($koneksi));
-
-              if (!$myQry) {
-                throw new Exception("Form gagal diinput. Code: PP. " . mysqli_error($koneksi));
-              }
-
-              $dataOrder = $_POST['itemOrder'];
-
-              foreach ($dataOrder as $key => $value) {
-                $data = explode("/", $value);
-                $unit0 = isset($data[0]) ? $data[0] : '';
-                $unit2 = isset($data[2]) ? $data[2] : '';
-                $itemQty  = $_POST['itemQty'][$key];
-                $itemNote    = $_POST['itemNote'][$key];
-                $itemPrice      = $_POST['itemPrice'][$key];
-
-                $mySql      = "INSERT INTO pr_detail (pr_id, product_id, pr_qty, pr_unit, pr_price, pr_note, updated_date)
-                                VALUES ('$dataCode','$unit0','$itemQty','$unit2','$itemPrice','$itemNote',now())";
-                $myQry = mysqli_query($koneksi, $mySql);
-
-
-                if (!$myQry) {
-                  throw new Exception("Form gagal diinput. Code: PP. " . mysqli_error($koneksi));
-                }
-              }
-
-              commit();
-              echo "<meta http-equiv='refresh' content='0; url=pembayaran_pembelian.php'>";
-            } catch (Exception $e) {
-              rollback();
-              echo $e->getMessage();
-            }
-            exit;
-          }
-        }
-        ?>
-
-        <form action="<?php $_SERVER['PHP_SELF']; ?>" method="post" name="form1" id="forem" target="_self" enctype="multipart/form-data">
-          <div class="content-body">
-            <div class="row">
-              <div class="col-12">
-                <div class="card">
-                  <div class="card-body">
-                    <div class="row mt-1">
-                      <div class="col-md-3 col-12 px-25">
-                        <div class="mb-1">
-                          <label class="form-label">No Pembayaran Pembelian *</label>
-                          <input type="text" name="txtCode" class="form-control" placeholder="No Pembayaran Pembelian" required>
-                        </div>
-                      </div>
-                      <div class="col-md-3 col-12 ps-25">
-                        <div class="mb-1">
-                          <label class="form-label">Tanggal Pembayaran Pembelian *</label>
-                          <input type="date" name="txtDate" class="form-control" required>
-                        </div>
-                      </div>
-                      <div class="col-md-3 col-12 px-25">
-                        <div class="mb-1">
-                          <label class="form-label">Bank Keluar *</label>
-                          <select name="txtKeluar" id="idToP" required class="select2 form-select" tabindex="-1">
-                            <option value="" selected>Pilih Bank Keluar</option>
-                            <?php
-                            $tops = array("BRI", "BCA", "Mandiri");
-                            foreach ($tops as $top) {
-                              echo "<option value=\"$top\">$top</option>";
-                            }
-                            ?>
-                          </select>
-                        </div>
-                      </div>
-                      <div class="col-md-3 col-12 px-25">
-                        <div class="mb-1">
-                          <label class="form-label">Tipe Pembayaran *</label>
-                          <select name="txtTipe" id="idToP" required class="select2 form-select" tabindex="-1">
-                            <option value="" selected>Pilih Tipe Pembayaran</option>
-                            <?php
-                            $tops = array("Cash", "Bank Transfer");
-                            foreach ($tops as $top) {
-                              echo "<option value=\"$top\">$top</option>";
-                            }
-                            ?>
-                          </select>
-                        </div>
-                      </div>
-                      <div class="col-md-3 col-12 ps-25">
-                        <div class="mb-1">
-                          <label class="form-label">Tanggal Cek *</label>
-                          <input type="date" name="txtDate" class="form-control" required>
-                        </div>
-                      </div>
-                      <div class="col-md-3 col-12 px-25">
-                        <div class="mb-1">
-                          <label class="form-label">No Referensi *</label>
-                          <input type="text" name="txtNote" class="form-control" placeholder="No Referensi" required>
-                        </div>
-                      </div>
-                      <div class="col-md-3 col-12 px-25">
-                        <div class="mb-1">
-                          <label class="form-label">Bank Penerima *</label>
-                          <select name="txtPenerima" id="idToP" required class="select2 form-select" tabindex="-1">
-                            <option value="" selected>Pilih Bank Penerima</option>
-                            <?php
-                            $tops = array("BRI", "BCA", "Mandiri");
-                            foreach ($tops as $top) {
-                              echo "<option value=\"$top\">$top</option>";
-                            }
-                            ?>
-                          </select>
-                        </div>
-                      </div>
-                      <div class="col-md-3 col-12 px-25">
-                        <div class="mb-1">
-                          <label class="form-label">Jumlah Diterima *</label>
-                          <input type="text" name="txtTerima" class="form-control" placeholder="Jumlah Diterima" required>
-                        </div>
-                      </div>
-                      <div class="col-md-3 col-12 px-25">
-                        <div class="mb-1">
-                          <label class="form-label">Jumlah Dibayar *</label>
-                          <input type="text" name="txtBayar" class="form-control" placeholder="Jumlah Dibayar" required>
-                        </div>
-                      </div>
-
-
-                      <div class="row mt-1">
-                        <div class="col-md-6 col-12 px-25">
-                          <div class="mb-1">
-                            <label class="form-label">Customer *</label>
-                            <select name="txtCustomer" id="txtCustomerDetail" class="select2 form-control" onchange="updatePrice()">
-                              <option value=''>Pilih Customer..</option>
-                              <?php
-                              $mySql = "SELECT * FROM customer";
-                              $dataQry = mysqli_query($koneksi, $mySql) or die("Anugrah ERP ERROR : " . mysqli_error($koneksi));
-                              while ($dataRow = mysqli_fetch_array($dataQry)) {
-                                echo "<option value='$dataRow[customer_id]' data-price='$dataRow[customer_price]'>$dataRow[customer_name]</option>";
-                              }
-                              ?>
-                            </select>
-                          </div>
-                        </div>
-
-                        <div class="col-md-1 col-12 ps-25">
-                          <div class="mb-1">
-                            <label class="form-label">Faktur</label>
-                            <input class="form-control komah" placeholder="Faktur" id="txtFaktur" name="txtFaktur" step="any" type="text" maxlength="16" value="0" readonly />
-                          </div>
-                        </div>
-
-                        <div class="col-md-3 col-12 pe-25">
-                          <div class="mb-1">
-                            <label class="form-label">Catatan</label>
-                            <input class="form-control" placeholder="Catatan" id='txtNote' name="note" type="text" />
-                          </div>
-                        </div>
-                        <div class="col-md-1 col-12 ps-25">
-                          <div class="mt-4">
-                            <a class="btn btn-primary" style="width:100%" id="addRow" onclick="addRow()">
-                              <i class="fa-solid fa-plus"></i></a>
-                          </div>
-                        </div>
-                      </div>
+    <div id="layoutSidenav">
+        <div id="layoutSidenav_content">
+            <main>
+                <div class="container-fluid">
+                    <div class="breadcrumb-wrapper">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item active">Pembelian </li>
+                            <li class="breadcrumb-item ">Pembayaran Pembelian</li>
+                        </ol>
                     </div>
-                    <div class="row mt-4">
-                      <table id="formjurnal" class="table table-hover display" width="100%">
-                        <thead>
-                          <tr>
-                            <th>No</th>
-                            <th>No. Faktur</th>
-                            <th>Tgl Faktur</th>
-                            <th>Jumlah</th>
-                            <th>Terhutang</th>
-                            <th>Jumlah Pembayaran</th>
-                            <th>Deskripsi</th>
-                          </tr>
-                        </thead>
-                      </table>
-                    </div>
-                    <div class="col-12 text-center">
-                      <button class="btn btn-icon btn-outline-danger" id="delRow" type="button">
-                        <i data-feather="trash" class="me-25"></i>
-                        <span>Hapus Baris</span>
-                      </button>
-                    </div>
-                    <div class="col-12 d-flex justify-content-between">
-                      <a href="pembayaran_pembelian.php" class="btn btn-outline-warning">Kembali</a>
-                      <button type="submit" name="btnSubmit" class="btn btn-primary">Submit</button>
-                    </div>
-                  </div>
+
+                    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" name="form1" target="_self" enctype="multipart/form-data">
+                        <div class="content-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card-body">
+                                        <div class="row mt-1">
+                                            <?php if ($dataFaktur == '') { ?>
+
+                                                <div class="col-md-3 col-12 pe-25">
+                                                    <div class="mb-1">
+                                                        <label class="form-label">Penerimaan Invoice *</label>
+                                                        <select name="txtFaktur" id="txtFaktur" class="select2 form-control">
+                                                            <option value=''>Pilih Penerimaan Invoice..</option>
+                                                            <?php
+                                                            $mySql = "SELECT DISTINCT purchase_invoice_id FROM purchase_invoice";
+                                                            $dataQry = mysqli_query($koneksi, $mySql) or die("Anugrah ERP ERROR : " . mysqli_error($koneksi));
+                                                            while ($dataRow = mysqli_fetch_array($dataQry)) {
+                                                                echo "<option value='$dataRow[purchase_invoice_id]'>$dataRow[purchase_invoice_id]</option>";
+                                                            }
+                                                            ?>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 col-12 pe-25">
+                                                    <div class="mb-1" style="padding-top: 20px;">
+                                                        <button type="submit" name="btnLoad" class="btn btn-primary">Submit</button>
+                                                    </div>
+                                                </div>
+
+                                            <?php } else { ?>
+                                                <input type="hidden" name="txtFaktur" value="<?= $dataFaktur  ?>">
+
+                                                <div class="card-body">
+                                                    <div class="row mt-1">
+                                                        <div class="col-md-3 col-12 px-25">
+                                                            <div class="mb-1">
+                                                                <label class="form-label"> Pembayaran Pembelian *</label>
+                                                                <input type="text" name="txtPembayaran" class="form-control" placeholder="No Pembayaran Pembelian" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-3 col-12 ps-25">
+                                                            <div class="mb-1">
+                                                                <label class="form-label">Tanggal Pembayaran Pembelian *</label>
+                                                                <input type="date" name="txtPaymentDate" class="form-control" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-3 col-12 ps-25">
+                                                            <div class="mb-1">
+                                                                <label class="form-label">Bank Keluar *</label>
+                                                                <select name="txtPaymentBank" id="txtPaymentBank" required class="select2 form-control">
+                                                                    <option value="" selected>Pilih Bank Keluar</option>
+                                                                    <?php
+                                                                    $tops = array("BRI", "BCA", "Mandiri");
+                                                                    foreach ($tops as $top) {
+                                                                        echo "<option value=\"$top\">$top</option>";
+                                                                    }
+                                                                    ?>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-3 col-12 px-25">
+                                                            <div class="mb-1">
+                                                                <label class="form-label">Tipe Pembayaran *</label>
+                                                                <select name="txtPaymentType" id="txtPaymentType" required class="select2 form-control">
+                                                                    <option value="" selected>Pilih Tipe Pembayaran</option>
+                                                                    <?php
+                                                                    $tops = array("Cash", "Bank Transfer");
+                                                                    foreach ($tops as $top) {
+                                                                        echo "<option value=\"$top\">$top</option>";
+                                                                    }
+                                                                    ?>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-3 col-12 ps-25">
+                                                            <div class="mb-1">
+                                                                <label class="form-label">Tanggal Cek *</label>
+                                                                <input type="date" name="txtCekDate" class="form-control" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-3 col-12 px-25">
+                                                            <div class="mb-1">
+                                                                <label class="form-label">No Referensi *</label>
+                                                                <input type="text" name="txtPaymentReference" class="form-control" placeholder="No Referensi" required>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-3 col-12 pe-25">
+                                                            <div class="mb-1">
+                                                                <label class="form-label">Bank Penerima *</label>
+                                                                <select name="txtPaymentBankSender" id="idToP" required class="select2 form-control">
+                                                                    <option value="" selected>Pilih Bank Penerima</option>
+                                                                    <?php
+                                                                    $tops = array("BRI", "BCA", "Mandiri");
+                                                                    foreach ($tops as $top) {
+                                                                        echo "<option value=\"$top\">$top</option>";
+                                                                    }
+                                                                    ?>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <!-- <div class=" col-md-3 col-12 px-25">
+                                                            <div class="mb-1">
+                                                                <label class="form-label">Jumlah Diterima *</label>
+                                                                <input type="text" name="txtTerima" class="form-control" placeholder="Jumlah Diterima" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-3 col-12 px-25">
+                                                            <div class="mb-1">
+                                                                <label class="form-label">Jumlah Dibayar *</label>
+                                                                <input type="text" name="txtBayar" class="form-control" placeholder="Jumlah Dibayar" required>
+                                                            </div>
+                                                        </div> -->
+                                                        <?php ?>
+                                                    </div>
+                                                    <br>
+                                                    <br>
+                                                    <div class="row mt-1">
+                                                        <table class="table table-striped  table-hover" width="100%">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>No</th>
+                                                                    <th>Penerimaan Invoice</th>
+                                                                    <th>Nama Supplier</th>
+                                                                    <th>Total</th>
+                                                                    <th>Pembayaran</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <?php
+                                                                $mySql  =   "SELECT
+                                                                pi.purchase_invoice_id,
+                                                                s.supplier_name,
+                                                                sum(pd.purchase_invoice_value ) as purchase_invoice_value
+                                                            FROM
+                                                                purchase_invoice pi
+                                                                JOIN purchase_invoice_detail pd ON pd.purchase_invoice_id = pi.purchase_invoice_id 
+                                                                JOIN supplier s ON s.supplier_id = pi.supplier_id
+                                                            WHERE
+                                                                pi.purchase_invoice_id = '$dataFaktur'
+                                                            group by pi.purchase_invoice_id";
+
+                                                                $myQry     = mysqli_query($koneksi, $mySql)  or die("ANUGRAH ERP ERROR :  " . mysqli_error($koneksi));
+                                                                while ($myData = mysqli_fetch_array($myQry)) {
+                                                                    $nomor  = 0;
+                                                                    $nomor++;
+
+                                                                ?>
+                                                                    <tr>
+                                                                        <input type="hidden" name="itemBilling[<?= $nomor; ?>]" value=" <?= $myData['purchase_invoice_id']; ?>">
+                                                                        <td><?= $nomor; ?></td>
+                                                                        <td><?= $myData['purchase_invoice_id']; ?></td>
+                                                                        <td><?= $myData['supplier_name']; ?></td>
+                                                                        <td><?= $myData['purchase_invoice_value']; ?></td>
+                                                                        <td><input class="form-control form-control-sm" name="itemValue[<?= $nomor; ?>]" step="any" type="number" value="<?= $myData['purchase_invoice_value']; ?>" required /></td>
+                                                                    </tr>
+                                                                <?php
+                                                                }
+                                                                ?>
+                                                                <input type="hidden" id="count" value="<?= $nomor; ?>">
+                                                                <?php ?>
+                                                            </tbody>
+                                                            <tfoot>
+                                                            </tfoot>
+                                                        </table>
+                                                    </div>
+
+                                                    <div class="col-12 d-flex justify-content-between">
+                                                        <a href="pembayaran_pembelian.php" class="btn btn-outline-warning">Batalkan</a>
+                                                        <button type="submit" name="btnSubmit" class="btn btn-primary">Submit</button>
+                                                    </div>
+                                                </div>
+                                            <?php } ?>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-              </div>
-            </div>
-        </form>
-      </main>
+            </main>
+        </div>
     </div>
-  </div>
+    <!-- END: Content-->
+    <footer class="py-4 bg-light mt-auto">
+        <div class="container-fluid px-4">
+            <div class="d-flex align-items-center justify-content-between small">
+                <div class="text-muted">Copyright &copy; Anugrah Konveksi</div>
+                <div>
+                    <a href="#">Privacy Policy</a>
+                    &middot;
+                    <a href="#">Terms &amp; Conditions</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script>
+        $(document).ready(function() {
+            $(document).on('focus', '.dateSDI', function() {
+                $(this).datepicker({
+                    autoclose: true,
+                    orientation: "bottom left",
+                    format: 'yyyy-mm-dd'
+                });
+            });
+        });
+    </script>
 
+    <script type="text/javascript">
 
-  <footer class="py-4 bg-light mt-auto">
-
-  </footer>
-  </div>
-  </div>
-
-
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-  <script src="js/scripts.js"></script>
-  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script> -->
-  <!-- <script src="assets/demo/chart-area-demo.js"></script> -->
-  <!-- <script src="assets/demo/chart-bar-demo.js"></script> -->
-  <!-- <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script> -->
-  <!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.slim.min.js"></script> -->
-  <!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script> -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-
-
-
-  <script>
-    $("#txtNote").keydown(function(event) {
-      if (event.which == 13) {
-        event.preventDefault();
-        addRow();
-      }
-    });
-
-    $(window).keydown(function(event) {
-      if (event.which == 13) {
-        event.preventDefault();
-        return false;
-      }
-    });
-
-    var t = $('#formjurnal').DataTable({
-      paging: false,
-      searching: false,
-      select: true
-    });
-
-    var counter = 0;
-    var totalDr = 0;
-    var totalCr = 0;
-    var reduceTotal = 0;
-    var reduce2Total = 0;
-    var totalRow = 0;
-
-    function addRow() {
-      var dataOrder = $('#txtOrderDetail').val();
-      var dataQty = $('#txtQty').val();
-      // var dataDate = $('#txtDate').val();
-      var dataPrice = $('#txtPrice').val();
-      var dataNote = $('#txtNote').val();
-      // var totalPrice = 0;
-      // var totalQty = 0;
-
-      // dataQty = dataQty.replace(/,/g, '');
-      // dataPrice = dataPrice.replace(/,/g, '');
-
-      // console.log(dataDate);
-      // totalPrice = parseFloat(totalPrice) + parseFloat(dataPrice);
-      // totalPrice = parseFloat(totalPrice) + parseFloat(dataPrice);
-
-      // var totalDeffDr = totalDr - totalCr;
-      // var totalDeffCr = totalCr - totalDr;
-
-      // if (dataOrder == '' || dataQty == '') //cek kosong
-      // {
-      //     Swal.fire({
-      //         title: 'Error!',
-      //         text: "Produk, Tanggal Kirim dan Qty harus diisi.",
-      //         icon: 'error',
-      //         customClass: {
-      //             confirmButton: 'btn btn-primary'
-      //         },
-      //         buttonsStyling: false
-      //     });
-      //     return false;
-      // }
-      // var dataOrderArr = dataOrder.split('|');
-      // var dataOrder = dataOrderArr[0];
-      // var dataOrderName = dataOrderArr[1];
-      // var dataOrderNote = dataOrderArr[2];
-      console.log(dataQty);
-
-      var rowNode = t.row.add([
-        counter + 1,
-        dataOrder,
-        (dataQty),
-        // dataDate,
-        dataNote,
-        (dataPrice),
-        (dataQty * dataPrice) +
-        '<input class="form-control kuantiti" id="kuantiti" name="itemOrder[' + counter + ']" value="' + dataOrder + '" type="hidden">' +
-        '<input type="hidden" name="itemQty[' + counter + ']" value="' + dataQty + '">' +
-        // '<input type="hidden" name="itemDate[' + counter + ']" value="' + dataDate + '">' +
-        '<input type="hidden" name="itemPrice[' + counter + ']" value="' + dataPrice + '">' +
-        '<input type="hidden" name="itemNote[' + counter + ']" value="' + dataNote + '">'
-
-      ]).draw(false).node();
-      $(rowNode).find('td').eq(3).addClass('total');
-      $(rowNode).find('td').eq(4).addClass('total2');
-
-      counter++;
-
-      $('#txtDate').val('');
-      $('#txtQty').val('');
-      $('#txtNote').val('');
-      moveIt();
-
-      totalRow++;
-      console.log("trow : " + totalRow);
-    }
-
-    function moveIt() {
-      document.getElementById('txtQty').focus();
-    }
-
-    var theSelected = 0;
-    //select row buat delete
-    $('#formjurnal tbody').on('click', 'tr', function() {
-      if ($(this).hasClass('selected')) {
-        $(this).removeClass('selected');
-        reduceTotal = 0;
-        reduce2Total = 0;
-        theSelected = 0;
-      } else {
-        t.$('tr.selected').removeClass('selected');
-        $(this).addClass('selected');
-        reduceTotal = $(this).closest('tr').children('td.total').text();
-        reduceTotal = reduceTotal.replace(/,/g, ''); //ilangin koma
-
-        reduce2Total = $(this).closest('tr').children('td.total2').text();
-        reduce2Total = reduce2Total.replace(/,/g, ''); //ilangin koma
-        theSelected = 1;
-      }
-    });
-
-    //Delete row
-    $('#delRow').click(function() {
-      console.log("x : " + totalRow);
-      if (totalRow > 0) {
-        if (theSelected > 0) {
-          t.row('.selected').remove().draw(false);
-          totalRow--;
-          theSelected = 0;
-          var div = document.getElementById('row-hide');
-          div.style.display = '';
-        }
-      }
-    });
-  </script>
-
+    </script>
 </body>
-<script>
-  function updatePrice() {
-    var selectedProduct = document.getElementById("txtOrderDetail");
-    var priceInput = document.getElementById("txtPrice");
-    var selectedOption = selectedProduct.options[selectedProduct.selectedIndex];
-    var price = selectedOption.getAttribute("data-price");
-    priceInput.value = price;
-  }
-</script>
 
 </html>

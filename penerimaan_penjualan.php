@@ -49,66 +49,77 @@ require 'header.php';
                                             <th>Payment ID</th>
                                             <th>Tanggal Bayar</th>
                                             <th>Total Bayar</th>
+                                            <th>Tanggal Cek</th>
                                             <th>Bank</th>
-                                            <th>Customer</th>
                                             <th>Faktur Penjualan</th>
-                                            <th>Catatan</th>
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php
-                                        // Query untuk mengambil data dari tabel po dengan JOIN ke tabel supplier dan pr
-                                        $mySql = "SELECT
-                                                    billing.billing_id,
-                                                    billing.sales_id,
-                                                    billing.billing_date,
-                                                    billing.billing_note,
-                                                    billing_detail.billing_detail_id,
-                                                    billing_detail.sales_detail_id,
-                                                    billing_detail.billing_id AS detail_billing_id,
-                                                    billing_detail.product_id,
-                                                    billing_detail.billing_quantity,
-                                                    billing_detail.billing_price,
-                                                    billing_detail.updated_date,
-                                                    SUM(billing_detail.billing_quantity * billing_detail.billing_price) AS total
-                                                FROM
-                                                    billing
-                                                JOIN
-                                                    billing_detail ON billing.billing_id = billing_detail.billing_id
-                                                WHERE
-                                                    billing.updated_date
-                                                GROUP BY
-                                                    billing.billing_id";
 
+                                        $mySql = "SELECT
+                                        p.payment_id,
+                                        p.payment_date,
+                                        p.payment_cheque,
+                                        p.payment_type,
+                                        p.payment_bank,
+                                        p.payment_bank_sender,
+                                        p.payment_ref,
+                                        pd.billing_id,
+                                        pd.billing_pembayaran
+                                    FROM
+                                        payment p
+                                        JOIN payment_detail pd ON pd.payment_id = p.payment_id ";
                                         $myQry = mysqli_query($koneksi, $mySql);
 
-                                        $nomor = 0;
+                                        if (!$myQry) {
+                                            echo "Error: " . mysqli_error($koneksi);
+                                            exit;
+                                        }
 
+                                        $nomor = 0;
                                         while ($myData = mysqli_fetch_array($myQry)) {
                                             $nomor++;
-                                            $Code = $myData['billing_id'];
-
+                                            $Code = $myData['payment_id'];
                                         ?>
                                             <tr>
-                                                <td><?= $nomor; ?></td>
-                                                <td><a href="faktur_penjualan_view.php?code=<?= $Code; ?>" target="_new" alt="View Data"><u><?= $myData['billing_id']; ?></u></a></td>
-                                                <td><?= $myData['billing_date']; ?></td>
-                                                <td><?= $myData['sales_id']; ?></td>
-                                                <td><?= number_format($myData['total']); ?></td>
-                                                <td><?= $myData['billing_date']; ?></td>
-                                                <td><?= $myData['billing_note']; ?></td>
-                                                <td><?= $myData['billing_note']; ?></td>
-                                                <td><button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editModal<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['payment_id']; ?>">
+                                                <td><?= htmlspecialchars($nomor); ?></td>
+                                                <td><a href="penerimaan_penjualan_view.php?code=<?= htmlspecialchars($Code); ?>" target="_new" alt="View Data"><u><?= htmlspecialchars($myData['payment_id']); ?></u></a></td>
+                                                <td><?= htmlspecialchars($myData['payment_date']); ?></td>
+                                                <td><?= number_format($myData['billing_pembayaran']); ?></td>
+                                                <td><?= htmlspecialchars($myData['payment_cheque']); ?></td>
+                                                <td><?= htmlspecialchars($myData['payment_bank_sender']); ?></td>
+                                                <td><?= htmlspecialchars($myData['billing_id']); ?></td>
+                                                <td>
+                                                    <button type="button" class="btn btn-warning" onclick="window.location.href='penerimaan_penjualan_edit.php?code=<?= $Code; ?>&id=<?= $myData['payment_id']; ?>'">
                                                         Edit
-                                                    </button> |
-                                                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['payment_id']; ?>">
+                                                    </button>|
+                                                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= htmlspecialchars($Code); ?>" data-id="<?= htmlspecialchars($Code); ?>" data-name="<?= htmlspecialchars($myData['payment_id']); ?>">
                                                         Hapus
                                                     </button>
                                                 </td>
                                             </tr>
+                                            <div class="modal fade delete-modal" id="delete<?= $Code; ?>">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h4 class="modal-title">Hapus Penerimaan Penjualan</h4>
+                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>Anda yakin ingin menghapus Penerimaan Penjualan <strong><?= $myData['payment_id']; ?></strong>?</p>
+                                                            <form id="deleteForm" method="POST" action="function.php">
+                                                                <input type="hidden" name="payment_id" value="<?= $Code; ?>">
+                                                                <button type="submit" class="btn btn-danger" name="hapusPJ">Hapus</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         <?php } ?>
                                     </tbody>
+
                                 </table>
                             </div>
                         </div>

@@ -41,11 +41,9 @@ require 'header.php';
                         </div>
 
                         <div class="card mb-4">
-                            <div class="card-header">
-                                <!-- Button to Open the Modal -->
-
+                            <!-- <div class="card-header">
                                 <a href="report_pr.php" class="btn btn-info">Cetak</a>
-                            </div>
+                            </div> -->
                         </div>
 
 
@@ -137,9 +135,10 @@ require 'header.php';
                                                 </td>
                                                 <!-- <td><a href="po_view.php?code=<?= $Id; ?>" target="_new" alt="View Data"><u><?= $myData['request_id']; ?></u></a></td> -->
                                                 <td>
-                                                    <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editModal<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['pr_id']; ?>">
+                                                    <button type="button" class="btn btn-warning" onclick="window.location.href='pr_edit.php?code=<?= $Code; ?>&id=<?= $myData['pr_id']; ?>'">
                                                         Edit
                                                     </button>
+
                                                     |
                                                     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['pr_id']; ?>">
                                                         Hapus
@@ -155,8 +154,9 @@ require 'header.php';
                                                             <button type="button" class="close" data-dismiss="modal">&times;</button>
                                                         </div>
                                                         <div class="modal-body">
+                                                            <p>Anda yakin ingin menghapus PR <strong><?= $myData['pr_id']; ?></strong>?</p>
                                                             <form id="deleteForm" method="POST" action="function.php">
-                                                                <input type="hidden" name="pr_id" id="deleteId" value="<?php $Code; ?>">
+                                                                <input type="hidden" name="pr_id" value="<?= $Code; ?>">
                                                                 <button type="submit" class="btn btn-danger" name="hapuspr">Hapus</button>
                                                             </form>
                                                         </div>
@@ -278,20 +278,6 @@ require 'header.php';
     <?php
     }
     ?>
-    <script>
-        $(document).ready(function() {
-            // Saat modal delete ditampilkan, atur nilai id dan nama pr
-            $('.delete-modal').on('show.bs.modal', function(event) {
-                var button = $(event.relatedTarget);
-                var id = button.data('id');
-                var name = button.data('name');
-
-                var modal = $(this);
-                modal.find('#deleteId').val(id);
-                modal.find('#pr').text('Anda yakin ingin menghapus pr "' + name + '"?');
-            });
-        });
-    </script>
 </body>
 
 </html>

@@ -48,7 +48,6 @@ require 'header.php';
                                             <th>No</th>
                                             <th>No. SKB</th>
                                             <th>Tanggal SKB</th>
-                                            <th>No SO</th>
                                             <th>Pelanggan</th>
                                             <th>No Faktur</th>
                                             <th>Catatan</th>
@@ -59,17 +58,15 @@ require 'header.php';
                                         <?php
                                         $mySql = "SELECT
                                         so.stock_order_id,
-                                        GROUP_CONCAT( DISTINCT s.stock_order_reference ) AS stock_order_references,
-                                        s.stock_status,
-                                        s.stock_date,
-                                        s.stock_note,
+                                        s.stock_order_date,
+                                        s.stock_order_note,
                                         MAX( s.updated_date ) AS stock_updated_date,
                                         MAX( b.billing_id ) AS billing_id,
                                         MAX( b.customer_name ) AS customer_name 
                                     FROM
                                         stock_order_detail so
-                                        JOIN stock s ON so.stock_order_id = s.stock_order_id
-                                        JOIN view_billing_detail b ON s.stock_order_reference = b.sales_id 
+                                        JOIN stock_order s ON so.stock_order_id = s.stock_order_id
+                                        JOIN view_billing b ON s.stock_order_reference_id = b.billing_id 
                                     GROUP BY
                                         so.stock_order_id";
 
@@ -86,19 +83,35 @@ require 'header.php';
                                             <tr>
                                                 <td><?= $nomor; ?></td>
                                                 <td><a href="surat_keluar_barang_view.php?code=<?= $Code; ?>" target="_new" alt="View Data"><u><?= $myData['stock_order_id']; ?></u></a></td>
-                                                <td><?= $myData['stock_date']; ?></td>
-                                                <td><?= $myData['stock_order_references']; ?></td>
+                                                <td><?= $myData['stock_order_date']; ?></td>
                                                 <td><?= $myData['customer_name']; ?></td>
                                                 <td><?= $myData['billing_id']; ?></td>
-                                                <td><?= $myData['stock_note']; ?></td>
-                                                <td><button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editModal<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['sales_id']; ?>">
+                                                <td><?= $myData['stock_order_note']; ?></td>
+                                                <td><button type="button" class="btn btn-warning" onclick="window.location.href='surat_keluar_barang_edit.php?code=<?= $Code; ?>&id=<?= $myData['stock_order_id']; ?>'">
                                                         Edit
                                                     </button> |
-                                                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['sales_id']; ?>">
+                                                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['stock_order_id']; ?>">
                                                         Hapus
                                                     </button>
                                                 </td>
                                             </tr>
+                                            <div class="modal fade delete-modal" id="delete<?= $Code; ?>">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h4 class="modal-title">Hapus SKB</h4>
+                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>Anda yakin ingin menghapus SKB <strong><?= $myData['stock_order_id']; ?></strong>?</p>
+                                                            <form id="deleteForm" method="POST" action="function.php">
+                                                                <input type="hidden" name="stock_order_id" value="<?= $Code; ?>">
+                                                                <button type="submit" class="btn btn-danger" name="hapusskb">Hapus</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         <?php } ?>
                                     </tbody>
                                 </table>

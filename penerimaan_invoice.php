@@ -48,48 +48,81 @@ require 'header.php';
                       <th>No</th>
                       <th>No. Faktur</th>
                       <th>Tanggal</th>
-                      <th>Jatuh Tempo</th>
                       <th>Faktur Supplier</th>
                       <th>Nama Supplier</th>
                       <th>Product</th>
                       <th>Nilai Faktur</th>
-                      <th>Terhutang</th>
                       <th>Aksi</th>
                     </tr>
                   </thead>
                   <tbody>
                     <?php
-                    // Query untuk mengambil data dari tabel po dengan JOIN ke tabel supplier dan pr
-                    $mySql = "SELECT po.purchase_id, po.purchase_date, po.supplier_name, po.purchase_status, 
-                                    po.product_name, po.purchase_for, po.total
-                                    FROM view_po po
-                                    WHERE po.purchase_date";
+                    $mySql = "SELECT
+                   pi.purchase_invoice_id,
+                   pi.supplier_id,
+                   pi.faktur_supplier,
+                   pi.purchase_invoice_date,
+                   SUM(pid.purchase_invoice_value * pid.qty) AS total_value,
+                   s.supplier_name
+                 FROM
+                   purchase_invoice pi
+                 JOIN
+                   purchase_invoice_detail pid ON pid.purchase_invoice_id = pi.purchase_invoice_id
+                 JOIN
+                   supplier s ON s.supplier_id = pi.supplier_id
+                 GROUP BY
+                   pi.purchase_invoice_id, pi.supplier_id, pi.faktur_supplier, pi.purchase_invoice_date, s.supplier_name";
                     $myQry = mysqli_query($koneksi, $mySql);
 
                     $nomor = 0;
                     while ($myData = mysqli_fetch_array($myQry)) {
                       $nomor++;
-                      $Code = $myData['purchase_id'];
+                      $Code = $myData['purchase_invoice_id'];
+                      // Query untuk mengambil produk berdasarkan pr_id
+                      $produkSql = "SELECT product_id FROM purchase_invoice_detail WHERE purchase_invoice_id = '$Code'";
+                      $produkQuery = mysqli_query($koneksi, $produkSql);
+                      $produkArray = array();
+                      while ($produkData = mysqli_fetch_array($produkQuery)) {
+                        $produkArray[] = $produkData['product_id'];
+                      }
+                      $produkList = implode(", ", $produkArray);
+
+
 
                     ?>
                       <tr>
                         <td><?= $nomor; ?></td>
-                        <td><a href="po_view.php?code=<?= $Code; ?>" target="_new" alt="View Data"><u><?= $myData['purchase_id']; ?></u></a></td>
-                        <td><?= $myData['purchase_date']; ?></td>
+                        <td><a href="penerimaan_invoice_view.php?code=<?= $Code; ?>" target="_new" alt="View Data"><u><?= $myData['purchase_invoice_id']; ?></u></a></td>
+                        <td><?= $myData['purchase_invoice_date']; ?></td>
+                        <td><?= $myData['supplier_id']; ?></td>
                         <td><?= $myData['supplier_name']; ?></td>
-                        <td><?= $myData['product_name']; ?></td>
-                        <td><?= $myData['product_name']; ?></td>
-                        <td><?= $myData['product_name']; ?></td>
-                        <td><?= $myData['product_name']; ?></td>
-                        <td><?= $myData['product_name']; ?></td>
-                        <td><button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editModal<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['purchase_id']; ?>">
+                        <td><?php echo $produkList; ?></td>
+                        <td><?php echo (number_format($myData['total_value'])); ?></td>
+                        <td><button type="button" class="btn btn-warning" onclick="window.location.href='penerimaan_invoice_edit.php?code=<?= $Code; ?>&id=<?= $myData['purchase_invoice_id']; ?>'">
                             Edit
                           </button> |
-                          <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['purchase_id']; ?>">
+                          <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['purchase_invoice_id']; ?>">
                             Hapus
                           </button>
                         </td>
                       </tr>
+                      <div class="modal fade delete-modal" id="delete<?= $Code; ?>">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h4 class="modal-title">Hapus PI</h4>
+                              <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                              <p>Anda yakin ingin menghapus PI <strong><?= $myData['purchase_invoice_id']; ?></strong>?</p>
+                              <form id="deleteForm" method="POST" action="function.php">
+                                <input type="hidden" name="purchase_invoice_id" value="<?= $Code; ?>">
+                                <button type="submit" class="btn btn-danger" name="hapusPI">Hapus</button>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     <?php } ?>
                   </tbody>
                 </table>

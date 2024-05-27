@@ -3,20 +3,21 @@ require 'function.php';
 require 'cek.php';
 require 'header.php';
 
-//$Code    = $_SESSION['SES_KODE'];
 $Code    = isset($_GET['code']) ?  $_GET['code'] : '';
-$mySql    = "SELECT * from view_pr_detail WHERE pr_id='$Code'";
+$mySql    = "SELECT * from view_sales WHERE sales_id='$Code'";
 $myQry    = mysqli_query($koneksi, $mySql);
 $myData = mysqli_fetch_array($myQry);
 # MASUKKAN DATA KE VARIABEL
 
+$dataCustomer       = $myData['customer_name'];
+// $dataSalesman       = $myData['salesman_name'];
+$dataSalesDate       = $myData['sales_date'];
+$dataFor    = $myData['product_category'];
+$dataNote    = $myData['product_note'];
+$dataPO             = $myData['sales_po'];
+$dataRequestDate             = $myData['sales_request_date'];
+$dataTermOfPayment = $myData['sales_top'];
 
-$dataCode        = $myData['pr_id'];
-$dataPurchaseID = $myData['pr_id'];
-$dataPurchaseFor  = $myData['pr_for'];
-$dataPurchaseNote  = $myData['pr_note'];
-$dataPurchaseDate  = $myData['pr_date'];
-$dataRequest  = $myData['request'];
 
 ?>
 <!DOCTYPE html>
@@ -28,7 +29,7 @@ $dataRequest  = $myData['request'];
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="">
   <meta name="author" content="">
-  <title>Pembelian - Permintaan Pembelian (PR)</title>
+  <title>Penjualan - Sales Order (SO)</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
   <link href="css/styles.css" rel="stylesheet">
   <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
@@ -41,8 +42,8 @@ $dataRequest  = $myData['request'];
         <div class="container-fluid">
           <div class="breadcrumb-wrapper">
             <ol class="breadcrumb">
-              <li class="breadcrumb-item active">Pembelian</li>
-              <li class="breadcrumb-item ">Permintaan Pembelian (PR)</li>
+              <li class="breadcrumb-item active">Penjualan</li>
+              <li class="breadcrumb-item ">Sales Order (SO)</li>
             </ol>
           </div>
         </div>
@@ -70,6 +71,21 @@ $dataRequest  = $myData['request'];
             mysqli_rollback($koneksi);
           }
 
+          // BACA DATA DALAM FORM, masukkan data ke variabel
+          $dataPO         = isset($_POST['txtPO']) ? $_POST['txtPO'] : '';
+          $dataTermOfPayment         = isset($_POST['txtTermofpayment']) ? $_POST['txtTermofpayment'] : '';
+          $dataCustomer       = $_POST['txtCustomer'];
+          $dataTermOfPayment  = $_POST['txtTermofpayment'];
+          $dataSalesDate       = $_POST['txtSalesDate'];
+          $dataProduct    = $_POST['txtOrder'];
+          $dataPrice    = $_POST['txtPrice'];
+          $dataQty    = $_POST['txtQty'];
+          $dataRequestDate       = $_POST['txtRequestDate'];
+          $dataPO             = $_POST['txtPO'];
+          $dataSales             = $_POST['txtSales'];
+          $dataType             = $_POST['txtType'];
+
+
 
           # JIKA ADA PESAN ERROR DARI VALIDASI
           if (count($pesanError) >= 1) {
@@ -84,38 +100,42 @@ $dataRequest  = $myData['request'];
             try {
               autofalse();
 
+
               # SIMPAN DATA KE DATABASE.
 
-              $mySql = "UPDATE pr SET pr_date = '$dataPurchaseDate', pr_for = '$dataPurchaseFor', request = '$dataRequest', pr_note = '$dataPurchaseNote', pr_status = 1, updated_date = NOW() 
-                        WHERE pr_id = '$dataCode'";
+              $mySql = "UPDATE sales SET sales_date = '$dataSalesDate', customer_id = '$dataCustomer', sales_po = '$dataPO', sales_top = '$dataTermOfPayment', sales_request_date = '$dataRequestDate', sales_type = '$dataType', updated_date = NOW() 
+                        WHERE sales_id = '$dataSales'";
 
-              $myQry = mysqli_query($koneksi, $mySql) or die("RENTAS ERP ERROR : " . mysqli_error($koneksi));
+              $myQry = mysqli_query($koneksi, $mySql) or die("ANUGRAH ERP ERROR: " . mysqli_error($koneksi));
 
               if (!$myQry) {
-                throw new Exception("Form gagal diinput. Code: PR. " . mysqli_error($koneksi));
+                throw new Exception("Form gagal diinput. Code: Sales-Order. " . mysqli_error($koneksi));
               }
 
               $dataOrder = $_POST['itemOrder'];
 
+
               foreach ($dataOrder as $key => $value) {
                 $data = explode("/", $value);
                 $unit0 = isset($data[0]) ? $data[0] : '';
-                $unit2 = isset($data[2]) ? $data[2] : '';
                 $itemQty  = $_POST['itemQty'][$key];
-                $itemNote    = $_POST['itemNote'][$key];
+                // $itemNote    = $_POST['itemNote'][$key];
                 $itemPrice      = $_POST['itemPrice'][$key];
 
-                $mySql      = "INSERT INTO pr_detail (pr_id, product_id, pr_qty, pr_unit, pr_price, pr_note, updated_date)
-                VALUES ('$dataCode','$unit0','$itemQty','$unit2','$itemPrice','$itemNote',now())";
+                $mySql      = "INSERT INTO sales_detail (sales_id, product_id, qty, price_list, updated_date)
+                VALUES ('$dataSales','$unit0','$itemQty','$itemPrice',now())";
                 $myQry = mysqli_query($koneksi, $mySql);
 
+
+
                 if (!$myQry) {
-                  throw new Exception("Form gagal diinput. Code: PR-Detail. " . mysqli_error($koneksi));
+                  throw new Exception("Form gagal diinput. Code: Sales-Order-Detail. " . mysqli_error($koneksi));
                 }
               }
 
+
               commit();
-              echo "<meta http-equiv='refresh' content='0; url=pr.php'>";
+              echo "<meta http-equiv='refresh' content='0; url=sales_order.php'>";
             } catch (Exception $e) {
               rollback();
               echo $e->getMessage();
@@ -125,6 +145,7 @@ $dataRequest  = $myData['request'];
         }
         ?>
 
+
         <form action="<?php $_SERVER['PHP_SELF']; ?>" method="post" name="form1" id="forem" target="_self" enctype="multipart/form-data">
           <div class="content-body">
             <div class="row">
@@ -132,86 +153,132 @@ $dataRequest  = $myData['request'];
                 <div class="card">
                   <div class="card-body">
                     <div class="row mt-1">
-                      <div class="row mt-1">
-                        <div class="col-md-3 col-12 pe-25">
-                          <div class="mb-1">
-                            <label><strong>No Permintaan Pembelian</strong></label><br />
-                            <?php echo $Code; ?>
-                            <input class="form-control" name="txtCode" type="hidden" value="<?php echo $Code; ?>" maxlength="10" readonly />
-                          </div>
-                        </div>
-                        <div class="col-md-3 col-12 px-25">
-                          <div class="mb-1">
-                            <label><strong>Tanggal Permintaan</strong></label><br /><?php echo $dataPurchaseDate; ?>
-                          </div>
-                        </div>
-
-                        <div class="col-md-3 col-12 px-25">
-                          <div class="mb-1">
-                            <label><strong>Permintaan Untuk</strong></label><br /><?php echo $dataPurchaseFor; ?>
-                          </div>
-                        </div>
-                        <div class="col-md-3 col-12 px-25">
-                          <div class="mb-1">
-                            <label><strong>Pemohon PR</strong></label><br /><?php echo $dataRequest; ?>
-                          </div>
-                        </div>
-                        <div class="col-md-3 col-12 ps-25">
-                          <div class="mb-1">
-                            <label><strong>Catatan</strong></label><br /><?php echo $dataPurchaseNote; ?>
-                          </div>
+                      <div class="col-md-3 col-12 px-25">
+                        <div class="mb-1">
+                          <label class="form-label">Sales ID *</label>
+                          <input type="text" name="txtSales" value="<?= $Code; ?>" class="form-control" placeholder="Sales ID" required readonly>
                         </div>
                       </div>
 
-                      <br>
-                      <br>
-                      <br>
-                      <div class="row mt-1">
-                        <div class="col-md-6 col-12 px-25">
-                          <div class="mb-1">
-                            <label class="form-label">Produk *</label>
-                            <select name="txtOrder" id="txtOrderDetail" class="select2 form-control" onchange="updatePrice()">
-                              <option value=''>Pilih Produk..</option>
-                              <?php
-                              $mySql = "SELECT * FROM product";
-                              $dataQry = mysqli_query($koneksi, $mySql) or die("Anugrah ERP ERROR : " . mysqli_error($koneksi));
-                              while ($dataRow = mysqli_fetch_array($dataQry)) {
-                                echo "<option value='$dataRow[product_id]' data-price='$dataRow[product_price]'>$dataRow[product_name]</option>";
+                      <div class="col-md-3 col-12 pe-25">
+                        <div class="mb-1">
+                          <label class="form-label">Customer</label>
+                          <select id="customer" class="form-select select2" tabindex="-1" name="txtCustomer">
+                            <?php
+                            $mySql = "SELECT customer_id, customer_name FROM customer";
+                            $dataQry = mysqli_query($koneksi, $mySql) or die("ANUGRAH ERP ERROR : " . mysqli_error($koneksi));
+                            while ($dataRow = mysqli_fetch_array($dataQry)) {
+                              $selected = ($dataRow['customer_id'] == $dataCustomer) ? "selected" : "";
+                              echo "<option value='$dataRow[customer_id]' $selected>$dataRow[customer_name]</option>";
+                            }
+                            ?>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div class="col-md-3 col-12 ps-25">
+                        <div class="mb-1">
+                          <label class="form-label">Category</label>
+                          <select id="idCategory" class="form-select select2" tabindex="-1" required name="txtType">
+                            <option value="">Pilih</option>
+                            <?php
+                            $mySql = "SELECT product_category FROM product GROUP BY product_category";
+                            $dataQry = mysqli_query($koneksi, $mySql) or die("ANUGRAH ERP ERROR : " . mysqli_error($koneksi));
+                            while ($dataRow = mysqli_fetch_array($dataQry)) {
+                              $selected = ($dataRow['product_category'] == $dataFor) ? "selected" : "";
+                              echo "<option value='$dataRow[product_category]' $selected>$dataRow[product_category]</option>";
+                            }
+                            ?>
+                          </select>
+                        </div>
+                      </div>
+
+
+                      <div class="col-md-3 col-12 px-25">
+                        <div class="mb-1">
+                          <label for="idToP" class="form-label">ToP *</label>
+                          <select name="txtTermofpayment" id="idToP" class="select2 form-select" required tabindex="-1">
+                            <option value="" selected>Pilih ToP</option>
+                            <?php
+                            $tops = array("COD", "7", "15", "30", "45", "50");
+                            foreach ($tops as $top) {
+                              // Check if this option should be selected
+                              $selected = '';
+                              if (isset($dataTermOfPayment) && $dataTermOfPayment == $top) {
+                                $selected = 'selected';
                               }
-                              ?>
-                            </select>
-                          </div>
+                              echo "<option value=\"$top\" $selected>$top</option>";
+                            }
+                            ?>
+                          </select>
                         </div>
-
-                        <div class="col-md-1 col-12 ps-25">
-                          <div class="mb-1">
-                            <label class="form-label">Harga</label>
-                            <input class="form-control komah" placeholder="Harga" id="txtPrice" name="txtPrice" step="any" type="text" maxlength="16" value="0" readonly />
-                          </div>
-                        </div>
-
-                        <div class="col-md-1 col-12 pe-25">
-                          <div class="mb-1">
-                            <label class="form-label">Qty *</label>
-                            <input class="form-control komah" placeholder="Qty" autocomplete="off" id="txtQty" name="txtQty" step="any" maxlength="16" type="text" any />
-                          </div>
-                        </div>
+                      </div>
 
 
-                        <div class="col-md-3 col-12 pe-25">
-                          <div class="mb-1">
-                            <label class="form-label">Catatan</label>
-                            <input class="form-control" placeholder="Catatan" id='txtNote' name="note" type="text" />
-                          </div>
+
+                      <div class="col-md-3 col-12 ps-25">
+                        <div class="mb-1">
+                          <label class="form-label">Tanggal SO *</label>
+                          <input type="date" name="txtSalesDate" value="<?= date('Y-m-d', strtotime($dataSalesDate)); ?>" class="form-control" required>
                         </div>
-                        <div class="col-md-1 col-12 ps-25">
-                          <div class="mt-4">
-                            <a class="btn btn-primary" style="width:100%" id="addRow" onclick="addRow()">
-                              <i class="fa-solid fa-plus"></i></a>
-                          </div>
+                      </div>
+
+                      <div class="col-md-3 col-12 px-25">
+                        <div class="mb-1">
+                          <label class="form-label">No PO/RJ *</label>
+                          <input type="text" name="txtPO" value="<?= $dataPO; ?>" class="form-control" placeholder="No PO/RJ" required>
+                        </div>
+                      </div>
+
+                      <div class="col-md-3 col-12 ps-25">
+                        <div class="mb-1">
+                          <label class="form-label">Tanggal Delivery *</label>
+                          <input type="date" name="txtRequestDate" value="<?= $dataRequestDate; ?>" class="form-control" required>
                         </div>
                       </div>
                     </div>
+                    <br>
+                    <div class="row mt-1">
+                      <div class="col-md-6 col-12 px-25">
+                        <div class="mb-1">
+                          <label class="form-label">Produk *</label>
+                          <select name="txtOrder" id="txtOrderDetail" class="select2 form-control" onchange="updatePrice()">
+                            <option value=''>Pilih Produk..</option>
+                            <?php
+                            $mySql = "SELECT * FROM product";
+                            $dataQry = mysqli_query($koneksi, $mySql) or die("Anugrah ERP ERROR : " . mysqli_error($koneksi));
+                            while ($dataRow = mysqli_fetch_array($dataQry)) {
+                              echo "<option value='$dataRow[product_id]' data-price='$dataRow[product_price]'>$dataRow[product_name]</option>";
+                            }
+                            ?>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div class="col-md-1 col-12 ps-25">
+                        <div class="mb-1">
+                          <label class="form-label">Harga</label>
+                          <input class="form-control komah" placeholder="Harga" id="txtPrice" name="txtPrice" step="any" type="text" maxlength="16" value="0" readonly />
+                        </div>
+                      </div>
+                      <div class="col-md-1 col-12 px-25">
+                        <div class="mb-1">
+                          <label class="form-label">Qty *</label>
+                          <input class="form-control" name="txtQty" id="txtQty" type="number" />
+                        </div>
+                      </div>
+                      <div class="col-md-1 col-12 ps-25">
+                        <div class="mt-4">
+                          <a class="btn btn-primary" style="width:100%" id="addRow" onclick="addRow()"> tambah</a>
+
+                        </div>
+                      </div>
+                    </div>
+                    <br>
+                    <div class="divider divider-primary">
+                      <div class="divider-text">Daftar Produk</div>
+                    </div>
+
                     <div class="row mt-4">
                       <table id="formjurnal" class="table table-hover display" width="100%">
                         <thead>
@@ -219,56 +286,51 @@ $dataRequest  = $myData['request'];
                             <th>No</th>
                             <th>Nama Produk</th>
                             <th>Qty</th>
-                            <!-- <th>Tgl Kirim</th> -->
-                            <th>Catatan</th>
                             <th>Harga (Rp)</th>
                             <th>Total (Rp)</th>
                           </tr>
                         </thead>
                         <tbody>
                           <?php
-                          $mySql     = "SELECT * FROM view_pr_detail WHERE pr_id='$Code' ORDER BY pr_detail_id";
+                          $mySql     = "SELECT * FROM view_sales WHERE sales_id='$Code' ORDER BY sales_detail_id";
                           $myQry     = mysqli_query($koneksi, $mySql);
                           $nomor  = 0;
                           $sumTotal =    0;
                           while ($myData = mysqli_fetch_array($myQry)) {
                             $nomor++;
-                            $Purchase = $myData['pr_detail_id'];
-                            $Order = $myData['pr_id'];
-                            $sumTotal =
+                            $sumTotal =  $sumTotal + $myData['total_price'];
 
-                              $sumTotal + $myData['total'];
 
                           ?>
                             <tr>
                               <td><?php echo $nomor; ?></td>
-                              <td><?php echo $myData['product_id']; ?></td>
-                              <td><?php echo number_format($myData['pr_qty']); ?></td>
-                              <!-- <td><?php echo $myData['pr_detail_date']; ?></td> -->
-                              <td><?php echo $myData['pr_note']; ?></td>
-                              <td><?php echo (number_format($myData['pr_price'])); ?></td>
-                              <td><?php echo (number_format($myData['total'])); ?></td>
+                              <td><?php echo ($myData['product_id']); ?></td>
+                              <td><?php echo number_format($myData['qty']); ?></td>
+                              <td><?php echo (number_format($myData['product_price'])); ?></td>
+                              <td><?php echo (number_format($myData['total_price'])); ?></td>
                             </tr>
                           <?php } ?>
                         </tbody>
-                        <tfoot>
+                        <!-- <tfoot>
                           <tr>
-                            <td colspan="5"><strong>Total Biaya</strong></td>
-                            <td><?php echo (number_format($sumTotal)); ?></td>
+                            <td colspan="4"></td>
+                            <td></td>
+                            <td><br />Total Biaya<br /><?php echo (number_format($sumTotal)); ?></td>
+
                           </tr>
-                        </tfoot>
-
-
+                        </tfoot> -->
                       </table>
                     </div>
-                    <div class="col-12 text-center">
+
+                    <!-- <div class="col-12 text-center">
                       <button class="btn btn-icon btn-outline-danger" id="delRow" type="button">
                         <i data-feather="trash" class="me-25"></i>
                         <span>Hapus Baris</span>
                       </button>
-                    </div>
+                    </div> -->
+                    <br>
                     <div class="col-12 d-flex justify-content-between">
-                      <a href="pr.php" class="btn btn-outline-warning">Kembali</a>
+                      <a href="sales_order.php" class="btn btn-outline-warning">Kembali</a>
                       <button type="submit" name="btnSubmit" class="btn btn-primary">Submit</button>
                     </div>
                   </div>
@@ -335,7 +397,7 @@ $dataRequest  = $myData['request'];
       var dataQty = $('#txtQty').val();
       // var dataDate = $('#txtDate').val();
       var dataPrice = $('#txtPrice').val();
-      var dataNote = $('#txtNote').val();
+      // var dataNote = $('#txtNote').val();
       // var totalPrice = 0;
       // var totalQty = 0;
 
@@ -373,14 +435,14 @@ $dataRequest  = $myData['request'];
         dataOrder,
         (dataQty),
         // dataDate,
-        dataNote,
+        // dataNote,
         (dataPrice),
         (dataQty * dataPrice) +
         '<input class="form-control kuantiti" id="kuantiti" name="itemOrder[' + counter + ']" value="' + dataOrder + '" type="hidden">' +
         '<input type="hidden" name="itemQty[' + counter + ']" value="' + dataQty + '">' +
         // '<input type="hidden" name="itemDate[' + counter + ']" value="' + dataDate + '">' +
-        '<input type="hidden" name="itemPrice[' + counter + ']" value="' + dataPrice + '">' +
-        '<input type="hidden" name="itemNote[' + counter + ']" value="' + dataNote + '">'
+        '<input type="hidden" name="itemPrice[' + counter + ']" value="' + dataPrice + '">'
+        // '<input type="hidden" name="itemNote[' + counter + ']" value="' + dataNote + '">'
 
       ]).draw(false).node();
       $(rowNode).find('td').eq(3).addClass('total');
@@ -390,7 +452,7 @@ $dataRequest  = $myData['request'];
 
       $('#txtDate').val('');
       $('#txtQty').val('');
-      $('#txtNote').val('');
+      // $('#txtNote').val('');
       moveIt();
 
       totalRow++;

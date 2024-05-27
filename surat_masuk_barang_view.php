@@ -22,31 +22,23 @@ require 'header.php';
 <?php
 
 $Code    = isset($_GET['code']) ?  $_GET['code'] : '';
-$mySql = "SELECT
-s.stock_order_id,
-s.stock_date,
-s.stock_order_reference,
-po.supplier_name,
-po.product_name,
-s.stock_note 
-FROM
-stock_order_detail so
-JOIN stock s ON so.stock_order_id = s.stock_order_id
-JOIN view_po po ON s.stock_order_reference = po.purchase_id 
-WHERE 
-                so.stock_order_id='$Code'
-GROUP BY
-so.stock_order_id";
+$mySql = "SELECT * FROM stock_order_detail so
+            JOIN stock_order s ON so.stock_order_id = s.stock_order_id
+            JOIN view_po po ON s.stock_order_reference_id = po.purchase_id 
+            WHERE so.stock_order_id = '$Code'
+            GROUP BY
+            so.stock_order_id";
 
 $myQry    = mysqli_query($koneksi, $mySql)  or die("ANUGRAH ERP ERROR : " . mysqli_error($koneksi));
 $myData = mysqli_fetch_array($myQry);
 
 # MASUKKAN DATA KE VARIABEL
 $dataCode        = $myData['stock_order_id'];
-$dataSMBDate  = $myData['stock_date'];
+$dataSD = $myData['stock_order_id'];
+$dataSMBDate  = $myData['stock_order_date'];
 $dataSupplierName  = $myData['supplier_name'];
-$dataRequestID  = $myData['stock_order_reference'];
-$dataNote  = $myData['stock_note'];
+$dataNote  = $myData['stock_order_note'];
+$dataFaktur  = $myData['stock_order_reference_id'];
 ?>
 
 <!-- BEGIN: Content-->
@@ -97,11 +89,6 @@ $dataNote  = $myData['stock_note'];
                                                     </div>
                                                 </div>
 
-                                                <div class="col-md-3 col-12 ps-25">
-                                                    <div class="mb-1">
-                                                        <label><strong>No Sales Order </strong> </label><br /><?php echo $dataRequestID; ?>
-                                                    </div>
-                                                </div>
 
                                                 <div class="col-md-12 col-12 pe-25">
                                                     <div class="mb-1">

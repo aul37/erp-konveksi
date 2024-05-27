@@ -8,14 +8,13 @@ if (isset($_POST['btnSubmit'])) {
     $pesanError = array();
 
     // Pastikan semua input memiliki nilai sebelum digunakan
-    $tgl = date('Y-m-d H:i:s');
-    $dataCode = isset($_POST['txtSMBID']) ? $_POST['txtSMBID'] : '';
-    $dataReference = isset($_POST['txtRequestID']) ? $_POST['txtRequestID'] : '';
-    $dataDate = isset($_POST['txtSMBDate']) ? $_POST['txtSMBDate'] : '';
-    $dataWH = isset($_POST['txtWH']) ? $_POST['txtWH'] : '';
-    $dataNote = isset($_POST['txtSMBNote']) ? $_POST['txtSMBNote'] : '';
-    $dataStatus = 'PO Created';
-    $dataDetail = isset($_POST['updCode']) ? $_POST['updCode'] : array();
+    $dataCode = $_POST['txtSMBID'];
+    $dataReference = 'PURCHASE ORDER';
+    $dataDate = $_POST['txtSMBDate']; // Ganti txtDate dengan txtSKBDate
+    $dataNote = $_POST['txtSMBNote'];
+    $dataStatus = 'IN';
+    $dataDetail = $_POST['updCode'];
+    $dataFaktur = $_POST['txtRequestID'];
 
     // Tambahkan pemeriksaan nilai-nilai form
     if (empty($dataCode)) {
@@ -27,12 +26,7 @@ if (isset($_POST['btnSubmit'])) {
     if (empty($dataDate)) {
         $pesanError[] = "Tanggal SMB tidak boleh kosong.";
     }
-    if (empty($dataWH)) {
-        $pesanError[] = "Gudang tidak boleh kosong.";
-    }
-    if (empty($dataNote)) {
-        $pesanError[] = "Catatan tidak boleh kosong.";
-    }
+
 
     if (count($pesanError) == 0) {
         try {
@@ -40,7 +34,7 @@ if (isset($_POST['btnSubmit'])) {
 
             // Insert data into stock_order table
             $mySql = "INSERT INTO stock_order (stock_order_id, stock_order_reference, stock_order_reference_id, stock_order_date, stock_order_note, updated_date)
-VALUES ('$dataCode','$dataReference','$dataReference','$dataDate', '$dataNote',now())";
+            VALUES ('$dataCode','$dataReference','$dataFaktur','$dataDate', '$dataNote' ,now())";
             $myQry = mysqli_query($koneksi, $mySql);
 
             // Periksa apakah query eksekusi berhasil
@@ -54,10 +48,12 @@ VALUES ('$dataCode','$dataReference','$dataReference','$dataDate', '$dataNote',n
                 $dataQty = $_POST['updQty'][$key];
                 $dataPrice = $_POST['updPrice'][$key];
 
-                if (!empty($dataQty) && !empty($dataPrice)) {
-                    // Insert data into stock_order_detail table
-                    $mySql = "INSERT INTO stock_order_detail(stock_order_id, product_id, qty, updated_date)
-VALUES ('$dataCode','$productid','$dataQty',now())";
+                $dataIncrementQ = mysqli_fetch_array(mysqli_query($koneksi, "SELECT AUTO_INCREMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'db_anugrah' AND TABLE_NAME = 'stock_order_detail'"));
+                $dataIncrement = $dataIncrementQ[0];
+
+                if ($dataQty > 0) {
+                    $mySql = "INSERT INTO stock_order_detail(stock_order_id, product_id, qty, ref_detail_id, updated_date)
+                    VALUES ('$dataCode','$productid','$dataQty', '$orderID', now())";
                     $myQry = mysqli_query($koneksi, $mySql);
 
                     // Periksa apakah query eksekusi berhasil
@@ -66,10 +62,10 @@ VALUES ('$dataCode','$productid','$dataQty',now())";
                     }
 
                     // Insert data into stock table
-                    $mySql3 = "INSERT INTO stock
-(stock_order_id, stock_status, stock_date, product_id, qty, stock_note, stock_order_reference, updated_date)
-VALUES
-('$dataCode','$dataStatus','$dataDate','$productid','$dataQty','$dataNote', '$dataReference', now())";
+                    $mySql3 = "INSERT INTO stock 
+                    (stock_order_id, stock_status, stock_date, product_id, qty, stock_note, updated_date, stock_order_detail_id)
+                    VALUES 
+                    ('$dataCode','$dataStatus','$dataDate','$productid','$dataQty','$dataNote', now(), '$dataIncrement')";
                     $myQry3 = mysqli_query($koneksi, $mySql3);
 
                     // Periksa apakah query eksekusi berhasil
@@ -160,22 +156,6 @@ if (isset($_POST['btnLoad'])) {
                                                     </div>
                                                 </div>
 
-                                                <div class="col-md-3 col-12 px-25">
-                                                    <div class="mb-1">
-                                                        <label class="form-label">Dari Gudang *</label>
-                                                        <select name="txtWH" id="idWH" required class="select2 form-select form-control" tabindex="-1">
-                                                            <option value="" selected>Pilih Gudang</option>
-                                                            <?php
-                                                            $gudang = array("Anugrah");
-                                                            foreach ($gudang as $gudang) {
-                                                                echo "<option value=\"$gudang\">$gudang</option>";
-                                                            }
-                                                            ?>
-                                                        </select>
-                                                    </div>
-                                                </div>
-
-
                                                 <div class="col-md-3 col-12 ps-25">
                                                     <div class="mb-1">
                                                         <label class="form-label">Tanggal SMB *</label>
@@ -231,11 +211,7 @@ if (isset($_POST['btnLoad'])) {
                                                                 <label>No Referensi PO </label><br /><?= $dataRequestID; ?>
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-3 col-12 ps-25">
-                                                            <div class="mb-1">
-                                                                <label>Dari Gudang</label><br /><?= $dataWH; ?>
-                                                            </div>
-                                                        </div>
+
                                                         <div class="col-md-3 col-12 ps-25">
                                                             <div class="mb-1">
                                                                 <label>Catatan</label><br /><?= $dataNote; ?>
@@ -266,6 +242,7 @@ if (isset($_POST['btnLoad'])) {
                                                     <?php
                                                     $mySql     = "SELECT
                                                                     vd.purchase_id,
+                                                                    vd.purchase_detail_id,
                                                                     vd.product_id,
                                                                     vd.product_name,
                                                                     vd.qty,
@@ -282,7 +259,7 @@ if (isset($_POST['btnLoad'])) {
                                                     $grandTotal = 0; // Total keseluruhan pembelian
                                                     while ($myData = mysqli_fetch_array($myQry)) {
                                                         $nomor++;
-                                                        $SMB = $myData['purchase_id'];
+                                                        $SMB = $myData['purchase_detail_id'];
                                                         $Order = $myData['purchase_id'];
                                                         $grandTotal += $myData['total'];
                                                     ?>

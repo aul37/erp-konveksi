@@ -90,7 +90,7 @@ require 'header.php';
                                                 <td><?php echo $myData['customer_name']; ?></td>
                                                 <td><?php echo $myData['product_name']; ?></td>
                                                 <td><?= number_format($myData['total']); ?></td>
-                                                <td><button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editModal<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['sales_id']; ?>">
+                                                <td><button type="button" class="btn btn-warning" onclick="window.location.href='so_edit.php?code=<?= $Code; ?>&id=<?= $myData['sales_id']; ?>'">
                                                         Edit
                                                     </button> |
                                                     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['sales_id']; ?>">
@@ -98,6 +98,23 @@ require 'header.php';
                                                     </button>
                                                 </td>
                                             </tr>
+                                            <div class="modal fade delete-modal" id="delete<?= $Code; ?>">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h4 class="modal-title">Hapus SO</h4>
+                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>Anda yakin ingin menghapus SO <strong><?= $myData['sales_id']; ?></strong>?</p>
+                                                            <form id="deleteForm" method="POST" action="function.php">
+                                                                <input type="hidden" name="sales_id" value="<?= $Code; ?>">
+                                                                <button type="submit" class="btn btn-danger" name="hapusso">Hapus</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                     </tbody>
                                 <?php } ?>
                                 </tbody>
