@@ -1,5 +1,5 @@
 <?php
-require 'function.php';
+require 'function_pembelian.php';
 require 'cek.php';
 require 'header.php';
 
@@ -81,7 +81,7 @@ if (isset($_POST['btnSubmit'])) {
       // mysqli_rollback($koneksi);
       // die;
       mysqli_commit($koneksi);
-      echo "<meta http-equiv='refresh' content='0; url=penerimaan_invoice.php'>";
+      echo "<meta http-equiv='refresh' content='0; url=penerimaan_invoice_pembelian.php'>";
       exit;
     } catch (Exception $e) {
       mysqli_rollback($koneksi);
@@ -254,7 +254,7 @@ if (isset($_POST['btnSubmit'])) {
                           </div>
 
                           <div class="col-12 d-flex justify-content-between">
-                            <a href="penerimaan_invoice.php" class="btn btn-outline-warning">Batalkan</a>
+                            <a href="penerimaan_invoice_pembelian.php" class="btn btn-outline-warning">Batalkan</a>
                             <button type="submit" name="btnSubmit" class="btn btn-primary">Submit</button>
                           </div>
                         </div>

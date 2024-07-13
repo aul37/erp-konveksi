@@ -1,7 +1,7 @@
 <?php
-require 'function.php';
+require 'function_pembelian.php';
 require 'cek.php';
-require 'header.php';
+require 'header_pembelian.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -105,7 +105,7 @@ require 'header.php';
                                                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                                                     </div>
                                                     <div class="modal-body">
-                                                        <form id="deleteForm" method="POST" action="function.php">
+                                                        <form id="deleteForm" method="POST" action="function_pembelian.php">
                                                             <p id="product"></p>
                                                             <input type="hidden" name="id" id="deleteId" value="">
                                                             <button type="submit" class="btn btn-danger" name="hapusproduct">Hapus</button>
@@ -230,7 +230,7 @@ while ($myData = mysqli_fetch_array($myQry)) {
                         <h4 class="modal-title">Edit Product</h4>
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
-                    <form method="post" action="function.php">
+                    <form method="post" action="function_pembelian.php">
                         <div class="modal-body">
                             <input type="hidden" name="product_id" value="<?= $Code; ?>">
                             <input type="text" name="product_id" class="form-control" placeholder="ID Barang" value="<?= $myData['product_id']; ?>" readonly>

@@ -1,7 +1,7 @@
 <?php
-require 'function.php';
+require 'function_penjualan.php';
 require 'cek.php';
-require 'header.php';
+require 'header_penjualan.php';
 
 ?>
 
@@ -22,7 +22,7 @@ require 'header.php';
 
 <body class="sb-nav-fixed">
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-        <a class="navbar-brand" href="index.php">Anugrah Konveksi</a>
+        <a class="navbar-brand" href="index_penjualan.php">Anugrah Konveksi</a>
     </nav>
 
     <!-- JavaScript -->

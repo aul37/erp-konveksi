@@ -1,8 +1,7 @@
 <?php
-require 'function.php';
+require 'function_pembelian.php';
 require 'cek.php';
-require 'header.php';
-
+require 'header_pembelian.php';
 
 if (isset($_POST['btnSubmit'])) {
     $pesanError = array();
@@ -26,6 +25,7 @@ if (isset($_POST['btnSubmit'])) {
     if (empty($dataDate)) {
         $pesanError[] = "Tanggal SMB tidak boleh kosong.";
     }
+
 
     if (count($pesanError) == 0) {
         try {
@@ -76,7 +76,8 @@ if (isset($_POST['btnSubmit'])) {
 
             // Commit the transaction
             mysqli_commit($koneksi);
-            echo "<meta http-equiv='refresh' content='0; url=surat_masuk_barang.php'>";
+            echo "
+<meta http-equiv='refresh' content='0; url=surat_masuk_barang_pembelian.php'>";
             exit;
         } catch (Exception $e) {
             // Rollback the transaction in case of error
@@ -144,20 +145,7 @@ if (isset($_POST['btnLoad'])) {
                                                         <select name="txtRequestID" id="txtRequestID" class="select2 form-control">
                                                             <option value=''>Pilih Referensi PO..</option>
                                                             <?php
-                                                            $mySql = "SELECT 
-    po.purchase_id, 
-    supplier.supplier_name 
-FROM 
-    po 
-JOIN 
-    supplier 
-    ON po.supplier_id = supplier.supplier_id
-LEFT JOIN 
-    stock_order 
-    ON po.purchase_id = stock_order.stock_order_reference_id
-WHERE 
-    stock_order.stock_order_reference_id IS NULL;
-";
+                                                            $mySql = "SELECT po.purchase_id, supplier.supplier_name FROM po JOIN supplier ON po.supplier_id = supplier.supplier_id";
                                                             $dataQry = mysqli_query($koneksi, $mySql) or die("Anugrah ERP ERROR : " . mysqli_error($koneksi));
                                                             while ($dataRow = mysqli_fetch_array($dataQry)) {
                                                                 echo "<option value='" . $dataRow['purchase_id'] . "'>" . $dataRow['purchase_id'] . " - " . $dataRow['supplier_name'] . "</option>";
@@ -185,7 +173,7 @@ WHERE
 
                                                 <div class="col-md-4 col-12 pe-25">
                                                     <div class="mb-1" style="padding-top: 20px;">
-                                                        <a href="surat_masuk_barang.php" class="btn btn-warning">Kembali</a>
+                                                        <a href="surat_masuk_barang_pembelian.php" class="btn btn-warning">Kembali</a>
                                                         <button type="submit" name="btnLoad" class="btn btn-primary">Submit</button>
                                                     </div>
                                                 </div>
@@ -303,7 +291,7 @@ WHERE
                                         </div>
 
                                         <div class="col-12 d-flex justify-content-between">
-                                            <a href="surat_masuk_barang.php" class="btn btn-outline-warning">Batalkan</a>
+                                            <a href="surat_masuk_barang_pembelian.php" class="btn btn-outline-warning">Batalkan</a>
                                             <button type="submit" name="btnSubmit" class="btn btn-primary">Submit</button>
                                         </div>
                                     <?php } ?>

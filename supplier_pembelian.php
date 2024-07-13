@@ -1,7 +1,7 @@
 <?php
-require 'function.php';
+require 'function_pembelian.php';
 require 'cek.php';
-require 'header.php';
+require 'header_pembelian.php';
 ?>
 
 <!DOCTYPE html>
@@ -13,7 +13,7 @@ require 'header.php';
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>Master Data - Customer</title>
+    <title>Master Data - Supplier</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
     <link href="css/styles.css" rel="stylesheet">
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
@@ -27,7 +27,7 @@ require 'header.php';
                     <div class="breadcrumb-wrapper">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item active">Master Data</li>
-                            <li class="breadcrumb-item ">Customer</li>
+                            <li class="breadcrumb-item ">Supplier</li>
                         </ol>
                     </div>
 
@@ -35,7 +35,7 @@ require 'header.php';
                         <div class="card-header">
                             <!-- Button to Open the Modal -->
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
-                                Tambah Data Customer
+                                Tambah Data Supplier
                             </button>
                         </div>
                     </div>
@@ -43,11 +43,11 @@ require 'header.php';
 
                     <?php }
                     $cek = isset($_GET['cek']) ? $_GET['cek'] : '';
-                    $customer = isset($_GET['customer_name']) ? $_GET['customer_name'] : '';
-                    // $npwp = isset($_GET['customer_npwp']) ? $_GET['customer_npwp'] : '';
-                    $contact = isset($_GET['customer_contact']) ? $_GET['customer_contact'] : '';
-                    $address = isset($_GET['customer_address']) ? $_GET['customer_address'] : '';
-                    $status = isset($_GET['customer_status']) ? $_GET['customer_status'] : '';
+                    $name = isset($_GET['supplier_name']) ? $_GET['supplier_name'] : '';
+                    $city = isset($_GET['supplier_city']) ? $_GET['supplier_city'] : '';
+                    $contact = isset($_GET['supplier_contact']) ? $_GET['supplier_contact'] : '';
+                    $address = isset($_GET['supplier_address']) ? $_GET['supplier_address'] : '';
+                    $status = isset($_GET['supplier_status']) ? $_GET['supplier_status'] : '';
                     ?>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -55,58 +55,54 @@ require 'header.php';
                                 <thead>
                                     <tr>
                                         <th>No</th>
-                                        <th>ID</th>
-                                        <th>Pelanggan</th>
-                                        <!-- <th>NPWP</th> -->
+                                        <th>ID Supplier</th>
+                                        <th>Nama Supplier</th>
+                                        <th>Alamat Supplier</th>
+                                        <th>Kota</th>
                                         <th>No Telpon</th>
-                                        <th>Alamat Pelanggan</th>
                                         <th>Status</th>
                                         <th>Aksi</th>
-
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php
-                                    $mySql = "SELECT * FROM customer where 1=1 ";
-                                    $mySql .= " ORDER BY customer_id ASC";
+                                    $mySql = "SELECT * FROM supplier where 1=1 ";
+                                    $mySql .= " ORDER BY supplier_id ASC";
                                     $myQry     = mysqli_query($koneksi, $mySql)  or die("ANUGRAH ERP ERROR :  " . mysqli_error($koneksi));
                                     $nomor  = 0;
                                     while ($myData = mysqli_fetch_array($myQry)) {
                                         $nomor++;
-                                        $Code = $myData['customer_id'];
+                                        $Code = $myData['supplier_id'];
                                     ?>
                                         <tr>
                                             <td><?php echo $nomor; ?></td>
-                                            <td><?php echo $myData['customer_id']; ?></td>
-                                            <td><?php echo $myData['customer_name']; ?></td>
-                                            <!-- <td><?php echo $myData['customer_npwp']; ?></td> -->
-                                            <td><?php echo $myData['customer_contact']; ?></td>
-                                            <td><?php echo $myData['customer_address']; ?></td>
-                                            <td><?php echo $myData['customer_status']; ?></td>
+                                            <td><?php echo $myData['supplier_id']; ?></td>
+                                            <td><?php echo $myData['supplier_name']; ?></td>
+                                            <td><?php echo $myData['supplier_address']; ?></td>
+                                            <td><?php echo $myData['supplier_city']; ?></td>
+                                            <td><?php echo $myData['supplier_contact']; ?></td>
+                                            <td><?php echo $myData['supplier_status']; ?></td>
                                             <td>
-                                                <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editModal<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['customer_name']; ?>">
+                                                <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editModal<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['supplier_name']; ?>">
                                                     Edit
                                                 </button> |
-                                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['customer_name']; ?>">
+                                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['supplier_name']; ?>">
                                                     Hapus
                                                 </button>
                                             </td>
                                         </tr>
-
-
-
                                         <div class="modal fade delete-modal" id="delete<?= $Code; ?>">
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h4 class="modal-title">Hapus Customer</h4>
+                                                        <h4 class="modal-title">Hapus Supplier</h4>
                                                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                                                     </div>
                                                     <div class="modal-body">
-                                                        <form id="deleteForm" method="POST" action="function.php">
-                                                            <p id="customer"></p>
+                                                        <form id="deleteForm" method="POST" action="function_pembelian.php">
+                                                            <p id="supplier"></p>
                                                             <input type="hidden" name="id" id="deleteId" value="">
-                                                            <button type="submit" class="btn btn-danger" name="hapuscustomer">Hapus</button>
+                                                            <button type="submit" class="btn btn-danger" name="hapussupplier">Hapus</button>
                                                         </form>
                                                     </div>
                                                 </div>
@@ -141,38 +137,32 @@ require 'header.php';
 
 </body>
 
-<!-- The Modal -->
+<!-- Modal for Tambah -->
 <div class="modal fade" id="myModal">
     <div class="modal-dialog">
         <div class="modal-content">
-
-            <!-- Modal Header -->
             <div class="modal-header">
-                <h4 class="modal-title">Tambah Customer</h4>
+                <h4 class="modal-title">Tambah Supplier</h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
-            <!-- Modal body -->
             <form method="post">
                 <div class="modal-body">
-                    <input type="text" name="customer_id" class="form-control" placeholder="ID" required>
+                    <input type="text" name="supplier_id" class="form-control" placeholder="ID" required>
                     <br>
-                    <input type="text" name="customer_name" class="form-control" placeholder="Pelanggan" required>
+                    <input type="text" name="supplier_name" class="form-control" placeholder="Supplier" required>
                     <br>
-                    <!-- <input type="text" name="customer_npwp" class="form-control" placeholder="NPWP" required>
-                    <br> -->
-                    <input type="text" name="customer_contact" placeholder="No Telpon" class="form-control" required>
+                    <input type="text" name="supplier_address" class="form-control" placeholder="Alamat Supplier" required>
                     <br>
-                    <input type="text" name="customer_address" class="form-control" placeholder="Alamat Pelanggan" required>
+                    <input type="text" name="supplier_city" placeholder="Kota" class="form-control" required>
                     <br>
-                    <select name="customer_status" class="form-select" required>
+                    <input type="text" name="supplier_contact" class="form-control" placeholder="No Telpon" required>
+                    <br>
+                    <select name="supplier_status" class="form-select" required>
                         <option value="Active">Active</option>
                         <option value="Not Active">Not Active</option>
                     </select>
-
                     <br>
-                    <button type="submit" class="btn btn-success" name="addcustomer">Simpan</button>
-
-
+                    <button type="submit" class="btn btn-success" name="addsupplier">Simpan</button>
                 </div>
             </form>
         </div>
@@ -180,21 +170,20 @@ require 'header.php';
 </div>
 
 
-
 <?php
-$mySql = "SELECT * FROM customer where 1=1 ";
-$mySql .= " ORDER BY customer_id ASC";
+$mySql = "SELECT * FROM supplier where 1=1 ";
+$mySql .= " ORDER BY supplier_id ASC";
 $myQry = mysqli_query($koneksi, $mySql) or die("ANUGRAH ERP ERROR :  " . mysqli_error($koneksi));
 $nomor = 0;
 while ($myData = mysqli_fetch_array($myQry)) {
     $nomor++;
-    $Code = $myData['customer_id'];
-    $ID = $myData['customer_id'];
-    $customer = $myData['customer_name'];
-    // $npwp = $myData['customer_npwp'];
-    $address = $myData['customer_address'];
-    $contact = $myData['customer_contact'];
-    $status = $myData['customer_status'];
+    $Code = $myData['supplier_id'];
+    $supplier = $myData['supplier_id'];
+    $name = $myData['supplier_name'];
+    $address = $myData['supplier_address'];
+    $city = $myData['supplier_city'];
+    $contact = $myData['supplier_contact'];
+    $status = $myData['supplier_status'];
 ?>
 
     <!-- Modal for Edit -->
@@ -202,41 +191,41 @@ while ($myData = mysqli_fetch_array($myQry)) {
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Edit Customer</h4>
+                    <h4 class="modal-title">Edit Supplier</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
-                <form method="post" action="function.php">
+                <form method="post" action="function_pembelian.php">
                     <div class="modal-body">
                         <input type="hidden" name="id" value="<?= $Code; ?>">
-                        <input type="text" name="customer_id" class="form-control" placeholder="ID" value="<?= $ID; ?>" readonly>
+                        <input type="text" name="supplier_id" class="form-control" placeholder="ID" value="<?= $supplier; ?>" readonly>
                         <br>
-                        <input type="text" name="customer_name" class="form-control" placeholder="Pelanggan" value="<?= $customer; ?>" readonly>
+                        <input type="text" name="supplier_name" class="form-control" placeholder="Supplier" value="<?= $name; ?>" readonly>
                         <br>
-                        <!-- <input type="text" name="customer_npwp" class="form-control" placeholder="NPWP" value="<?= $npwp; ?>" required>
-                        <br> -->
-                        <input type="text" name="customer_contact" placeholder="No Telpon" class="form-control" value="<?= $contact; ?>" required>
+                        <input type="text" name="supplier_address" class="form-control" placeholder="Alamat Supplier" value="<?= $address; ?>" required>
                         <br>
-                        <input type="text" name="customer_address" class="form-control" placeholder="Alamat Pelanggan" value="<?= $address; ?>" required>
+                        <input type="text" name="supplier_city" placeholder="Kota" class="form-control" value="<?= $city; ?>" required>
                         <br>
-                        <select name="customer_status" class="form-select" required>
-                            <option value="Active" <?= ($status == 'Active') ? 'selected' : ''; ?>>Active</option>
-                            <option value="Not Active" <?= ($status == 'Not Active') ? 'selected' : ''; ?>>Not Active</option>
+                        <input type="text" name="supplier_contact" class="form-control" placeholder="No Telpon" value="<?= $contact; ?>" required>
+                        <br>
+                        <select name="supplier_status" class="form-select" required>
+                            <option value="Active" <?php if ($status == 'Active') echo 'selected="selected"'; ?>>Active</option>
+                            <option value="Not Active" <?php if ($status == 'Not Active') echo 'selected="selected"'; ?>>Not Active</option>
                         </select>
                         <br>
-                        <button type="submit" class="btn btn-success" name="updatecustomer">Simpan</button>
-
+                        <button type="submit" class="btn btn-success" name="updatesupplier">Simpan</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+
 <?php
 }
 ?>
 
 <script>
     $(document).ready(function() {
-        // Saat modal delete ditampilkan, atur nilai id dan nama customer
+        // Saat modal delete ditampilkan, atur nilai id dan nama supplier
         $('.delete-modal').on('show.bs.modal', function(event) {
             var button = $(event.relatedTarget);
             var id = button.data('id');
@@ -244,7 +233,7 @@ while ($myData = mysqli_fetch_array($myQry)) {
 
             var modal = $(this);
             modal.find('#deleteId').val(id);
-            modal.find('#customer').text('Anda yakin ingin menghapus customer "' + name + '"?');
+            modal.find('#supplier').text('Anda yakin ingin menghapus supplier "' + name + '"?');
         });
     });
 </script>

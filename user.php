@@ -40,100 +40,94 @@ require 'header.php';
                                 Tambah Data Pengguna
                             </button>
                         </div>
-                        <div class="card mb-4">
-                            <div class="card-header">
-                                <!-- Button to Open the Modal -->
+                    </div>
+                    <?php { ?>
 
-                                <a href="report_user.php" class="btn btn-info">Cetak</a>
-                            </div>
-                        </div>
-                        <?php { ?>
+                    <?php }
+                    $cek = isset($_GET['cek']) ? $_GET['cek'] : '';
+                    $nama = isset($_GET['nama']) ? $_GET['nama'] : '';
+                    $kode = isset($_GET['kode']) ? $_GET['kode'] : '';
+                    $password = isset($_GET['password']) ? $_GET['password'] : '';
+                    $komisi = isset($_GET['komisi']) ? $_GET['komisi'] : '';
+                    $status = isset($_GET['status']) ? $_GET['status'] : '';
+                    ?>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="datatablesSimple" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>ID</th>
+                                        <th>Depatermen</th>
+                                        <th>Nama User</th>
+                                        <th>Kontak</th>
+                                        <th>Alamat User</th>
+                                        <th>Password</th>
+                                        <th>Status</th>
+                                        <th>Aksi</th>
 
-                        <?php }
-                        $cek = isset($_GET['cek']) ? $_GET['cek'] : '';
-                        $nama = isset($_GET['nama']) ? $_GET['nama'] : '';
-                        $kode = isset($_GET['kode']) ? $_GET['kode'] : '';
-                        $password = isset($_GET['password']) ? $_GET['password'] : '';
-                        $komisi = isset($_GET['komisi']) ? $_GET['komisi'] : '';
-                        $status = isset($_GET['status']) ? $_GET['status'] : '';
-                        ?>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-bordered" id="datatablesSimple" width="100%" cellspacing="0">
-                                    <thead>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                    $mySql = "SELECT * FROM user where 1=1 ";
+                                    $mySql .= " ORDER BY user_id ASC";
+                                    $myQry     = mysqli_query($koneksi, $mySql)  or die("ANUGRAH ERP ERROR :  " . mysqli_error($koneksi));
+                                    $nomor  = 0;
+                                    while ($myData = mysqli_fetch_array($myQry)) {
+                                        $nomor++;
+                                        $Code = $myData['user_id'];
+                                    ?>
                                         <tr>
-                                            <th>No</th>
-                                            <th>ID</th>
-                                            <th>Depatermen</th>
-                                            <th>Nama User</th>
-                                            <th>Kontak</th>
-                                            <th>Alamat User</th>
-                                            <th>Password</th>
-                                            <th>Status</th>
-                                            <th>Aksi</th>
-
+                                            <td><?php echo $nomor; ?></td>
+                                            <td><?php echo $myData['user_id']; ?></td>
+                                            <td><?php echo $myData['user_department']; ?></td>
+                                            <td><?php echo $myData['user_name']; ?></td>
+                                            <td><?php echo $myData['user_contact']; ?></td>
+                                            <td><?php echo $myData['user_address']; ?></td>
+                                            <td><?php echo md5($myData['user_password']); ?></td>
+                                            <td><?php echo $myData['user_status']; ?></td>
+                                            <td>
+                                                <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editModal<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['user_name']; ?>">
+                                                    Edit
+                                                </button> |
+                                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['user_name']; ?>">
+                                                    Hapus
+                                                </button>
+                                            </td>
                                         </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php
-                                        $mySql = "SELECT * FROM user where 1=1 ";
-                                        $mySql .= " ORDER BY user_id ASC";
-                                        $myQry     = mysqli_query($koneksi, $mySql)  or die("ANUGRAH ERP ERROR :  " . mysqli_error($koneksi));
-                                        $nomor  = 0;
-                                        while ($myData = mysqli_fetch_array($myQry)) {
-                                            $nomor++;
-                                            $Code = $myData['user_id'];
-                                        ?>
-                                            <tr>
-                                                <td><?php echo $nomor; ?></td>
-                                                <td><?php echo $myData['user_id']; ?></td>
-                                                <td><?php echo $myData['user_department']; ?></td>
-                                                <td><?php echo $myData['user_name']; ?></td>
-                                                <td><?php echo $myData['user_contact']; ?></td>
-                                                <td><?php echo $myData['user_address']; ?></td>
-                                                <td><?php echo md5($myData['user_password']); ?></td>
-                                                <td><?php echo $myData['user_status']; ?></td>
-                                                <td>
-                                                    <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editModal<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['user_name']; ?>">
-                                                        Edit
-                                                    </button> |
-                                                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['user_name']; ?>">
-                                                        Hapus
-                                                    </button>
-                                                </td>
-                                            </tr>
 
 
 
-                                            <div class="modal fade delete-modal" id="delete<?= $Code; ?>">
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h4 class="modal-title">Hapus User</h4>
-                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <form id="deleteForm" method="POST" action="function.php">
-                                                                <p id="user"></p>
-                                                                <input type="hidden" name="id" id="deleteId" value="">
-                                                                <button type="submit" class="btn btn-danger" name="hapususer">Hapus</button>
-                                                            </form>
-                                                        </div>
+                                        <div class="modal fade delete-modal" id="delete<?= $Code; ?>">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h4 class="modal-title">Hapus User</h4>
+                                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form id="deleteForm" method="POST" action="function.php">
+                                                            <p id="user"></p>
+                                                            <input type="hidden" name="id" id="deleteId" value="">
+                                                            <button type="submit" class="btn btn-danger" name="hapususer">Hapus</button>
+                                                        </form>
                                                     </div>
                                                 </div>
                                             </div>
-                                        <?php } ?>
-                                    </tbody>
-                                </table>
-                            </div>
+                                        </div>
+                                    <?php } ?>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
-            </main>
-            <footer class="py-4 bg-light mt-auto">
-
-            </footer>
         </div>
+        </main>
+        <footer class="py-4 bg-light mt-auto">
+
+        </footer>
+    </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>

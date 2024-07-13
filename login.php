@@ -6,30 +6,38 @@ if (isset($_POST['login'])) {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    // Mencocokkan data
-    $cekdatabase = mysqli_query($koneksi, "SELECT * FROM user where user_name='$username' and user_password='$password'");
-    // Menghitung jumlah data
-    $hitung = mysqli_num_rows($cekdatabase);
+    // Melakukan query untuk mencari data pengguna yang sesuai
+    $query = "SELECT * FROM user WHERE user_name='$username' AND user_password='$password'";
+    $cekdatabase = mysqli_query($koneksi, $query);
+    $cek = mysqli_num_rows($cekdatabase);
 
-    if ($hitung > 0) {
-        // Login sukses
+    if ($cek > 0) {
+        // Jika data ditemukan, login sukses
         $data = mysqli_fetch_assoc($cekdatabase);
         $_SESSION['log'] = true;
         $_SESSION['username'] = $data['user_name'];
 
-        if ($username == 'anugrah') {
-            // Pengguna dengan nama "anugrah" berhasil login
-            header('location: index.php');
-        };
-        // } elseif ($username == 'owner')
-        //     header('location: index.php');
+        // Redirect ke halaman sesuai dengan username
+        switch ($username) {
+            case 'anugrah':
+                header('location: index.php');
+                exit; // Pastikan untuk menghentikan eksekusi setelah melakukan redirect
+                break;
+            case 'Rizky Aprianto':
+                header('location: index_penjualan.php');
+                exit;
+                break;
+            case 'Fauzi Bayu':
+                header('location: index_pembelian.php');
+                exit;
+                break;
+        }
     } else {
-        // Login gagal
-        header('location: login.php');
+        // Jika data tidak ditemukan, login gagal
+        $error_message = "Username atau password salah.";
     }
 }
 ?>
-
 
 
 <!DOCTYPE html>
@@ -86,6 +94,14 @@ if (isset($_POST['login'])) {
                                             <button class="btn btn-primary" name="login">Login</button>
                                         </div>
                                     </form>
+
+                                    <?php
+                                    // Tampilkan pesan kesalahan jika ada
+                                    if (isset($error_message)) {
+                                        echo '<div class="alert alert-danger mt-3">' . $error_message . '</div>';
+                                    }
+                                    ?>
+
                                 </div>
 
                             </div>

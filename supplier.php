@@ -38,94 +38,88 @@ require 'header.php';
                                 Tambah Data Supplier
                             </button>
                         </div>
-                        <div class="card mb-4">
-                            <div class="card-header">
-                                <!-- Button to Open the Modal -->
+                    </div>
+                    <?php { ?>
 
-                                <a href="report_supplier.php" class="btn btn-info">Cetak</a>
-                            </div>
-                        </div>
-                        <?php { ?>
-
-                        <?php }
-                        $cek = isset($_GET['cek']) ? $_GET['cek'] : '';
-                        $name = isset($_GET['supplier_name']) ? $_GET['supplier_name'] : '';
-                        $city = isset($_GET['supplier_city']) ? $_GET['supplier_city'] : '';
-                        $contact = isset($_GET['supplier_contact']) ? $_GET['supplier_contact'] : '';
-                        $address = isset($_GET['supplier_address']) ? $_GET['supplier_address'] : '';
-                        $status = isset($_GET['supplier_status']) ? $_GET['supplier_status'] : '';
-                        ?>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-bordered" id="datatablesSimple" width="100%" cellspacing="0">
-                                    <thead>
+                    <?php }
+                    $cek = isset($_GET['cek']) ? $_GET['cek'] : '';
+                    $name = isset($_GET['supplier_name']) ? $_GET['supplier_name'] : '';
+                    $city = isset($_GET['supplier_city']) ? $_GET['supplier_city'] : '';
+                    $contact = isset($_GET['supplier_contact']) ? $_GET['supplier_contact'] : '';
+                    $address = isset($_GET['supplier_address']) ? $_GET['supplier_address'] : '';
+                    $status = isset($_GET['supplier_status']) ? $_GET['supplier_status'] : '';
+                    ?>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="datatablesSimple" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>ID Supplier</th>
+                                        <th>Nama Supplier</th>
+                                        <th>Alamat Supplier</th>
+                                        <th>Kota</th>
+                                        <th>No Telpon</th>
+                                        <th>Status</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                    $mySql = "SELECT * FROM supplier where 1=1 ";
+                                    $mySql .= " ORDER BY supplier_id ASC";
+                                    $myQry     = mysqli_query($koneksi, $mySql)  or die("ANUGRAH ERP ERROR :  " . mysqli_error($koneksi));
+                                    $nomor  = 0;
+                                    while ($myData = mysqli_fetch_array($myQry)) {
+                                        $nomor++;
+                                        $Code = $myData['supplier_id'];
+                                    ?>
                                         <tr>
-                                            <th>No</th>
-                                            <th>ID Supplier</th>
-                                            <th>Nama Supplier</th>
-                                            <th>Alamat Supplier</th>
-                                            <th>Kota</th>
-                                            <th>No Telpon</th>
-                                            <th>Status</th>
-                                            <th>Aksi</th>
+                                            <td><?php echo $nomor; ?></td>
+                                            <td><?php echo $myData['supplier_id']; ?></td>
+                                            <td><?php echo $myData['supplier_name']; ?></td>
+                                            <td><?php echo $myData['supplier_address']; ?></td>
+                                            <td><?php echo $myData['supplier_city']; ?></td>
+                                            <td><?php echo $myData['supplier_contact']; ?></td>
+                                            <td><?php echo $myData['supplier_status']; ?></td>
+                                            <td>
+                                                <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editModal<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['supplier_name']; ?>">
+                                                    Edit
+                                                </button> |
+                                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['supplier_name']; ?>">
+                                                    Hapus
+                                                </button>
+                                            </td>
                                         </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php
-                                        $mySql = "SELECT * FROM supplier where 1=1 ";
-                                        $mySql .= " ORDER BY supplier_id ASC";
-                                        $myQry     = mysqli_query($koneksi, $mySql)  or die("ANUGRAH ERP ERROR :  " . mysqli_error($koneksi));
-                                        $nomor  = 0;
-                                        while ($myData = mysqli_fetch_array($myQry)) {
-                                            $nomor++;
-                                            $Code = $myData['supplier_id'];
-                                        ?>
-                                            <tr>
-                                                <td><?php echo $nomor; ?></td>
-                                                <td><?php echo $myData['supplier_id']; ?></td>
-                                                <td><?php echo $myData['supplier_name']; ?></td>
-                                                <td><?php echo $myData['supplier_address']; ?></td>
-                                                <td><?php echo $myData['supplier_city']; ?></td>
-                                                <td><?php echo $myData['supplier_contact']; ?></td>
-                                                <td><?php echo $myData['supplier_status']; ?></td>
-                                                <td>
-                                                    <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editModal<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['supplier_name']; ?>">
-                                                        Edit
-                                                    </button> |
-                                                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['supplier_name']; ?>">
-                                                        Hapus
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                            <div class="modal fade delete-modal" id="delete<?= $Code; ?>">
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h4 class="modal-title">Hapus Supplier</h4>
-                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <form id="deleteForm" method="POST" action="function.php">
-                                                                <p id="supplier"></p>
-                                                                <input type="hidden" name="id" id="deleteId" value="">
-                                                                <button type="submit" class="btn btn-danger" name="hapussupplier">Hapus</button>
-                                                            </form>
-                                                        </div>
+                                        <div class="modal fade delete-modal" id="delete<?= $Code; ?>">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h4 class="modal-title">Hapus Supplier</h4>
+                                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form id="deleteForm" method="POST" action="function.php">
+                                                            <p id="supplier"></p>
+                                                            <input type="hidden" name="id" id="deleteId" value="">
+                                                            <button type="submit" class="btn btn-danger" name="hapussupplier">Hapus</button>
+                                                        </form>
                                                     </div>
                                                 </div>
                                             </div>
-                                        <?php } ?>
-                                    </tbody>
-                                </table>
-                            </div>
+                                        </div>
+                                    <?php } ?>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
-            </main>
-            <footer class="py-4 bg-light mt-auto">
-
-            </footer>
         </div>
+        </main>
+        <footer class="py-4 bg-light mt-auto">
+
+        </footer>
+    </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
