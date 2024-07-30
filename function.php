@@ -532,11 +532,11 @@ if (isset($_POST['hapusPJ'])) {
 
 
     if ($hapus && $hapus1) {
-        header('Location: pembayaran_pembelian.php');
+        header('Location: penerimaan_penjualan.php');
         exit();
     } else {
         echo 'Gagal menghapus data.';
-        header('Location: pembayaran_pembelian.php');
+        header('Location: penerimaan_penjualan.php');
         exit();
     }
 }

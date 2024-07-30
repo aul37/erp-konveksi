@@ -62,7 +62,7 @@ require 'header.php';
                    pi.supplier_id,
                    pi.faktur_supplier,
                    pi.purchase_invoice_date,
-                        sum(pid.purchase_invoice_value) as purchase_invoice_value,
+                        sum(pid.purchase_invoice_value) as purchase_invoice_value, 
                   --  SUM(pid.purchase_invoice_value * pid.qty) AS total_value,
                    s.supplier_name
                  FROM
