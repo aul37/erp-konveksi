@@ -152,7 +152,8 @@ require 'header_pembelian.php';
                                                     <select name="txtRequest" id="txtRequest" class="select2 form-control">
                                                         <option value=''>Pilih Pemohon Pembelian..</option>
                                                         <?php
-                                                        $mySql = "SELECT DISTINCT user_name FROM user WHERE user_status = 'Active'";
+                                                        $userDepartment = 'Purchasing';
+                                                        $mySql = "SELECT DISTINCT user_name FROM user WHERE user_status = 'Active' AND user_department = '$userDepartment'";
                                                         $dataQry = mysqli_query($koneksi, $mySql) or die("Anugrah ERP ERROR : " . mysqli_error($koneksi));
                                                         while ($dataRow = mysqli_fetch_array($dataQry)) {
                                                             echo "<option value='$dataRow[user_name]'>$dataRow[user_name]</option>";
@@ -184,7 +185,7 @@ require 'header_pembelian.php';
                                                         <select name="txtOrder" id="txtOrderDetail" class="select2 form-control" onchange="updatePrice()">
                                                             <option value=''>Pilih Produk..</option>
                                                             <?php
-                                                            $mySql = "SELECT * FROM product";
+                                                            $mySql = "SELECT * FROM product where product_status = 'Active'";
                                                             $dataQry = mysqli_query($koneksi, $mySql) or die("Anugrah ERP ERROR : " . mysqli_error($koneksi));
                                                             while ($dataRow = mysqli_fetch_array($dataQry)) {
                                                                 echo "<option value='$dataRow[product_id]' data-price='$dataRow[product_price]'>$dataRow[product_name]</option>";

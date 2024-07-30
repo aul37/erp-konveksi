@@ -124,7 +124,18 @@ if (isset($_POST['btnSubmit'])) {
                             <select name="txtRequest" id="txtRequest" class="select2 form-control">
                               <option value=''>Pilih Surat Masuk Barang..</option>
                               <?php
-                              $mySql = "SELECT DISTINCT stock_order_id FROM stock_order WHERE stock_order_reference = 'PURCHASE ORDER' ";
+                              $mySql = "SELECT DISTINCT
+	s.stock_order_id 
+FROM
+	stock_order s
+	JOIN stock_order_detail sd ON sd.stock_order_id = s.stock_order_id 
+WHERE
+	stock_order_reference = 'PURCHASE ORDER' 
+	AND stock_order_detail_id NOT IN (
+	SELECT
+		stock_order_detail_id 
+FROM
+	purchase_invoice_detail)";
                               $dataQry = mysqli_query($koneksi, $mySql) or die("Anugrah ERP ERROR : " . mysqli_error($koneksi));
                               while ($dataRow = mysqli_fetch_array($dataQry)) {
                                 echo "<option value='$dataRow[stock_order_id]'>$dataRow[stock_order_id]</option>";

@@ -179,8 +179,8 @@ if (isset($_POST['btnLoad'])) {
                         <div class="col-md-3 col-12 pe-25">
                           <div class="mb-1">
                             <label class="form-label">No. Faktur *</label>
-                            <select name="txtFaktur" id="txtFaktur" class="select2 form-control">
-                              <option value='' <?php if ($dataFaktur == '') echo 'selected'; ?>>Pilih No. Faktur..</option>
+                            <select name="txtFaktur" id="txtFaktur" class="select2 form-control" disabled>
+                              <option value='' <?php if (empty($dataFaktur)) echo 'selected'; ?>>Pilih No. Faktur..</option>
                               <?php
                               $mySql = "SELECT DISTINCT billing_id FROM billing";
                               $dataQry = mysqli_query($koneksi, $mySql) or die("Anugrah ERP ERROR : " . mysqli_error($koneksi));
@@ -192,6 +192,8 @@ if (isset($_POST['btnLoad'])) {
                             </select>
                           </div>
                         </div>
+
+
 
 
                         <div class="col-md-3 col-12 ps-25">

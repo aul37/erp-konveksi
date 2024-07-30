@@ -62,7 +62,9 @@ require 'header_pembelian.php';
                    pi.supplier_id,
                    pi.faktur_supplier,
                    pi.purchase_invoice_date,
-                   SUM(pid.purchase_invoice_value * pid.qty) AS total_value,
+                  --  SUM(pid.purchase_invoice_value * pid.qty) AS total_value,
+                        sum(pid.purchase_invoice_value) as purchase_invoice_value,
+
                    s.supplier_name
                  FROM
                    purchase_invoice pi
@@ -73,6 +75,8 @@ require 'header_pembelian.php';
                  GROUP BY
                    pi.purchase_invoice_id, pi.supplier_id, pi.faktur_supplier, pi.purchase_invoice_date, s.supplier_name";
                     $myQry = mysqli_query($koneksi, $mySql);
+                    $sumTotal = 0;
+                    $sumTotal += $myData['purchase_invoice_value'];
 
                     $nomor = 0;
                     while ($myData = mysqli_fetch_array($myQry)) {
@@ -97,7 +101,7 @@ require 'header_pembelian.php';
                         <td><?= $myData['supplier_id']; ?></td>
                         <td><?= $myData['supplier_name']; ?></td>
                         <td><?php echo $produkList; ?></td>
-                        <td><?php echo (number_format($myData['total_value'])); ?></td>
+                        <td><?php echo (number_format($myData['purchase_invoice_value'])); ?></td>
                         <td><button type="button" class="btn btn-warning" onclick="window.location.href='penerimaan_invoice_edit_pembelian.php?code=<?= $Code; ?>&id=<?= $myData['purchase_invoice_id']; ?>'">
                             Edit
                           </button> |

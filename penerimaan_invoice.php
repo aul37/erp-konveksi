@@ -62,7 +62,8 @@ require 'header.php';
                    pi.supplier_id,
                    pi.faktur_supplier,
                    pi.purchase_invoice_date,
-                   SUM(pid.purchase_invoice_value * pid.qty) AS total_value,
+                        sum(pid.purchase_invoice_value) as purchase_invoice_value,
+                  --  SUM(pid.purchase_invoice_value * pid.qty) AS total_value,
                    s.supplier_name
                  FROM
                    purchase_invoice pi
@@ -77,7 +78,10 @@ require 'header.php';
                     $nomor = 0;
                     while ($myData = mysqli_fetch_array($myQry)) {
                       $nomor++;
+                      $sumTotal = 0;
                       $Code = $myData['purchase_invoice_id'];
+                      $sumTotal += $myData['purchase_invoice_value'];
+
                       // Query untuk mengambil produk berdasarkan pr_id
                       $produkSql = "SELECT product_id FROM purchase_invoice_detail WHERE purchase_invoice_id = '$Code'";
                       $produkQuery = mysqli_query($koneksi, $produkSql);
@@ -97,7 +101,7 @@ require 'header.php';
                         <td><?= $myData['supplier_id']; ?></td>
                         <td><?= $myData['supplier_name']; ?></td>
                         <td><?php echo $produkList; ?></td>
-                        <td><?php echo (number_format($myData['total_value'])); ?></td>
+                        <td><?php echo (number_format($myData['purchase_invoice_value'])); ?></td>
                         <td><button type="button" class="btn btn-warning" onclick="window.location.href='penerimaan_invoice_edit.php?code=<?= $Code; ?>&id=<?= $myData['purchase_invoice_id']; ?>'">
                             Edit
                           </button> |

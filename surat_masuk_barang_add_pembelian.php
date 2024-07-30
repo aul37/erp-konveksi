@@ -145,7 +145,19 @@ if (isset($_POST['btnLoad'])) {
                                                         <select name="txtRequestID" id="txtRequestID" class="select2 form-control">
                                                             <option value=''>Pilih Referensi PO..</option>
                                                             <?php
-                                                            $mySql = "SELECT po.purchase_id, supplier.supplier_name FROM po JOIN supplier ON po.supplier_id = supplier.supplier_id";
+                                                            $mySql = "SELECT 
+    po.purchase_id, 
+    supplier.supplier_name 
+FROM 
+    po 
+JOIN 
+    supplier 
+    ON po.supplier_id = supplier.supplier_id
+LEFT JOIN 
+    stock_order 
+    ON po.purchase_id = stock_order.stock_order_reference_id
+WHERE 
+    stock_order.stock_order_reference_id IS NULL";
                                                             $dataQry = mysqli_query($koneksi, $mySql) or die("Anugrah ERP ERROR : " . mysqli_error($koneksi));
                                                             while ($dataRow = mysqli_fetch_array($dataQry)) {
                                                                 echo "<option value='" . $dataRow['purchase_id'] . "'>" . $dataRow['purchase_id'] . " - " . $dataRow['supplier_name'] . "</option>";

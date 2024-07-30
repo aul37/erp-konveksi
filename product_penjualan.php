@@ -245,6 +245,8 @@ while ($myData = mysqli_fetch_array($myQry)) {
                                 <option value="Unit" <?= ($myData['product_satuan'] == 'Unit') ? 'selected' : ''; ?>>Unit</option>
                                 <option value="Buah" <?= ($myData['product_satuan'] == 'Buah') ? 'selected' : ''; ?>>Buah</option>
                                 <option value="Pasang" <?= ($myData['product_satuan'] == 'Pasang') ? 'selected' : ''; ?>>Pasang</option>
+                                <option value="Barang Jadi" <?= ($myData['product_category'] == 'Barang Jadi') ? 'selected' : ''; ?>>Barang Jadi</option>
+
                             </select>
                             <br>
                             <select name="product_category" class="form-select" required>

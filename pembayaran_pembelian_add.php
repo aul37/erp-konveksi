@@ -146,7 +146,12 @@ $dataPaymentBankSender        = isset($_POST['txtPaymentBankSender']) ? $_POST['
                                                         <select name="txtFaktur" id="txtFaktur" class="select2 form-control">
                                                             <option value=''>Pilih Penerimaan Invoice..</option>
                                                             <?php
-                                                            $mySql = "SELECT DISTINCT purchase_invoice_id FROM purchase_invoice";
+                                                            $mySql = "SELECT DISTINCT
+	purchase_invoice_id 
+FROM
+	purchase_invoice 
+WHERE
+	purchase_invoice_id NOT IN ( SELECT purchase_invoice_id FROM purchase_payment_detail )";
                                                             $dataQry = mysqli_query($koneksi, $mySql) or die("Anugrah ERP ERROR : " . mysqli_error($koneksi));
                                                             while ($dataRow = mysqli_fetch_array($dataQry)) {
                                                                 echo "<option value='$dataRow[purchase_invoice_id]'>$dataRow[purchase_invoice_id]</option>";
@@ -282,7 +287,7 @@ $dataPaymentBankSender        = isset($_POST['txtPaymentBankSender']) ? $_POST['
 
                                                                 ?>
                                                                     <tr>
-                                                                        <input type="hidden" name="itemBilling[<?= $nomor; ?>]" value=" <?= $myData['purchase_invoice_id']; ?>">
+                                                                        <input type="hidden" name="itemBilling[<?= $nomor; ?>]" value="<?= $myData['purchase_invoice_id']; ?>">
                                                                         <td><?= $nomor; ?></td>
                                                                         <td><?= $myData['purchase_invoice_id']; ?></td>
                                                                         <td><?= $myData['supplier_name']; ?></td>

@@ -1,5 +1,5 @@
 <?php
-require 'function_penjualan.php';
+require 'function.php';
 require 'cek.php';
 require 'header_penjualan.php';
 ?>
@@ -34,7 +34,7 @@ require 'header_penjualan.php';
                     <div class="card mb-4">
                         <div class="col-md-6 col-12">
                             <div class="mb-1 breadcrumb-right">
-                                <a class="btn-icon btn btn-primary btn-round btn-sm" href="faktur_penjualan_add_penjualan.php">
+                                <a class="btn-icon btn btn-primary btn-round btn-sm" href="faktur_penjualan_add.php">
                                     <span class="align-middle">Tambah Data Faktur Penjualan</span>
                                 </a>
                             </div>
@@ -78,7 +78,9 @@ require 'header_penjualan.php';
                                                 WHERE
                                                     billing.updated_date
                                                 GROUP BY
-                                                    billing.billing_id";
+                                                    billing.billing_id
+                                                     ORDER BY
+						                            billing.billing_date ASC";
 
                                         $myQry = mysqli_query($koneksi, $mySql);
 
@@ -91,17 +93,19 @@ require 'header_penjualan.php';
                                         ?>
                                             <tr>
                                                 <td><?= $nomor; ?></td>
-                                                <td><a href="faktur_penjualan_view_penjualan.php?code=<?= $Code; ?>" target="_new" alt="View Data"><u><?= $myData['billing_id']; ?></u></a></td>
+                                                <td><a href="faktur_penjualan_view.php?code=<?= $Code; ?>" target="_new" alt="View Data"><u><?= $myData['billing_id']; ?></u></a></td>
                                                 <td><?= $myData['billing_date']; ?></td>
                                                 <td><?= $myData['sales_id']; ?></td>
                                                 <td><?= number_format($myData['total']); ?></td>
                                                 <td><?= $myData['billing_note']; ?></td>
-                                                <td><button type="button" class="btn btn-warning" onclick="window.location.href='faktur_penjualan_edit_penjualan.php?code=<?= $Code; ?>&id=<?= $myData['billing_id']; ?>'">
+                                                <td><button type="button" class="btn btn-warning" onclick="window.location.href='faktur_penjualan_edit.php?code=<?= $Code; ?>&id=<?= $myData['billing_id']; ?>'">
                                                         Edit
                                                     </button> |
                                                     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['billing_id']; ?>">
                                                         Hapus
                                                     </button>
+                                                    <span class='mx-25'>|</span>
+                                                    <a href='pdf_billing.php?&id=<?= $Code; ?>' target='_blank' alt='Print Data'>Print</a>
                                                 </td>
                                             </tr>
                                             <div class="modal fade delete-modal" id="delete<?= $Code; ?>">
@@ -113,7 +117,7 @@ require 'header_penjualan.php';
                                                         </div>
                                                         <div class="modal-body">
                                                             <p>Anda yakin ingin menghapus FJ <strong><?= $myData['billing_id']; ?></strong>?</p>
-                                                            <form id="deleteForm" method="POST" action="function_penjualan.php">
+                                                            <form id="deleteForm" method="POST" action="function.php">
                                                                 <input type="hidden" name="billing_id" value="<?= $Code; ?>">
                                                                 <button type="submit" class="btn btn-danger" name="hapusfj">Hapus</button>
                                                             </form>

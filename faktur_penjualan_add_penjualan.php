@@ -155,10 +155,24 @@ if (isset($_POST['btnLoad'])) {
                                                         <select name="txtRequestID" id="txtRequestID" class="select2 form-control">
                                                             <option value=''>Pilih Referensi SO..</option>
                                                             <?php
-                                                            $mySql = "SELECT s.sales_id, c.customer_name 
-                      FROM sales s 
-                      JOIN customer c ON s.customer_id = c.customer_id 
-                      GROUP BY s.sales_id";
+                                                            $mySql = "SELECT DISTINCT
+	s.sales_id,
+	c.customer_name 
+FROM
+	sales s
+	JOIN sales_detail sd ON sd.sales_id = s.sales_id
+	JOIN customer c ON s.customer_id = c.customer_id 
+WHERE
+	s.sales_id NOT IN (
+	SELECT
+		s.sales_id 
+	FROM
+		sales s
+		JOIN sales_detail sd ON sd.sales_id = s.sales_id
+	JOIN billing_detail bd ON bd.sales_detail_id = sd.sales_detail_id 
+	)
+";
+
                                                             $dataQry = mysqli_query($koneksi, $mySql) or die("Anugrah ERP ERROR : " . mysqli_error($koneksi));
                                                             while ($dataRow = mysqli_fetch_array($dataQry)) {
                                                                 echo "<option value='$dataRow[sales_id]'>$dataRow[sales_id] - $dataRow[customer_name]</option>";

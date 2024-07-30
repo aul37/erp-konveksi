@@ -248,9 +248,7 @@ if (isset($_POST['addproduct'])) {
 
     if ($addtotable) {
         header('location: product.php');
-    } else {
-        echo 'Gagal';
-        header('location: product.php');
+        exit();
     }
 }
 

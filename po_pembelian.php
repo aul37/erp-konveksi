@@ -1,5 +1,5 @@
 <?php
-require 'function_pembelian.php';
+require 'function.php';
 require 'cek.php';
 require 'header_pembelian.php';
 ?>
@@ -34,7 +34,7 @@ require 'header_pembelian.php';
                     <div class="card mb-4">
                         <div class="col-md-6 col-12">
                             <div class="mb-1 breadcrumb-right">
-                                <a class="btn-icon btn btn-primary btn-round btn-sm" href="po_add_pembelian.php">
+                                <a class="btn-icon btn btn-primary btn-round btn-sm" href="po_add.php">
                                     <span class="align-middle">Tambah Data Pesanan Pembelian (PO)</span>
                                 </a>
                             </div>
@@ -87,16 +87,18 @@ require 'header_pembelian.php';
                                         ?>
                                             <tr>
                                                 <td><?= $nomor; ?></td>
-                                                <td><a href="po_view_pembelian.php?code=<?= $Code; ?>" target="_new" alt="View Data"><u><?= $myData['purchase_id']; ?></u></a></td>
+                                                <td><a href="po_view.php?code=<?= $Code; ?>" target="_new" alt="View Data"><u><?= $myData['purchase_id']; ?></u></a></td>
                                                 <td><?= $myData['purchase_date']; ?></td>
                                                 <td><?= $myData['supplier_name']; ?></td>
                                                 <td><?= $myData['product_name']; ?></td>
-                                                <td> <button type="button" class="btn btn-warning" onclick="window.location.href='po_edit_pembelian.php?code=<?= $Code; ?>&id=<?= $myData['purchase_id']; ?>'">
+                                                <td> <button type="button" class="btn btn-warning" onclick="window.location.href='po_edit.php?code=<?= $Code; ?>&id=<?= $myData['purchase_id']; ?>'">
                                                         Edit
                                                     </button> |
                                                     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['purchase_id']; ?>">
                                                         Hapus
                                                     </button>
+                                                    <span class='mx-25'>|</span>
+                                                    <a href='pdf_penerimaan_invoice.php?&id=<?= $Code; ?>' target='_blank' alt='Print Data'>Print</a>
                                                 </td>
                                             </tr>
                                             <div class="modal fade delete-modal" id="delete<?= $Code; ?>">
@@ -108,7 +110,7 @@ require 'header_pembelian.php';
                                                         </div>
                                                         <div class="modal-body">
                                                             <p>Anda yakin ingin menghapus PO <strong><?= $myData['purchase_id']; ?></strong>?</p>
-                                                            <form id="deleteForm" method="POST" action="function_pembelian.php">
+                                                            <form id="deleteForm" method="POST" action="function.php">
                                                                 <input type="hidden" name="purchase_id" value="<?= $Code; ?>">
                                                                 <button type="submit" class="btn btn-danger" name="hapuspo">Hapus</button>
                                                             </form>

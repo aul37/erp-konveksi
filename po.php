@@ -97,6 +97,8 @@ require 'header.php';
                                                     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['purchase_id']; ?>">
                                                         Hapus
                                                     </button>
+                                                    <span class='mx-25'>|</span>
+                                                    <a href='pdf_penerimaan_invoice.php?&id=<?= $Code; ?>' target='_blank' alt='Print Data'>Print</a>
                                                 </td>
                                             </tr>
                                             <div class="modal fade delete-modal" id="delete<?= $Code; ?>">

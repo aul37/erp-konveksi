@@ -146,7 +146,9 @@ $dataPaymentBankSender        = isset($_POST['txtPaymentBankSender']) ? $_POST['
                                                         <select name="txtFaktur" id="txtFaktur" class="select2 form-control">
                                                             <option value=''>Pilih No. Faktur..</option>
                                                             <?php
-                                                            $mySql = "SELECT DISTINCT billing_id FROM billing";
+                                                            $mySql = "SELECT DISTINCT billing_id 
+FROM billing 
+WHERE billing_id NOT IN (SELECT billing_id FROM payment_detail)";
                                                             $dataQry = mysqli_query($koneksi, $mySql) or die("Anugrah ERP ERROR : " . mysqli_error($koneksi));
                                                             while ($dataRow = mysqli_fetch_array($dataQry)) {
                                                                 echo "<option value='$dataRow[billing_id]'>$dataRow[billing_id]</option>";
@@ -279,7 +281,7 @@ $dataPaymentBankSender        = isset($_POST['txtPaymentBankSender']) ? $_POST['
 
                                                                 ?>
                                                                     <tr>
-                                                                        <input type="hidden" name="itemBilling[<?= $nomor; ?>]" value=" <?= $myData['billing_id']; ?>">
+                                                                        <input type="hidden" name="itemBilling[<?= $nomor; ?>]" value="<?= $myData['billing_id']; ?>">
                                                                         <td><?= $nomor; ?></td>
                                                                         <td><?= $myData['billing_id']; ?></td>
                                                                         <td><?= $myData['customer_name']; ?></td>

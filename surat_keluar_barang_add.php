@@ -147,7 +147,9 @@ if (isset($_POST['btnLoad'])) {
                                                         <select name="txtFaktur" id="txtFaktur" class="select2 form-control">
                                                             <option value=''>Pilih No. Faktur..</option>
                                                             <?php
-                                                            $mySql = "SELECT DISTINCT billing_id FROM billing";
+                                                            $mySql = "SELECT DISTINCT billing_id 
+FROM billing 
+WHERE billing_id NOT IN (SELECT stock_order_reference_id FROM stock_order)";
                                                             $dataQry = mysqli_query($koneksi, $mySql) or die("Anugrah ERP ERROR : " . mysqli_error($koneksi));
                                                             while ($dataRow = mysqli_fetch_array($dataQry)) {
                                                                 echo "<option value='$dataRow[billing_id]'>$dataRow[billing_id]</option>";

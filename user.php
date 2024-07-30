@@ -62,7 +62,7 @@ require 'header.php';
                                         <th>Nama User</th>
                                         <th>Kontak</th>
                                         <th>Alamat User</th>
-                                        <th>Password</th>
+                                        <!-- <th>Password</th> -->
                                         <th>Status</th>
                                         <th>Aksi</th>
 
@@ -85,7 +85,7 @@ require 'header.php';
                                             <td><?php echo $myData['user_name']; ?></td>
                                             <td><?php echo $myData['user_contact']; ?></td>
                                             <td><?php echo $myData['user_address']; ?></td>
-                                            <td><?php echo md5($myData['user_password']); ?></td>
+                                            <!-- <td><?php echo md5($myData['user_password']); ?></td> -->
                                             <td><?php echo $myData['user_status']; ?></td>
                                             <td>
                                                 <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editModal<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['user_name']; ?>">
@@ -160,8 +160,12 @@ require 'header.php';
                 <div class="modal-body">
                     <input type="text" name="user_id" class="form-control" placeholder="ID" required>
                     <br>
-                    <input type="text" name="user_department" class="form-control" placeholder="Depatermen" required>
-                    <br>
+                    <select name="user_department" class="form-select" placeholder="Divisi" required>
+                        <option value="" disabled selected>Divisi</option>
+                        <option value="Sales">Sales</option>
+                        <option value="Purchasing">Purchasing</option>
+                        <option value="Super Admin">Super Admin</option>
+                    </select><br>
                     <input type="text" name="user_name" class="form-control" placeholder="Nama User" required>
                     <br>
                     <input type="text" name="user_contact" placeholder="Kontak" class="form-control" required>
@@ -216,8 +220,12 @@ while ($myData = mysqli_fetch_array($myQry)) {
                         <input type="hidden" name="id" value="<?= $Code; ?>">
                         <input type="text" name="user_id" class="form-control" placeholder="ID" value="<?= $ID; ?>" readonly>
                         <br>
-                        <input type="text" name="user_department" class="form-control" placeholder="Depatermen" value="<?= $department; ?>" readonly>
-                        <br>
+                        <select name="user_department" class="form-select" placeholder="Divisi" required>
+                            <option value="" disabled selected>Divisi</option>
+                            <option value="Sales">Sales</option>
+                            <option value="Purchasing">Purchasing</option>
+                            <option value="Super Admin">Super Admin</option>
+                        </select> <br>
                         <input type="text" name="user_name" class="form-control" placeholder="Nama User" value="<?= $name; ?>" readonly>
                         <br>
                         <input type="text" name="user_contact" placeholder="Kontak" class="form-control" value="<?= $contact; ?>" required>

@@ -165,7 +165,7 @@ $dataTermOfPayment = $myData['sales_top'];
                           <label class="form-label">Customer</label>
                           <select id="customer" class="form-select select2" tabindex="-1" name="txtCustomer">
                             <?php
-                            $mySql = "SELECT customer_id, customer_name FROM customer";
+                            $mySql = "SELECT customer_id, customer_name FROM customer WHERE customer_status = 'Active'";
                             $dataQry = mysqli_query($koneksi, $mySql) or die("ANUGRAH ERP ERROR : " . mysqli_error($koneksi));
                             while ($dataRow = mysqli_fetch_array($dataQry)) {
                               $selected = ($dataRow['customer_id'] == $dataCustomer) ? "selected" : "";
@@ -245,7 +245,7 @@ $dataTermOfPayment = $myData['sales_top'];
                           <select name="txtOrder" id="txtOrderDetail" class="select2 form-control" onchange="updatePrice()">
                             <option value=''>Pilih Produk..</option>
                             <?php
-                            $mySql = "SELECT * FROM product";
+                            $mySql = "SELECT * FROM product where product_status = 'Active'";
                             $dataQry = mysqli_query($koneksi, $mySql) or die("Anugrah ERP ERROR : " . mysqli_error($koneksi));
                             while ($dataRow = mysqli_fetch_array($dataQry)) {
                               echo "<option value='$dataRow[product_id]' data-price='$dataRow[product_price]'>$dataRow[product_name]</option>";

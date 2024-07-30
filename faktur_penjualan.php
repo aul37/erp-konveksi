@@ -78,7 +78,9 @@ require 'header.php';
                                                 WHERE
                                                     billing.updated_date
                                                 GROUP BY
-                                                    billing.billing_id";
+                                                    billing.billing_id
+                                                ORDER BY
+						                            billing.billing_date ASC";
 
                                         $myQry = mysqli_query($koneksi, $mySql);
 
@@ -102,6 +104,8 @@ require 'header.php';
                                                     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $Code; ?>" data-id="<?= $Code; ?>" data-name="<?= $myData['billing_id']; ?>">
                                                         Hapus
                                                     </button>
+                                                    <span class='mx-25'>|</span>
+                                                    <a href='pdf_billing.php?&id=<?= $Code; ?>' target='_blank' alt='Print Data'>Print</a>
                                                 </td>
                                             </tr>
                                             <div class="modal fade delete-modal" id="delete<?= $Code; ?>">

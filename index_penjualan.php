@@ -3,6 +3,7 @@ require 'function_penjualan.php';
 require 'cek.php';
 require 'header_penjualan.php';
 
+
 ?>
 
 <!DOCTYPE html>
@@ -61,6 +62,17 @@ require 'header_penjualan.php';
                                 <div class="card-body">Supplier</div>
                                 <div class="card-footer d-flex align-items-center justify-content-between">
                                     <a class="small text-white stretched-link" href="supplier.php">View Details</a>
+                                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-6 col-md-6">
+                            <div class="card bg-success text-white mb-4">
+                                <div class="card-body">Report Penjualan</div>
+                                <div class="card-footer d-flex align-items-center justify-content-between">
+                                    <a class="small text-white stretched-link" href="report_penjualan_penjualan.php">View Details</a>
                                     <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                                 </div>
                             </div>

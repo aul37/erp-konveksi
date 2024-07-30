@@ -156,8 +156,7 @@ LEFT JOIN
     stock_order 
     ON po.purchase_id = stock_order.stock_order_reference_id
 WHERE 
-    stock_order.stock_order_reference_id IS NULL;
-";
+    stock_order.stock_order_reference_id IS NULL";
                                                             $dataQry = mysqli_query($koneksi, $mySql) or die("Anugrah ERP ERROR : " . mysqli_error($koneksi));
                                                             while ($dataRow = mysqli_fetch_array($dataQry)) {
                                                                 echo "<option value='" . $dataRow['purchase_id'] . "'>" . $dataRow['purchase_id'] . " - " . $dataRow['supplier_name'] . "</option>";
